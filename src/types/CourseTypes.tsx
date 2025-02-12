@@ -1,7 +1,16 @@
 import { UserType } from './UserType';
 import { StepType, ELearningStepType } from './StepTypes';
 import { CompanyType } from './CompanyType';
-import { BLENDED, LEARNER, OPERATIONS, PEDAGOGY, STRICTLY_E_LEARNING, TESTER, TRAINER } from '../core/data/constants';
+import {
+  BLENDED,
+  LEARNER,
+  OPERATIONS,
+  PEDAGOGY,
+  STRICTLY_E_LEARNING,
+  TESTER,
+  TRAINER,
+  TUTOR,
+} from '../core/data/constants';
 import { AttendanceSheetType } from './AttendanceSheetTypes';
 
 // query
@@ -90,12 +99,15 @@ export type TraineeType = {
   firstMobileConnectionDate: string,
 }
 
-export type TrainerType = {
+export type InterlocutorType = {
   _id: string,
   identity: { lastname: string, firstname: string },
   picture: { link: '' },
-  biography: ''
 };
+
+export type TrainerType = InterlocutorType & { biography: '' };
+
+export type TutorType = InterlocutorType;
 
 export type BlendedCourseType = BaseCourseType & {
   subProgram: { isStrictlyELearning: false },
@@ -108,9 +120,10 @@ export type BlendedCourseType = BaseCourseType & {
   misc: string,
   trainees?: TraineeType[],
   companies?: CompanyType[],
+  tutors?: TutorType[],
   attendanceSheets?: AttendanceSheetType[]
 }
 
-export type CourseModeType = typeof LEARNER | typeof TESTER | typeof TRAINER;
+export type CourseModeType = typeof LEARNER | typeof TESTER | typeof TRAINER | typeof TUTOR;
 
 export type CourseType = ELearningCourseType | BlendedCourseType;

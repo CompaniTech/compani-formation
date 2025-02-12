@@ -29,6 +29,8 @@ export type CompanyListResponseType = { message: string, data: { companies: Comp
 
 // COURSE
 export type BlendedCourseListResponseType = { message: string, data: { courses: BlendedCourseType[] } }
+export type PedagogyCourseListResponseType = { traineeCourses: CourseType[], tutorCourses: BlendedCourseType[] }
+export type OperationsCourseListResponseType = BlendedCourseType[]
 export type CourseResponseType = { message: string, data: { course: CourseType } }
 export type PdfResponseType = { data: string }
 

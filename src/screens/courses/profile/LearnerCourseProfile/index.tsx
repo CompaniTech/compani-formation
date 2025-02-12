@@ -53,6 +53,7 @@ StackScreenProps<RootBottomTabParamList>
 >{}
 
 const LearnerCourseProfile = ({ route, navigation }: LearnerCourseProfileProps) => {
+  const { mode = LEARNER } = route.params;
   const setStatusBarVisible = useSetStatusBarVisible();
   const userId: string | null = useGetLoggedUserId();
   const setCourseToStore = useSetCourse();
@@ -65,11 +66,11 @@ const LearnerCourseProfile = ({ route, navigation }: LearnerCourseProfileProps) 
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const attendanceSheetsToSign = useMemo(() =>
-    (SINGLE_COURSES_SUBPROGRAM_IDS.includes(course?.subProgram._id || '')
+    (SINGLE_COURSES_SUBPROGRAM_IDS.includes(course?.subProgram._id || '') && mode === LEARNER
       ? (course as BlendedCourseType)?.attendanceSheets?.filter(as =>
         has(as, 'signatures.trainer') && !has(as, 'signatures.trainee')) || []
       : []),
-  [course]);
+  [course, mode]);
 
   const title = useMemo(() => getTitle(course), [course]);
 
@@ -77,20 +78,20 @@ const LearnerCourseProfile = ({ route, navigation }: LearnerCourseProfileProps) 
   useEffect(() => {
     const getCourse = async () => {
       try {
-        const [fetchedCourse, fetchedQuestionnaires] = await Promise.all([
-          Courses.getCourse(route.params.courseId, PEDAGOGY),
-          Questionnaires.getUserQuestionnaires({ course: route.params.courseId }),
-        ]);
-        if (fetchedCourse.format === BLENDED) {
-          const formattedCourse = {
-            _id: fetchedCourse._id,
-            subProgram: { steps: fetchedCourse.subProgram.steps.map(s => ({ _id: s._id, name: s.name })) },
-          };
-          setCourseToStore(formattedCourse as BlendedCourseType);
+        const fetchedCourse = await Courses.getCourse(route.params.courseId, PEDAGOGY);
+        if (mode === LEARNER) {
+          const fetchedQuestionnaires = await Questionnaires.getUserQuestionnaires({ course: route.params.courseId });
+          if (fetchedCourse.format === BLENDED) {
+            const formattedCourse = {
+              _id: fetchedCourse._id,
+              subProgram: { steps: fetchedCourse.subProgram.steps.map(s => ({ _id: s._id, name: s.name })) },
+            };
+            setCourseToStore(formattedCourse as BlendedCourseType);
+          }
+          setQuestionnaires(fetchedQuestionnaires);
         }
         const programImage = get(fetchedCourse, 'subProgram.program.image.link') || '';
         setCourse(fetchedCourse);
-        setQuestionnaires(fetchedQuestionnaires);
         if (programImage) setSource({ uri: programImage });
       } catch (e: any) {
         console.error(e);
@@ -102,7 +103,7 @@ const LearnerCourseProfile = ({ route, navigation }: LearnerCourseProfileProps) 
       setStatusBarVisible(true);
       getCourse();
     }
-  }, [isFocused, setStatusBarVisible, route.params.courseId, setCourseToStore]);
+  }, [isFocused, setStatusBarVisible, route.params.courseId, setCourseToStore, mode]);
 
   useEffect(() => () => {
     const currentRoute = navigation.getState().routes[navigation.getState().index];
@@ -180,7 +181,7 @@ const LearnerCourseProfile = ({ route, navigation }: LearnerCourseProfileProps) 
       };
       navigation.navigate('ElearningAbout', { program: eLearningProgram as ELearningProgramType });
     } else {
-      navigation.navigate('BlendedAbout', { course: course as BlendedCourseType, mode: LEARNER });
+      navigation.navigate('BlendedAbout', { course: course as BlendedCourseType, mode });
     }
   };
 
@@ -194,13 +195,13 @@ const LearnerCourseProfile = ({ route, navigation }: LearnerCourseProfileProps) 
           <PendingActionsContainer questionnaires={questionnaires} profileId={course._id}
             attendanceSheets={attendanceSheetsToSign} />
     }
-    <View style={styles.progressBarContainer}>
+    {mode === LEARNER && <View style={styles.progressBarContainer}>
       <Text style={styles.progressBarText}>ÉTAPES</Text>
       <View style={commonStyles.progressBarContainer}>
         <ProgressBar progress={getCourseProgress(course) * 100} />
       </View>
       <Text style={styles.progressBarText}>{(getCourseProgress(course) * 100).toFixed(0)}%</Text>
-    </View>
+    </View>}
   </>;
 
   const renderFooter = () => <View style={styles.buttonContainer}>
@@ -219,7 +220,7 @@ const LearnerCourseProfile = ({ route, navigation }: LearnerCourseProfileProps) 
   return course && has(course, 'subProgram.program') ? (
     <SafeAreaView style={commonStyles.container} edges={['top']}>
       <FlatList data={course.subProgram.steps} keyExtractor={item => item._id} ListHeaderComponent={renderHeader}
-        renderItem={({ item, index }) => renderStepList(course, LEARNER, route, item, index)}
+        renderItem={({ item, index }) => renderStepList(course, mode, route, item, index)}
         showsVerticalScrollIndicator={IS_WEB} ListFooterComponent={renderFooter} />
     </SafeAreaView>
   )

@@ -14,6 +14,7 @@ import { getTheoreticalDuration } from '../../../../core/helpers/utils';
 import { BlendedCourseType } from '../../../../types/CourseTypes';
 import { NextSlotsStepType } from '../../../../types/StepTypes';
 import { RootBottomTabParamList, RootStackParamList } from '../../../../types/NavigationType';
+import { OperationsCourseListResponseType } from '../../../../types/AxiosTypes';
 import { useGetLoggedUserId } from '../../../../store/main/hooks';
 import commonStyles from '../../../../styles/common';
 import { BLENDED, COMPLETED, FORTHCOMING, OPERATIONS, TRAINER } from '../../../../core/data/constants';
@@ -89,7 +90,7 @@ const TrainerCourses = ({ navigation }: TrainerCoursesProps) => {
           action: OPERATIONS,
           format: BLENDED,
           trainer: loggedUserId,
-        });
+        }) as OperationsCourseListResponseType;
         const formatedCourses = formatCoursesDiplaysContent(fetchedCourses);
         setCoursesDisplays(formatedCourses);
       }

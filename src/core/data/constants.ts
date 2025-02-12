@@ -75,6 +75,7 @@ export const TRAINER = 'trainer';
 // COURSE MODE
 export const LEARNER = 'learner';
 export const TESTER = 'tester';
+export const TUTOR = 'tutor';
 
 // REGEX
 export const PHONE_REGEX = /^(?:(?:\+|00)33|0)\s*[1-9](?:[\s.-]*\d{2}){4}(?:[\s]*)$/;

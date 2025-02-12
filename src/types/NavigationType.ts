@@ -19,6 +19,7 @@ export type RootStackParamList = {
     courseId: string,
     endedActivity?: string | null,
     endedQuestionnaire?: string | null,
+    mode?: CourseModeType,
   };
   TrainerCourseProfile: { courseId: string };
   SubProgramProfile: { subProgramId: string };

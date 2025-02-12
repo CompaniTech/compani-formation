@@ -11,9 +11,9 @@ import { capitalize, formatQuantity } from '../../../core/helpers/utils';
 import commonStyles, { markdownStyle } from '../../../styles/common';
 import InternalRulesModal from '../../../components/InternalRulesModal';
 import ContactInfoContainer from '../../../components/ContactInfoContainer';
-import { DAY_D_MONTH_YEAR, LEARNER } from '../../../core/data/constants';
-import TrainerCell from '../../../components/TrainerCell';
-import { TrainerType } from '../../../types/CourseTypes';
+import { DAY_D_MONTH_YEAR, LEARNER, TUTOR } from '../../../core/data/constants';
+import InterlocutorCell from '../../../components/InterlocutorCell';
+import { TrainerType, TutorType } from '../../../types/CourseTypes';
 
 interface BlendedAboutProps extends StackScreenProps<RootStackParamList, 'BlendedAbout'> {}
 
@@ -32,7 +32,8 @@ const BlendedAbout = ({ route, navigation }: BlendedAboutProps) => {
 
   const goToCourse = () => {
     if (course._id) {
-      navigation.navigate(mode === LEARNER ? 'LearnerCourseProfile' : 'TrainerCourseProfile', { courseId: course._id });
+      if ([LEARNER, TUTOR].includes(mode)) navigation.navigate('LearnerCourseProfile', { courseId: course._id, mode });
+      else navigation.navigate('TrainerCourseProfile', { courseId: course._id });
     }
   };
 
@@ -55,7 +56,16 @@ const BlendedAbout = ({ route, navigation }: BlendedAboutProps) => {
             {formatQuantity('Intervenant·e', course.trainers.length, 's', false)}
           </Text>
           {course.trainers
-            .map((trainer: TrainerType, index: number) => <TrainerCell key={`trainer_${index}`} trainer={trainer} />)}
+            .map((trainer: TrainerType, index: number) =>
+              <InterlocutorCell key={`trainer_${index}`} interlocutor={trainer} />)}
+        </>}
+        {!!course.tutors?.length && <>
+          <View style={commonStyles.sectionDelimiter} />
+          <Text style={styles.sectionTitle}>
+            {formatQuantity('Tuteur', course.tutors.length, 's', false)}
+          </Text>
+          {course.tutors
+            .map((tutor: TutorType, index: number) => <InterlocutorCell key={`tutor_${index}`} interlocutor={tutor} />)}
         </>}
         {!!course.contact?.identity && <>
           <View style={commonStyles.sectionDelimiter} />

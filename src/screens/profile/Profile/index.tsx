@@ -32,6 +32,7 @@ import { formatImage, formatPayload } from '../../../core/helpers/pictures';
 import { useGetLoggedUser, useSetLoggedUser } from '../../../store/main/hooks';
 import { PEDAGOGY, IS_WEB, DIRECTORY } from '../../../core/data/constants';
 import { CompanyType } from '../../../types/CompanyType';
+import { PedagogyCourseListResponseType } from '../../../types/AxiosTypes';
 import styles from './styles';
 
 interface ProfileProps extends CompositeScreenProps<
@@ -70,9 +71,9 @@ const Profile = ({ navigation }: ProfileProps) => {
   useEffect(() => {
     async function fetchData() {
       try {
-        const fetchedCourses = await Courses.getCourseList({ action: PEDAGOGY });
-        setOnGoingCoursesCount(fetchedCourses.filter(course => getCourseProgress(course) < 1).length);
-        setAchievedCoursesCount(fetchedCourses.filter(course => getCourseProgress(course) === 1).length);
+        const { traineeCourses } = await Courses.getCourseList({ action: PEDAGOGY }) as PedagogyCourseListResponseType;
+        setOnGoingCoursesCount(traineeCourses.filter(course => getCourseProgress(course) < 1).length);
+        setAchievedCoursesCount(traineeCourses.filter(course => getCourseProgress(course) === 1).length);
       } catch (e: any) {
         console.error(e);
         setOnGoingCoursesCount(0);

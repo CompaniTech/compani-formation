@@ -15,7 +15,7 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     flex: 1,
   },
-  trainerPicture: {
+  interlocutorPicture: {
     height: ICON.XXL,
     width: ICON.XXL,
     marginRight: MARGIN.MD,

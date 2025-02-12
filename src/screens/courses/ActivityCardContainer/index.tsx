@@ -6,7 +6,7 @@ import { AppState, AppStateStatus, BackHandler, Image } from 'react-native';
 import { StackScreenProps } from '@react-navigation/stack';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import Activities from '../../../api/activities';
-import { LEARNER, TRAINER } from '../../../core/data/constants';
+import { LEARNER, TRAINER, TUTOR } from '../../../core/data/constants';
 import { tabsNames } from '../../../core/data/tabs';
 import {
   useGetCardIndex,
@@ -93,11 +93,9 @@ const ActivityCardContainer = ({ route, navigation }: ActivityCardContainerProps
   const navigateNext = useCallback(() => {
     if (mode === LEARNER) {
       navigation.navigate('LearnerCourseProfile', { courseId: profileId, endedActivity: activity?._id });
-    } else if (mode === TRAINER) {
-      navigation.navigate('TrainerCourseProfile', { courseId: profileId });
-    } else {
-      navigation.navigate('SubProgramProfile', { subProgramId: profileId });
-    }
+    } else if (mode === TRAINER) navigation.navigate('TrainerCourseProfile', { courseId: profileId });
+    else if (mode === TUTOR) navigation.navigate('LearnerCourseProfile', { courseId: profileId, mode });
+    else navigation.navigate('SubProgramProfile', { subProgramId: profileId });
   }, [activity?._id, mode, navigation, profileId]);
 
   const goBack = useCallback(
