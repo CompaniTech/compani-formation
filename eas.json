@@ -42,7 +42,7 @@
     },
     "prod": {
       "node": "20.18.0",
-      "channel": "prod-2.31.0",
+      "channel": "prod-2.32.0",
       "env": {
         "EXPO_USE_SOURCE": "1",
         "APP_ENV": "production",
