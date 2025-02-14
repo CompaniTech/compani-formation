@@ -1,25 +1,23 @@
 import 'array-flat-polyfill';
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Text, View, ImageBackground, FlatList } from 'react-native';
 import { useIsFocused, CompositeScreenProps } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StackScreenProps } from '@react-navigation/stack';
 import get from 'lodash/get';
 import Courses from '../../../../api/courses';
-import CoursesSection, { EVENT_SECTION } from '../../../../components/CoursesSection';
-import NextStepCell from '../../../../components/steps/NextStepCell';
+import CoursesSection from '../../../../components/CoursesSection';
 import ProgramCell from '../../../../components/ProgramCell';
 import HomeScreenFooter from '../../../../components/HomeScreenFooter';
 import { getTheoreticalDuration } from '../../../../core/helpers/utils';
 import { BlendedCourseType } from '../../../../types/CourseTypes';
-import { NextSlotsStepType } from '../../../../types/StepTypes';
 import { RootBottomTabParamList, RootStackParamList } from '../../../../types/NavigationType';
 import { OperationsCourseListResponseType } from '../../../../types/AxiosTypes';
 import { useGetLoggedUserId } from '../../../../store/main/hooks';
 import commonStyles from '../../../../styles/common';
-import { BLENDED, COMPLETED, FORTHCOMING, OPERATIONS, TRAINER } from '../../../../core/data/constants';
+import { BLENDED, COMPLETED, FORTHCOMING, OPERATIONS } from '../../../../core/data/constants';
 import styles from '../styles';
-import { getElearningSteps, formatNextSteps, getCourseStatus } from '../helper';
+import { getElearningSteps, getCourseStatus } from '../helper';
 import { CourseDisplayType } from '../types';
 import TrainerEmptyState from '../TrainerEmptyState';
 
@@ -70,8 +68,6 @@ const formatCoursesDiplaysContent = (courses: BlendedCourseType[]) => {
   return contents.filter(section => section.courses.length);
 };
 
-const renderNextStepsItem = (step: NextSlotsStepType) => <NextStepCell nextSlotsStep={step} mode={TRAINER} />;
-
 interface TrainerCoursesProps extends CompositeScreenProps<
 StackScreenProps<RootBottomTabParamList>,
 StackScreenProps<RootStackParamList>
@@ -114,19 +110,8 @@ const TrainerCourses = ({ navigation }: TrainerCoursesProps) => {
     }
   }, [isFocused, getCourses, loggedUserId]);
 
-  const nextSteps: NextSlotsStepType[] = useMemo(() => (
-    coursesDisplays.length
-      ? formatNextSteps(coursesDisplays[0].courses)
-      : []
-  ), [coursesDisplays]);
-
   const renderHeader = () => <>
     <Text style={commonStyles.title} testID='header'>Espace intervenant</Text>
-    {!!nextSteps.length && <View style={styles.nextSteps}>
-      <CoursesSection items={nextSteps} title="Les prochaines sessions que j'anime"
-        countStyle={styles.purpleCount} renderItem={renderNextStepsItem} type={EVENT_SECTION} />
-    </View>
-    }
   </>;
 
   const renderFooter = () => (!!coursesDisplays.length &&
