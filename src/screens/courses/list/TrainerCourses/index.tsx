@@ -17,7 +17,14 @@ import { RootBottomTabParamList, RootStackParamList } from '../../../../types/Na
 import { OperationsCourseListResponseType } from '../../../../types/AxiosTypes';
 import { useGetLoggedUserId } from '../../../../store/main/hooks';
 import commonStyles from '../../../../styles/common';
-import { BLENDED, COMPLETED, FORTHCOMING, OPERATIONS, TRAINER } from '../../../../core/data/constants';
+import {
+  BLENDED,
+  COMPLETED,
+  FORTHCOMING,
+  OPERATIONS,
+  SINGLE_COURSES_SUBPROGRAM_IDS,
+  TRAINER,
+} from '../../../../core/data/constants';
 import styles from '../styles';
 import { getElearningSteps, formatNextSteps, getCourseStatus } from '../helper';
 import { CourseDisplayType } from '../types';
@@ -116,7 +123,9 @@ const TrainerCourses = ({ navigation }: TrainerCoursesProps) => {
 
   const nextSteps: NextSlotsStepType[] = useMemo(() => (
     coursesDisplays.length
-      ? formatNextSteps(coursesDisplays[0].courses)
+      ? formatNextSteps(
+        coursesDisplays[0].courses.filter(c => !SINGLE_COURSES_SUBPROGRAM_IDS.includes(c.subProgram._id))
+      )
       : []
   ), [coursesDisplays]);
 
