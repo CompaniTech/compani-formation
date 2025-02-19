@@ -38,7 +38,7 @@
     "@expo/metro-runtime": "~4.0.1",
     "@formatjs/intl-datetimeformat": "^6.12.2",
     "@formatjs/intl-getcanonicallocales": "^2.3.0",
-    "@formatjs/intl-locale": "^3.4.5",
+    "@formatjs/intl-locale": "4.2.10",
     "@formatjs/intl-numberformat": "^8.10.0",
     "@formatjs/intl-pluralrules": "^5.2.12",
     "@react-native-async-storage/async-storage": "1.23.1",
