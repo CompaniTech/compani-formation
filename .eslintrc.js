@@ -20,8 +20,7 @@ module.exports = {
   rules: {
     quotes: ['error', 'single'],
     semi: ['error', 'always'],
-    '@typescript-eslint/indent': ['error', 2],
-    indent: 0, // pour ne pas avoir l'erreur en doublon
+    indent: ['error', 2, { SwitchCase: 1 }],
     'linebreak-style': ['error', 'unix'],
     'react/display-name': 'off',
     'react/hook-use-state': 'error',

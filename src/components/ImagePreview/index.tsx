@@ -50,6 +50,7 @@ const ImagePreview = ({ source, deleteFile, onRequestClose, showButton = true }:
       await deleteFile();
       unmount();
     } catch (e) {
+      console.error(e);
       Alert.alert(
         'Echec de la suppression',
         'Veuillez réessayer',

@@ -30,6 +30,7 @@ const ImagePickerManager = ({ savePicture, onRequestClose, goBack }: ImagePicker
 
       if (goBack) goBack();
     } catch (e) {
+      console.error(e);
       Alert.alert(
         'Echec de l\'enregistrement',
         'Veuillez réessayer',
@@ -52,6 +53,7 @@ const ImagePickerManager = ({ savePicture, onRequestClose, goBack }: ImagePicker
         if (result.canceled) unmount();
         else onSavePhoto(result.assets[0]);
       } catch (e) {
+        console.error(e);
         Alert.alert(
           'La galerie ne répond pas',
           'Veuillez réessayer',

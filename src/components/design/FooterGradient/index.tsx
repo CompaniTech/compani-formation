@@ -4,7 +4,7 @@ import { ABSOLUTE_BOTTOM_POSITION, INPUT_HEIGHT } from '../../../styles/metrics'
 import styles from './styles';
 
 interface FooterGradientProps {
-  colors?: string[],
+  colors?: readonly [string, string, ...string[]],
   bottomPosition?: number,
   height?: number,
 }

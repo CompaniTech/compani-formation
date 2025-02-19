@@ -63,6 +63,7 @@ const EmailForm = ({ route, navigation }: EmailFormProps) => {
         } else navigation.navigate('CreateAccount', { email });
       }
     } catch (e) {
+      console.error(e);
       dispatchError({ type: SET_ERROR, payload: 'Oops, erreur lors de la vérification de l\'e-mail' });
     } finally {
       setIsLoading(false);

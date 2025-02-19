@@ -44,6 +44,7 @@ const CameraModal = ({ visible, savePicture, onRequestClose, goBack }: CameraMod
       unmount();
       if (goBack) goBack();
     } catch (e) {
+      console.error(e);
       Alert.alert(
         'Echec de l\'enregistrement',
         'Essayez de reprendre la photo',

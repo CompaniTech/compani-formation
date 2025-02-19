@@ -98,6 +98,7 @@ const refreshCompaniToken = (dispatch: Dispatch<ActionType>) => async (refreshTo
 
     dispatch({ type: SIGNIN, payload: token.token });
   } catch (e) {
+    console.error(e);
     signOut(dispatch)();
   }
 };
