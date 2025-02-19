@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Alert, BackHandler, View } from 'react-native';
-import * as Camera from 'expo-camera/legacy';
+import * as Camera from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useIsFocused, useNavigation } from '@react-navigation/native';
@@ -33,6 +33,7 @@ const UploadMethods = ({ attendanceSheetToAdd, slotsToAdd = [], course, goToPare
   const [imagePickerManager, setImagePickerManager] = useState<boolean>(false);
   const [isSingle, setIsSingle] = useState<boolean>(false);
   const isFocused = useIsFocused();
+  const [permission] = Camera.useCameraPermissions();
 
   useEffect(() => {
     setIsSingle(SINGLE_COURSES_SUBPROGRAM_IDS.includes(course.subProgram._id));
@@ -61,8 +62,7 @@ const UploadMethods = ({ attendanceSheetToAdd, slotsToAdd = [], course, goToPare
   const requestPermissionsForCamera = async () => {
     try {
       setIsLoading(true);
-      const { status } = await Camera.requestCameraPermissionsAsync();
-      if (status === 'granted') setCamera(true);
+      if (permission && permission.granted) setCamera(true);
       else alert('l\'appareil photo');
     } finally {
       setIsLoading(false);
