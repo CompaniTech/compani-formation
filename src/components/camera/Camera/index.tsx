@@ -43,12 +43,14 @@ const NiCamera = ({ setCapturedImage }: NiCameraProps) => {
     setPictureSize(supportedSizes[index]);
   };
 
-  const flipPhoto = async (photo: CameraCapturedPicture): Promise<CameraCapturedPicture> =>
-    manipulateAsync(photo.uri, [{ flip: FlipType.Horizontal }]);
+  const flipPhoto = async (photo: CameraCapturedPicture): Promise<CameraCapturedPicture> => {
+    const manipulate = cameraType === 'back' ? [{ rotate: 90 }] : [{ flip: FlipType.Horizontal }, { rotate: 90 }];
+    return manipulateAsync(photo.uri, manipulate);
+  };
 
   const onTakePicture = async () => {
     const photo = await camera.current?.takePictureAsync({ skipProcessing: true });
-    if (photo) setCapturedImage(cameraType === 'back' ? photo : await flipPhoto(photo));
+    if (photo) setCapturedImage(await flipPhoto(photo));
   };
 
   const onHandleCameraType = () => {
