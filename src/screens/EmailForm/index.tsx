@@ -62,8 +62,7 @@ const EmailForm = ({ route, navigation }: EmailFormProps) => {
           dispatchError({ type: SET_ERROR, payload: 'Oups ! Cet e-mail n\'est pas reconnu' });
         } else navigation.navigate('CreateAccount', { email });
       }
-    } catch (e) {
-      console.error(e);
+    } catch (_) {
       dispatchError({ type: SET_ERROR, payload: 'Oops, erreur lors de la vérification de l\'e-mail' });
     } finally {
       setIsLoading(false);

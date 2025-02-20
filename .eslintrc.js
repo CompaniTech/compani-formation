@@ -51,7 +51,7 @@ module.exports = {
     'object-curly-newline': ['error', { consistent: true }],
     'operator-linebreak': ['error', 'before', { overrides: { '&&': 'after', '||': 'after', '=': 'after' } }],
     'arrow-parens': [2, 'as-needed', { requireForBlockBody: true }],
-    '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }], // TS gère les types plutôt que eslint
+    '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', caughtErrorsIgnorePattern: '^_' }],
     'no-unused-vars': 'off', // Pour ne pas avoir l'erreur en doublon
     'prefer-destructuring': ['error', { VariableDeclarator: { object: true, array: false } }],
     'function-paren-newline': ['error', 'consistent'],

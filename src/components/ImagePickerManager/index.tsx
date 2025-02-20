@@ -29,8 +29,7 @@ const ImagePickerManager = ({ savePicture, onRequestClose, goBack }: ImagePicker
       unmount();
 
       if (goBack) goBack();
-    } catch (e) {
-      console.error(e);
+    } catch (_) {
       Alert.alert(
         'Echec de l\'enregistrement',
         'Veuillez réessayer',

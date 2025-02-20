@@ -73,8 +73,7 @@ const PictureModal = ({
     try {
       setIsLoading(true);
       if (deletePicture) await deletePicture();
-    } catch (e) {
-      console.error(e);
+    } catch (_) {
       Alert.alert(
         'Echec de la suppression',
         'Réessaie plus tard',
