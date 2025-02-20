@@ -56,7 +56,6 @@ const CreateAttendanceSheet = ({ route, navigation }: CreateAttendanceSheetProps
   const [errorSlots, dispatchErrorSlots] = useReducer(errorReducer, initialErrorState);
   const [errorSignature, dispatchErrorSignature] = useReducer(errorReducer, initialErrorState);
   const [errorConfirmation, dispatchErrorConfirmation] = useReducer(errorReducer, initialErrorState);
-  const stepsName = useMemo(() => Object.keys(groupedSlotsToBeSigned), [groupedSlotsToBeSigned]);
   const slotsOptions = useMemo(() =>
     Object.values(groupedSlotsToBeSigned)
       .map(slotGroup => [...slotGroup]
@@ -155,6 +154,14 @@ const CreateAttendanceSheet = ({ route, navigation }: CreateAttendanceSheetProps
     }
   };
 
+  const getFilteredStepsName = () => {
+    const selectedSlotIds = selectedSlotsOptions.flatMap(slotGroup => slotGroup.map(s => s.value));
+
+    return Object.entries(groupedSlotsToBeSigned)
+      .filter(([_, slots]) => slots.some(slot => selectedSlotIds.includes(slot._id)))
+      .map(([stepName, _]) => stepName);
+  };
+
   const saveAndGoToEndScreen = async () => {
     if (!confirmation) {
       dispatchErrorConfirmation({ type: SET_ERROR, payload: 'Veuillez cocher la case ci-dessous' });
@@ -175,8 +182,8 @@ const CreateAttendanceSheet = ({ route, navigation }: CreateAttendanceSheetProps
 
   const renderSlotSelection = () => (
     <AttendanceSheetSelectionForm title={slotSelectionTitle} error={errorSlots} goToNextScreen={goToUploadMethod}>
-      <MultipleCheckboxList optionsGroups={slotsOptions} groupTitles={stepsName} setOptions={setSlotsOptions}
-        checkedList={slotsToAdd}/>
+      <MultipleCheckboxList optionsGroups={slotsOptions} groupTitles={Object.keys(groupedSlotsToBeSigned)}
+        setOptions={setSlotsOptions} checkedList={slotsToAdd}/>
     </AttendanceSheetSelectionForm>
   );
 
@@ -192,7 +199,8 @@ const CreateAttendanceSheet = ({ route, navigation }: CreateAttendanceSheetProps
 
   const renderSummary = () => (
     <AttendanceSheetSummary signature={signature} goToNextScreen={saveAndGoToEndScreen} error={errorConfirmation}
-      stepsName={stepsName} isLoading={isLoading} setConfirmation={setConfirmationCheckbox} confirmation={confirmation}
+      stepsName={getFilteredStepsName()} isLoading={isLoading} setConfirmation={setConfirmationCheckbox}
+      confirmation={confirmation}
       traineeName={traineeName} slotsOptions={selectedSlotsOptions} />
   );
   const renderEndScreen = () => (
