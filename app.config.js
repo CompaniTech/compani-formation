@@ -55,6 +55,7 @@ export default {
       resizeMode: 'cover',
       backgroundColor: '#FFFFFF',
     },
+    newArchEnabled: true,
     assetBundlePatterns: ['assets/images/*'],
     extra: {
       ...ENVIRONMENT_VARIABLES,
