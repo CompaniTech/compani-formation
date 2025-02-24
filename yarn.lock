@@ -869,10 +869,10 @@
   dependencies:
     uuid "^8.0.0"
 
-"@expo/cli@0.22.17":
-  version "0.22.17"
-  resolved "https://registry.yarnpkg.com/@expo/cli/-/cli-0.22.17.tgz#57bfa821ac4fa981f975716d8b6f47bd23e6917a"
-  integrity sha512-4VOGWoCINIlsQKL0Pl0kQpSs2xAaEPobJ/3Q3xHdtJrBj4S3IHrOyn6mUvubs4A4YySjiyZjlc4UG6GGwxzSsg==
+"@expo/cli@0.22.18":
+  version "0.22.18"
+  resolved "https://registry.yarnpkg.com/@expo/cli/-/cli-0.22.18.tgz#1a049120d9b83a8738746f2438556977419078cb"
+  integrity sha512-TWGKHWTYU9xE7YETPk2zQzLPl+bldpzZCa0Cqg0QeENpu03ZEnMxUqrgHwrbWGTf7ONTYC1tODBkFCFw/qgPGA==
   dependencies:
     "@0no-co/graphql.web" "^1.0.8"
     "@babel/runtime" "^7.20.0"
@@ -1106,30 +1106,6 @@
     "@expo/config" "~10.0.10"
     "@expo/env" "~0.4.2"
     "@expo/json-file" "~9.0.2"
-    "@expo/spawn-async" "^1.7.2"
-    chalk "^4.1.0"
-    debug "^4.3.2"
-    fs-extra "^9.1.0"
-    getenv "^1.0.0"
-    glob "^10.4.2"
-    jsc-safe-url "^0.2.4"
-    lightningcss "~1.27.0"
-    minimatch "^3.0.4"
-    postcss "~8.4.32"
-    resolve-from "^5.0.0"
-
-"@expo/metro-config@~0.19.0":
-  version "0.19.10"
-  resolved "https://registry.yarnpkg.com/@expo/metro-config/-/metro-config-0.19.10.tgz#934e24ab54ef37f91f9ca72435d82055f21c045a"
-  integrity sha512-/CtsMLhELJRJjAllM4EUnlPUAixn8Q2YhorKBa4uXZ6FvTEZWHJjqsXnQD39gWSEuAIVwLfJ1qgJi8666+dW2w==
-  dependencies:
-    "@babel/core" "^7.20.0"
-    "@babel/generator" "^7.20.5"
-    "@babel/parser" "^7.20.0"
-    "@babel/types" "^7.20.0"
-    "@expo/config" "~10.0.9"
-    "@expo/env" "~0.4.1"
-    "@expo/json-file" "~9.0.1"
     "@expo/spawn-async" "^1.7.2"
     chalk "^4.1.0"
     debug "^4.3.2"
@@ -2874,10 +2850,10 @@ babel-preset-current-node-syntax@^1.0.0:
     "@babel/plugin-syntax-private-property-in-object" "^7.14.5"
     "@babel/plugin-syntax-top-level-await" "^7.14.5"
 
-babel-preset-expo@~12.0.0, babel-preset-expo@~12.0.8:
-  version "12.0.8"
-  resolved "https://registry.yarnpkg.com/babel-preset-expo/-/babel-preset-expo-12.0.8.tgz#7cff59cecac8049e68de37508d860d6bb74c66d8"
-  integrity sha512-bojAddWZJusLs3NVdF+jN3WweTYVEZXBKIeO0sOhqOg7UPh5w1bnMkx7SDua0FgQMGBxb13qM31Y46yeZnmXjw==
+babel-preset-expo@~12.0.9:
+  version "12.0.9"
+  resolved "https://registry.yarnpkg.com/babel-preset-expo/-/babel-preset-expo-12.0.9.tgz#2e40923bab7f92ec7caeff9c5d42e888cf632eb4"
+  integrity sha512-1c+ysrTavT49WgVAj0OX/TEzt1kU2mfPhDaDajstshNHXFKPenMPWSViA/DHrJKVIMwaqr+z3GbUOD9GtKgpdg==
   dependencies:
     "@babel/plugin-proposal-decorators" "^7.12.9"
     "@babel/plugin-transform-export-namespace-from" "^7.22.11"
@@ -4534,19 +4510,19 @@ expo-updates@~0.27.1:
     ignore "^5.3.1"
     resolve-from "^5.0.0"
 
-expo@~52.0.36:
-  version "52.0.36"
-  resolved "https://registry.yarnpkg.com/expo/-/expo-52.0.36.tgz#afca1973cc9f5f4b7c49eeac4581172017fda041"
-  integrity sha512-3QYoxz1+dW3IhBDuPUcw66K6GMUfwlZgXP42ypBT5d54X5AGPSo4Mk5RZxt6Buu+5K6F3qenml9B5snH/OvKIg==
+expo@~52.0.37:
+  version "52.0.37"
+  resolved "https://registry.yarnpkg.com/expo/-/expo-52.0.37.tgz#159b5f3f9bedb2c56b36a815b8679a2602a406cc"
+  integrity sha512-fo37ClqjNLOVInerm7BU27H8lfPfeTC7Pmu72roPzq46DnJfs+KzTxTzE34GcJ0b6hMUx9FRSSGyTQqxzo2TVQ==
   dependencies:
     "@babel/runtime" "^7.20.0"
-    "@expo/cli" "0.22.17"
+    "@expo/cli" "0.22.18"
     "@expo/config" "~10.0.10"
     "@expo/config-plugins" "~9.0.15"
     "@expo/fingerprint" "0.11.11"
     "@expo/metro-config" "0.19.11"
     "@expo/vector-icons" "^14.0.0"
-    babel-preset-expo "~12.0.8"
+    babel-preset-expo "~12.0.9"
     expo-asset "~11.0.4"
     expo-constants "~17.0.7"
     expo-file-system "~18.0.11"
@@ -8124,7 +8100,7 @@ semver@^6.3.0, semver@^6.3.1:
   resolved "https://registry.yarnpkg.com/semver/-/semver-6.3.1.tgz#556d2ef8689146e46dcea4bfdd095f3434dffcb4"
   integrity sha512-BR7VvDCVHO+q2xBEWskxS6DJE1qRnb7DxzUrogb71CWoSficBxYsiAGd+Kl0mmq/MprG9yArRkyrQxTO6XjMzA==
 
-semver@^7.1.3, semver@^7.3.5, semver@^7.5.3, semver@^7.5.4, semver@^7.6.0, semver@^7.6.3:
+semver@^7.1.3, semver@^7.3.5, semver@^7.5.3, semver@^7.5.4, semver@^7.6.0, semver@^7.7.1:
   version "7.7.1"
   resolved "https://registry.yarnpkg.com/semver/-/semver-7.7.1.tgz#abd5098d82b18c6c81f6074ff2647fd3e7220c9f"
   integrity sha512-hlq8tAfn0m/61p4BVRcPzIGr6LKiMwo4VM6dGi6pt4qcRkmNzTcWq6eCEjEh+qXjkMDvPlOFFSGwQjoEa6gyMA==
@@ -8871,10 +8847,10 @@ ts-interface-checker@^0.1.9:
   resolved "https://registry.yarnpkg.com/ts-interface-checker/-/ts-interface-checker-0.1.13.tgz#784fd3d679722bc103b1b4b8030bcddb5db2a699"
   integrity sha512-Y/arvbn+rrz3JCKl9C4kVNfTfSm2/mEp5FSz5EsZSANGPSlQrpRI5M4PKF+mJnE52jOO90PnPSc3Ur3bTQw0gA==
 
-ts-jest@^29.1.2:
-  version "29.2.5"
-  resolved "https://registry.yarnpkg.com/ts-jest/-/ts-jest-29.2.5.tgz#591a3c108e1f5ebd013d3152142cb5472b399d63"
-  integrity sha512-KD8zB2aAZrcKIdGk4OwpJggeLcH1FgrICqDSROWqlnJXGCXK4Mn6FcdK2B6670Xr73lHMG1kHw8R87A0ecZ+vA==
+ts-jest@^29.2.6:
+  version "29.2.6"
+  resolved "https://registry.yarnpkg.com/ts-jest/-/ts-jest-29.2.6.tgz#df53edf8b72fb89de032cfa310abf37582851d9a"
+  integrity sha512-yTNZVZqc8lSixm+QGVFcPe6+yj7+TWZwIesuOWvfcn4B9bz5x4NDzVCQQjOs7Hfouu36aEqfEbo9Qpo+gq8dDg==
   dependencies:
     bs-logger "^0.2.6"
     ejs "^3.1.10"
@@ -8883,7 +8859,7 @@ ts-jest@^29.1.2:
     json5 "^2.2.3"
     lodash.memoize "^4.1.2"
     make-error "^1.3.6"
-    semver "^7.6.3"
+    semver "^7.7.1"
     yargs-parser "^21.1.1"
 
 tsconfig-paths@^3.15.0:
