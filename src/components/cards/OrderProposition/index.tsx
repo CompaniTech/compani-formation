@@ -228,7 +228,7 @@ const OrderProposition = React.forwardRef<OrderPropositionRef, OrderPropositionP
   const style = styles(color, isValidated);
 
   return (
-    <GestureDetector gesture={gesture} touchAction={'pan-y'}>
+    <GestureDetector gesture={gesture}>
       <Animated.View style={animatedStyle} onLayout={handleLayout}>
         <View style={style.container}>
           <View style={style.contentContainer}>
