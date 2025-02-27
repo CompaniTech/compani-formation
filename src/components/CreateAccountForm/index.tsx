@@ -67,14 +67,13 @@ const CreateAccountForm = ({ index, data, isLoading, setData, goBack, create, op
   };
 
   const validData = () => {
-    setData(
-      data.map(d => ({
-        ...d,
-        isValid: isFieldValid(d.field, data.map(da => da.value)),
-        isValidationAttempted: true,
-      })), index
-    );
-    if (data.every(d => d.isValid)) {
+    const tempData = data.map(d => ({
+      ...d,
+      isValid: isFieldValid(d.field, data.map(da => da.value)),
+      isValidationAttempted: true,
+    }));
+    setData(tempData, index);
+    if (tempData.every(d => d.isValid)) {
       if (index !== 3) navigation.navigate(`create-account-screen-${index + 1}`);
       else create();
     }
