@@ -27,7 +27,7 @@ const PictureModal = ({
   deletePicture,
 }: PictureModalProps) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [permission] = Camera.useCameraPermissions();
+  const [, requestPermission] = Camera.useCameraPermissions();
 
   const alert = (component: string) => {
     Alert.alert(
@@ -38,19 +38,11 @@ const PictureModal = ({
     );
   };
 
-  const requestPermissionsForCamera = async () => {
-    try {
-      setIsLoading(true);
-      if (permission && permission.granted) openCamera();
-      else alert('l\'appareil photo');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const takePicture = () => {
+  const takePicture = async () => {
     closePictureModal();
-    requestPermissionsForCamera();
+    const { granted } = await requestPermission();
+    if (granted) openCamera();
+    else alert('l\'appareil photo');
   };
 
   const requestPermissionsForImagePicker = async () => {

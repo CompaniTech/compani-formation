@@ -8,14 +8,19 @@ import { WHITE } from '../../../styles/colors';
 import IoniconsButton from '../../icons/IoniconsButton';
 import { IS_IOS } from '../../../core/data/constants';
 
+const BACK = 'back';
+const FRONT = 'front';
+const ON = 'on';
+const OFF = 'off';
+
 interface NiCameraProps {
   setCapturedImage: (photo: CameraCapturedPicture) => void,
 }
 
 const NiCamera = ({ setCapturedImage }: NiCameraProps) => {
   const camera = useRef<CameraView>(null);
-  const [cameraType, setCameraType] = useState<CameraType>('front');
-  const [flashMode, setFlashMode] = useState<FlashMode>('off');
+  const [cameraType, setCameraType] = useState<CameraType>(FRONT);
+  const [flashMode, setFlashMode] = useState<FlashMode>(OFF);
   const [pictureSize, setPictureSize] = useState<string | undefined>();
 
   const closerValue = (array: number[], value: number) => {
@@ -44,7 +49,7 @@ const NiCamera = ({ setCapturedImage }: NiCameraProps) => {
   };
 
   const flipPhoto = async (photo: CameraCapturedPicture): Promise<CameraCapturedPicture> => {
-    const manipulate = cameraType === 'back' ? [{ rotate: 90 }] : [{ flip: FlipType.Horizontal }, { rotate: 90 }];
+    const manipulate = cameraType === BACK ? [{ rotate: 90 }] : [{ flip: FlipType.Horizontal }, { rotate: 90 }];
     return manipulateAsync(photo.uri, manipulate);
   };
 
@@ -54,22 +59,22 @@ const NiCamera = ({ setCapturedImage }: NiCameraProps) => {
   };
 
   const onHandleCameraType = () => {
-    setCameraType(previousCameraType => (previousCameraType === 'back' ? 'front' : 'back'));
-    setFlashMode('off');
+    setCameraType(previousCameraType => (previousCameraType === BACK ? FRONT : BACK));
+    setFlashMode(OFF);
   };
 
   const onHandleFlashMode = () => {
-    if (cameraType === 'back') setFlashMode(previousFlashMode => (previousFlashMode === 'on' ? 'off' : 'on'));
+    if (cameraType === BACK) setFlashMode(previousFlashMode => (previousFlashMode === ON ? OFF : ON));
   };
   return (
     <CameraView ref={camera} facing={cameraType} flash={flashMode} style={styles.camera}
       pictureSize ={pictureSize} onCameraReady={setScreenDimension}>
       <View style={styles.buttons}>
-        <IoniconsButton disabled={cameraType === 'front'} onPress={onHandleFlashMode} style={styles.flash} color={WHITE}
-          size={ICON.XL} name={flashMode === 'on' ? 'flash' : 'flash-off'}/>
+        <IoniconsButton disabled={cameraType === FRONT} onPress={onHandleFlashMode} style={styles.flash} color={WHITE}
+          size={ICON.XL} name={flashMode === ON ? 'flash' : 'flash-off'}/>
         <TouchableOpacity onPress={onTakePicture} style={styles.takePicture} />
         <IoniconsButton style={styles.cameraType} color={WHITE} size={ICON.XL} onPress={onHandleCameraType}
-          name={cameraType === 'front' ? 'camera-reverse' : 'camera'} />
+          name={cameraType === FRONT ? 'camera-reverse' : 'camera'} />
       </View>
     </CameraView>
   );
