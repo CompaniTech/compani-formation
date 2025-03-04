@@ -50,11 +50,7 @@ export default {
     primaryColor: '#005774',
     icon: './assets/images/ios_icon.png',
     backgroundColor: '#FFFFFF',
-    splash: {
-      image: './assets/images/splash.png',
-      resizeMode: 'cover',
-      backgroundColor: '#FFFFFF',
-    },
+    newArchEnabled: false,
     assetBundlePatterns: ['assets/images/*'],
     extra: {
       ...ENVIRONMENT_VARIABLES,
@@ -80,9 +76,15 @@ export default {
       bundleIdentifier: variables.bundleIdentifier,
       requireFullScreen: true,
       icon: './assets/images/ios_icon.png',
+      splash: {
+        image: './assets/images/splash_ios.png',
+        resizeMode: 'cover',
+        backgroundColor: '#FFFFFF',
+      },
       infoPlist: {
         NSCameraUsageDescription: 'Autorisez l\'accès à votre caméra pour pouvoir prendre une photo et la charger comme photo de profil dans Compani.',
         NSPhotoLibraryUsageDescription: 'Autorisez l\'accès à votre librairie pour pouvoir choisir une photo et la charger comme photo de profil dans Compani.',
+        ITSAppUsesNonExemptEncryption: false,
       },
       privacyManifests: {
         NSPrivacyAccessedAPITypes: [
@@ -105,6 +107,11 @@ export default {
       adaptiveIcon: {
         foregroundImage: './assets/images/android_icon.png',
         backgroundColor: '#005774',
+      },
+      splash: {
+        image: './assets/images/splash_android.png',
+        resizeMode: 'cover',
+        backgroundColor: '#FFFFFF',
       },
       versionCode: 260,
     },

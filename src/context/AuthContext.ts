@@ -97,7 +97,7 @@ const refreshCompaniToken = (dispatch: Dispatch<ActionType>) => async (refreshTo
     await asyncStorage.setUserId(token.user._id);
 
     dispatch({ type: SIGNIN, payload: token.token });
-  } catch (e) {
+  } catch (_) {
     signOut(dispatch)();
   }
 };

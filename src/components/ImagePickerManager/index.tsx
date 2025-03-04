@@ -29,7 +29,7 @@ const ImagePickerManager = ({ savePicture, onRequestClose, goBack }: ImagePicker
       unmount();
 
       if (goBack) goBack();
-    } catch (e) {
+    } catch (_) {
       Alert.alert(
         'Echec de l\'enregistrement',
         'Veuillez réessayer',
@@ -43,7 +43,7 @@ const ImagePickerManager = ({ savePicture, onRequestClose, goBack }: ImagePicker
     async function pickImage() {
       try {
         const result = await ImagePicker.launchImageLibraryAsync({
-          mediaTypes: ImagePicker.MediaTypeOptions.Images,
+          mediaTypes: 'images',
           allowsEditing: true,
           aspect: [1, 1],
           quality: 1,
@@ -52,6 +52,7 @@ const ImagePickerManager = ({ savePicture, onRequestClose, goBack }: ImagePicker
         if (result.canceled) unmount();
         else onSavePhoto(result.assets[0]);
       } catch (e) {
+        console.error(e);
         Alert.alert(
           'La galerie ne répond pas',
           'Veuillez réessayer',

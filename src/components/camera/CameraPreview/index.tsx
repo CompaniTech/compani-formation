@@ -1,4 +1,4 @@
-import { CameraCapturedPicture } from 'expo-camera/legacy';
+import { CameraCapturedPicture } from 'expo-camera';
 import { View, ImageBackground } from 'react-native';
 import NiPrimaryButton from '../../form/PrimaryButton';
 import NiSecondaryButton from '../../form/SecondaryButton';

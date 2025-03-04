@@ -3,7 +3,7 @@
 import mime from 'mime';
 import * as ImageManipulator from 'expo-image-manipulator';
 import * as FileSystem from 'expo-file-system';
-import { CameraCapturedPicture } from 'expo-camera/legacy';
+import { CameraCapturedPicture } from 'expo-camera';
 import { IMAGE_MAX_SIZE } from '../data/constants';
 import { ImageType, FormDataType } from '../../types/FileType';
 
