@@ -7,7 +7,7 @@ type ObjectDateType = {
   [key in DateTimeUnit]?: number
 };
 
-type CompaniDateType = {
+export type CompaniDateType = {
   _getDate: DateTime,
   getUnits: (units: DateTimeUnit[]) => ObjectDateType,
   format: (str: string) => string,

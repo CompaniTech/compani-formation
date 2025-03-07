@@ -1,8 +1,8 @@
 // @ts-nocheck
 
+import React from 'react';
 import { View, Text, FlatList, ScrollView } from 'react-native';
 import CompaniDate from '../../../core/helpers/dates/companiDates';
-import { ascendingSort } from '../../../core/helpers/dates/utils';
 import { DD_MM_YYYY, IS_WEB } from '../../../core/data/constants';
 import NiModal from '../../Modal';
 import FeatherButton from '../../icons/FeatherButton';
@@ -20,13 +20,11 @@ type LiveCellInfoModalProps = {
 }
 
 const formatStepSlots = (slots: SlotType[]): { startDate: string, slots: SlotType[] }[] => {
-  const sortedSlots = slots.sort(ascendingSort('startDate'));
-  const formattedSlots = sortedSlots.reduce(
+  const formattedSlots = slots.reduce(
     (acc, slot) => {
       const startDate = CompaniDate(slot.startDate).format(DD_MM_YYYY);
       if (acc[startDate]) acc[startDate].push(slot);
       else acc[startDate] = [slot];
-
       return acc;
     },
     {}
@@ -35,7 +33,7 @@ const formatStepSlots = (slots: SlotType[]): { startDate: string, slots: SlotTyp
   return Object.keys(formattedSlots).map(key => ({ startDate: key, slots: formattedSlots[key] }));
 };
 
-const LiveCellInfoModal = ({ visible, title, stepSlots, onRequestClose }: LiveCellInfoModalProps) => (
+const LiveCellInfoModal = React.memo(({ visible, title, stepSlots, onRequestClose }: LiveCellInfoModalProps) => (
   <NiModal visible={visible}>
     <View style={styles.header}>
       <Text style={styles.title} lineBreakMode={'tail'} numberOfLines={3}>{title}</Text>
@@ -45,9 +43,10 @@ const LiveCellInfoModal = ({ visible, title, stepSlots, onRequestClose }: LiveCe
     <ScrollView showsVerticalScrollIndicator={IS_WEB}>
       <FlatList ItemSeparatorComponent={() => <View style={styles.stepInfoSeparator} />} scrollEnabled={false}
         data={formatStepSlots(stepSlots)} renderItem={({ item }) => <LiveInfoItem slots={item.slots} />}
-        keyExtractor={item => item.startDate} />
+        keyExtractor={item => item.startDate} initialNumToRender={5}
+        maxToRenderPerBatch={10} windowSize={5} />
     </ScrollView>
   </NiModal>
-);
+));
 
 export default LiveCellInfoModal;

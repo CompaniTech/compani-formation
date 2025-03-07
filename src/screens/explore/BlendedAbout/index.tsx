@@ -1,17 +1,16 @@
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { View, Text, TouchableOpacity, FlatList } from 'react-native';
 import Markdown from 'react-native-markdown-display';
 import { StackScreenProps } from '@react-navigation/stack';
 import get from 'lodash/get';
 import { RootStackParamList } from '../../../types/NavigationType';
-import CompaniDate from '../../../core/helpers/dates/companiDates';
 import About from '../../../components/About';
 import styles from './styles';
-import { capitalize, formatQuantity } from '../../../core/helpers/utils';
+import { formatQuantity } from '../../../core/helpers/utils';
 import commonStyles, { markdownStyle } from '../../../styles/common';
 import InternalRulesModal from '../../../components/InternalRulesModal';
 import ContactInfoContainer from '../../../components/ContactInfoContainer';
-import { DAY_D_MONTH_YEAR, LEARNER, TUTOR } from '../../../core/data/constants';
+import { LEARNER, TUTOR } from '../../../core/data/constants';
 import InterlocutorCell from '../../../components/InterlocutorCell';
 import { TrainerType, TutorType } from '../../../types/CourseTypes';
 
@@ -21,14 +20,6 @@ const BlendedAbout = ({ route, navigation }: BlendedAboutProps) => {
   const { course, mode } = route.params;
   const program = course.subProgram?.program || null;
   const [isModalOpened, setIsModalOpened] = useState<boolean>(false);
-
-  const formattedDates = useMemo(() => {
-    if (!course.slots.length) return [];
-
-    const formattedSlots = course.slots.map(slot => capitalize(CompaniDate(slot.startDate).format(DAY_D_MONTH_YEAR)));
-
-    return [...new Set(formattedSlots)];
-  }, [course.slots]);
 
   const goToCourse = () => {
     if (course._id) {
@@ -44,8 +35,8 @@ const BlendedAbout = ({ route, navigation }: BlendedAboutProps) => {
           <>
             <View style={commonStyles.sectionDelimiter} />
             <Text style={styles.sectionTitle}>Dates de formation</Text>
-            <FlatList data={formattedDates} scrollEnabled={false}
-              renderItem={({ item }) => <Markdown style={markdownStyle(commonStyles.sectionContent)}>
+            <FlatList data={course.slots} scrollEnabled={false} initialNumToRender={5} maxToRenderPerBatch={10}
+              windowSize={5} renderItem={({ item }) => <Markdown style={markdownStyle(commonStyles.sectionContent)}>
                 {`- ${item}`}
               </Markdown>}
             />
