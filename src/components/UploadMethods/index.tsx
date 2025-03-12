@@ -5,7 +5,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useIsFocused, useNavigation } from '@react-navigation/native';
 import { GREY, PINK } from '../../styles/colors';
-import { INTER_B2B, SINGLE_COURSES_SUBPROGRAM_IDS } from '../../core/data/constants';
+import { INTER_B2B, SINGLE } from '../../core/data/constants';
 import AttendanceSheets from '../../api/attendanceSheets';
 import styles from './styles';
 import NiPrimaryButton from '../../components/form/PrimaryButton';
@@ -36,7 +36,7 @@ const UploadMethods = ({ attendanceSheetToAdd, slotsToAdd = [], course, goToPare
   const [permission] = Camera.useCameraPermissions();
 
   useEffect(() => {
-    setIsSingle(SINGLE_COURSES_SUBPROGRAM_IDS.includes(course.subProgram._id));
+    setIsSingle(course.type === SINGLE);
   }, [course]);
 
   const hardwareBackPress = useCallback(() => {
@@ -88,7 +88,11 @@ const UploadMethods = ({ attendanceSheetToAdd, slotsToAdd = [], course, goToPare
           file,
           course: course._id,
           trainer: loggedUserId,
-          ...(course.type === INTER_B2B ? { trainee: attendanceSheetToAdd } : { date: attendanceSheetToAdd }),
+          ...(
+            [INTER_B2B, SINGLE].includes(course.type)
+              ? { trainee: attendanceSheetToAdd }
+              : { date: attendanceSheetToAdd }
+          ),
           ...(isSingle && { slots: slotsToAdd }),
         });
         await AttendanceSheets.upload(data);
