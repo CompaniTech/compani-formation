@@ -23,6 +23,7 @@ export const PEDAGOGY = 'pedagogy';
 export const INTRA = 'intra';
 export const INTER_B2B = 'inter_b2b';
 export const INTRA_HOLDING = 'intra_holding';
+export const SINGLE = 'single';
 export const SINGLE_COURSES_SUBPROGRAM_IDS = Constants?.expoConfig?.extra?.SINGLE_COURSES_SUBPROGRAM_IDS.split(';');
 
 // STEPS

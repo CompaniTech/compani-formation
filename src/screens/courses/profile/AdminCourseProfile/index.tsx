@@ -39,12 +39,12 @@ import {
   OPERATIONS,
   PDF,
   SHORT_FIRSTNAME_LONG_LASTNAME,
-  SINGLE_COURSES_SUBPROGRAM_IDS,
   EXPECTATIONS,
   END_OF_COURSE,
   START_COURSE,
   END_COURSE,
   TODAY,
+  SINGLE,
 } from '../../../../core/data/constants';
 import CompaniDate from '../../../../core/helpers/dates/companiDates';
 import PersonCell from '../../../../components/PersonCell';
@@ -127,8 +127,6 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
     }
 
     if (TODAY.isBefore(firstSlot?.startDate!)) return [];
-    const interCourseSavedSheets = savedAttendanceSheets as InterAttendanceSheetType[];
-    const savedTrainees = interCourseSavedSheets.map(sheet => sheet.trainee?._id);
 
     if (isSingle) {
       if (Object.values(groupedSlotsToBeSigned).flat().length) {
@@ -137,6 +135,9 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
       }
       return [];
     }
+
+    const interCourseSavedSheets = savedAttendanceSheets as InterAttendanceSheetType[];
+    const savedTrainees = interCourseSavedSheets.map(sheet => sheet.trainee?._id);
 
     return [...new Set(
       course?.trainees?.filter(trainee => (!savedTrainees.includes(trainee._id)))
@@ -188,7 +189,7 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
 
         if (fetchedCourse.slots.length) setFirstSlot(fetchedCourse.slots[0]);
         setTitle(getTitle(fetchedCourse));
-        setIsSingle(SINGLE_COURSES_SUBPROGRAM_IDS.includes(fetchedCourse.subProgram._id));
+        setIsSingle(fetchedCourse.type === SINGLE);
         setCourse(fetchedCourse as BlendedCourseType);
       } catch (e: any) {
         console.error(e);
