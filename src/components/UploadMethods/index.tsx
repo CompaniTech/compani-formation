@@ -33,7 +33,7 @@ const UploadMethods = ({ attendanceSheetToAdd, slotsToAdd = [], course, goToPare
   const [imagePickerManager, setImagePickerManager] = useState<boolean>(false);
   const [isSingle, setIsSingle] = useState<boolean>(false);
   const isFocused = useIsFocused();
-  const [permission] = Camera.useCameraPermissions();
+  const [, requestPermission] = Camera.useCameraPermissions();
 
   useEffect(() => {
     setIsSingle(SINGLE_COURSES_SUBPROGRAM_IDS.includes(course.subProgram._id));
@@ -62,7 +62,8 @@ const UploadMethods = ({ attendanceSheetToAdd, slotsToAdd = [], course, goToPare
   const requestPermissionsForCamera = async () => {
     try {
       setIsLoading(true);
-      if (permission && permission.granted) setCamera(true);
+      const { granted } = await requestPermission();
+      if (granted) setCamera(true);
       else alert('l\'appareil photo');
     } finally {
       setIsLoading(false);
