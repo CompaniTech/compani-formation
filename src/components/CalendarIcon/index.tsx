@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Text, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import CompaniDate from '../../core/helpers/dates/companiDates';
 import { CourseModeType } from '../../types/CourseTypes';
 import { capitalize } from '../../core/helpers/utils';
-import { PINK, PURPLE } from '../../styles/colors';
+import { ICON } from '../../styles/metrics';
+import { PINK, PURPLE, WHITE } from '../../styles/colors';
 import Shadow from '../design/Shadow';
 import ProgressPieChart from '../ProgressPieChart';
 import { TRAINER, DAY_OF_WEEK_SHORT, DAY_OF_MONTH, MONTH_SHORT, TODAY, DAY } from '../../core/data/constants';
@@ -46,7 +48,8 @@ const CalendarIcon = ({ slots, progress = 0, mode }: CalendarIconProps) => {
     if (!progress) {
       return (
         <View style={style.datesLengthContainer}>
-          <Text style={style.datesLength}>+</Text>
+          <Ionicons name='calendar-sharp' size={ICON.SM} color={mode === TRAINER ? PURPLE[800] : PINK[500]}
+            backgroundColor={WHITE} />
         </View>
       );
     }

@@ -49,10 +49,6 @@ const styles = (inputColor: string) => StyleSheet.create({
     position: 'absolute',
     bottom: -6,
     right: -10,
-    borderRadius: BORDER_RADIUS.MD,
-    borderWidth: BORDER_WIDTH,
-    borderColor: inputColor,
-    backgroundColor: WHITE,
   },
   datesLength: {
     ...NUNITO_REGULAR.SM,
