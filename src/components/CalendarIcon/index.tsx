@@ -1,12 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Text, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import CompaniDate from '../../core/helpers/dates/companiDates';
 import { CourseModeType } from '../../types/CourseTypes';
 import { capitalize } from '../../core/helpers/utils';
-import { PINK, PURPLE } from '../../styles/colors';
+import { ICON } from '../../styles/metrics';
+import { PINK, PURPLE, WHITE } from '../../styles/colors';
 import Shadow from '../design/Shadow';
 import ProgressPieChart from '../ProgressPieChart';
-import { TRAINER, DD_MM_YYYY, DAY_OF_WEEK_SHORT, DAY_OF_MONTH, MONTH_SHORT } from '../../core/data/constants';
+import { TRAINER, DAY_OF_WEEK_SHORT, DAY_OF_MONTH, MONTH_SHORT, TODAY, DAY } from '../../core/data/constants';
 import styles from './styles';
 
 interface CalendarIconProps {
@@ -19,29 +21,35 @@ const CalendarIcon = ({ slots, progress = 0, mode }: CalendarIconProps) => {
   const [dayOfWeek, setDayOfWeek] = useState<string>('');
   const [dayOfMonth, setDayOfMonth] = useState<string>('');
   const [month, setMonth] = useState<string>('');
-  const [dates, setDates] = useState<string[]>([]);
+  const [hasSeveralDates, setHasSeveralDates] = useState<boolean>(false);
   const style = styles(mode === TRAINER ? PURPLE[800] : PINK[500]);
+
+  const getNextSlot = useCallback(() => {
+    if (TODAY.isBefore(slots[0])) return slots[0];
+    if (TODAY.isAfter(slots[slots.length - 1])) return null;
+    return slots.find(slot => TODAY.isBefore(slot));
+  }, [slots]);
 
   useEffect(() => {
     if (slots.length) {
-      const slotsDates = [...new Set(slots.map(date => CompaniDate(date).format(DD_MM_YYYY)))];
-      const nextSlots = slots.filter(slot => CompaniDate().isBefore(slot));
-      const date = nextSlots.length ? nextSlots[0] : slots[0];
+      setHasSeveralDates(!!slots.length && slots.some(date => !CompaniDate(date).isSame(slots[0], DAY)));
+      const nextSlot = getNextSlot();
+      const date = nextSlot ? CompaniDate(nextSlot) : CompaniDate(slots[0]);
 
-      setDayOfWeek(capitalize(CompaniDate(date).format(DAY_OF_WEEK_SHORT)));
-      setDayOfMonth(capitalize(CompaniDate(date).format(DAY_OF_MONTH)));
-      setMonth(capitalize(CompaniDate(date).format(MONTH_SHORT)));
-      setDates(slotsDates);
+      setDayOfWeek(capitalize(date.format(DAY_OF_WEEK_SHORT)));
+      setDayOfMonth(capitalize(date.format(DAY_OF_MONTH)));
+      setMonth(capitalize(date.format(MONTH_SHORT)));
     }
-  }, [slots]);
+  }, [slots, getNextSlot]);
 
   const renderProgress = () => {
-    if (!progress && dates.length <= 1) return null;
+    if (!progress && !hasSeveralDates) return null;
 
     if (!progress) {
       return (
         <View style={style.datesLengthContainer}>
-          <Text style={style.datesLength}>{dates.length}</Text>
+          <Ionicons name='calendar-sharp' size={ICON.SM} color={mode === TRAINER ? PURPLE[800] : PINK[500]}
+            backgroundColor={WHITE} />
         </View>
       );
     }
@@ -56,7 +64,7 @@ const CalendarIcon = ({ slots, progress = 0, mode }: CalendarIconProps) => {
   return (
     <View style={style.container}>
       <View style={style.dateContainer}>
-        {dates.length
+        {dayOfWeek
           ? <>
             <Text style={style.dayOfWeek}>{dayOfWeek}</Text>
             <Text style={style.dayOfMonth}>{dayOfMonth}</Text>
@@ -67,7 +75,7 @@ const CalendarIcon = ({ slots, progress = 0, mode }: CalendarIconProps) => {
             <Text style={style.toPlan}>?</Text>
           </> }
       </View>
-      {dates.length > 1
+      {hasSeveralDates
         ? <>
           <Shadow customStyle={style.shadowHeader} relativePosition={{ top: 3, left: 3, right: -3, bottom: 0 }}/>
           <Shadow customStyle={style.manyDatesShadow} relativePosition={{ top: 3, left: 3, right: -3, bottom: -3 }} />

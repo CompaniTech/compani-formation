@@ -220,7 +220,7 @@ const LearnerCourseProfile = ({ route, navigation }: LearnerCourseProfileProps) 
   return course && has(course, 'subProgram.program') ? (
     <SafeAreaView style={commonStyles.container} edges={['top']}>
       <FlatList data={course.subProgram.steps} keyExtractor={item => item._id} ListHeaderComponent={renderHeader}
-        renderItem={({ item, index }) => renderStepList(course, mode, route, item, index)}
+        renderItem={({ item, index }) => renderStepList(mode, route, item, index)}
         showsVerticalScrollIndicator={IS_WEB} ListFooterComponent={renderFooter} />
     </SafeAreaView>
   )

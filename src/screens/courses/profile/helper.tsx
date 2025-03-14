@@ -8,9 +8,9 @@ import ELearningCell from '../../../components/ELearningCell';
 import styles from './styles';
 import { BlendedCourseType } from '../../../types/CourseTypes';
 
-const renderStepCell = (item, index, course, mode, route) => {
+const renderStepCell = (item, index, mode, route) => {
   if ([ON_SITE, REMOTE].includes(item.type)) {
-    return <LiveCell step={item} slots={course?.slots} index={index} mode={mode} />;
+    return <LiveCell step={item} index={index} mode={mode} />;
   }
 
   if (item.type === E_LEARNING) {
@@ -25,10 +25,10 @@ const renderStepCell = (item, index, course, mode, route) => {
 
 const renderSeparator = () => <View style={styles.separator} />;
 
-export const renderStepList = (course, mode, route, item, index) => (
+export const renderStepList = (mode, route, item, index) => (
   <>
     {renderSeparator()}
-    {renderStepCell(item, index, course, mode, route)}
+    {renderStepCell(item, index, mode, route)}
   </>
 );
 

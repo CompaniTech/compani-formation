@@ -44,6 +44,7 @@ import {
   END_OF_COURSE,
   START_COURSE,
   END_COURSE,
+  TODAY,
 } from '../../../../core/data/constants';
 import CompaniDate from '../../../../core/helpers/dates/companiDates';
 import PersonCell from '../../../../components/PersonCell';
@@ -120,12 +121,12 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
             value: CompaniDate(slot.startDate).startOf('day').toISO(),
             label: CompaniDate(slot.startDate).format(DD_MM_YYYY),
           }))
-          .filter(date => !savedDates.includes(date.value) && CompaniDate().isSameOrAfter(date.value)),
+          .filter(date => !savedDates.includes(date.value) && TODAY.isSameOrAfter(date.value)),
         'value'
       );
     }
 
-    if (CompaniDate().isBefore(firstSlot?.startDate!)) return [];
+    if (TODAY.isBefore(firstSlot?.startDate!)) return [];
     const interCourseSavedSheets = savedAttendanceSheets as InterAttendanceSheetType[];
     const savedTrainees = interCourseSavedSheets.map(sheet => sheet.trainee?._id);
 
@@ -219,7 +220,7 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
   useEffect(() => {
     if (!firstSlot) {
       setNoAttendancesMessage('Veuillez ajouter des créneaux pour téléverser des feuilles d\'émargement.');
-    } else if (CompaniDate().isBefore(firstSlot.startDate)) {
+    } else if (TODAY.isBefore(firstSlot.startDate)) {
       setNoAttendancesMessage('L\'émargement sera disponible une fois le premier créneau passé.');
     } else if (course?.type === INTER_B2B && !course?.trainees?.length) {
       setNoAttendancesMessage('Veuillez ajouter des stagiaires pour émarger la formation.');
