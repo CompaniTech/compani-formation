@@ -1,5 +1,5 @@
 import 'array-flat-polyfill';
-import { useState, useEffect, useCallback, useMemo, useReducer } from 'react';
+import { useState, useEffect, useCallback, useReducer } from 'react';
 import { Text, View, ScrollView, ImageBackground } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useIsFocused, CompositeScreenProps } from '@react-navigation/native';
@@ -19,7 +19,7 @@ import { NextSlotsStepType } from '../../../../types/StepTypes';
 import { getCourseProgress, getTheoreticalDuration } from '../../../../core/helpers/utils';
 import { LEARNER, PEDAGOGY, IS_WEB, TUTOR } from '../../../../core/data/constants';
 import styles from '../styles';
-import { formatNextSteps, getElearningSteps } from '../helper';
+import { getElearningSteps } from '../helper';
 import LearnerEmptyState from '../LearnerEmptyState';
 import { PedagogyCourseListResponseType as PedagogyCourseListType } from '../../../../types/AxiosTypes';
 
@@ -41,14 +41,8 @@ type CourseActionType = { type: typeof SET_COURSES, payload: PedagogyCourseListT
 const courseReducer = (state: CourseStateType, action: CourseActionType) => {
   switch (action.type) {
     case SET_COURSES: {
-      const onGoing: CourseType[] = [];
-      const achieved: CourseType[] = [];
+      const { onGoing, achieved } = action.payload.traineeCourses;
       const tutor: CourseType[] = action.payload.tutorCourses;
-
-      action.payload.traineeCourses.forEach((course) => {
-        if (getCourseProgress(course) < 1) onGoing.push(course);
-        else achieved.push(course);
-      });
 
       return { onGoing, achieved, tutor };
     }
@@ -66,11 +60,13 @@ const LearnerCourses = ({ navigation }: LearnerCoursesProps) => {
 
   const [courses, dispatch] = useReducer(courseReducer, { onGoing: [], achieved: [], tutor: [] });
   const [elearningDraftSubPrograms, setElearningDraftSubPrograms] = useState<SubProgramType[]>(new Array(0));
+  const [nextSteps, setNextSteps] = useState<NextSlotsStepType[]>([]);
 
   const getCourses = useCallback(async () => {
     try {
       const fetchedCourses = await Courses.getCourseList({ action: PEDAGOGY });
       dispatch({ type: SET_COURSES, payload: fetchedCourses as PedagogyCourseListType });
+      setNextSteps((fetchedCourses as PedagogyCourseListType).nextSteps);
     } catch (e: any) {
       console.error(e);
       dispatch({ type: RESET_COURSES });
@@ -117,8 +113,6 @@ const LearnerCourses = ({ navigation }: LearnerCoursesProps) => {
   const renderSubProgramItem = (subProgram: SubProgramWithProgramType) => <ProgramCell program={subProgram.program}
     theoreticalDuration={getTheoreticalDuration(getElearningSteps(subProgram.steps))}
     onPress={() => onPressProgramCell(subProgram._id, false)} />;
-
-  const nextSteps: NextSlotsStepType[] = useMemo(() => formatNextSteps(courses.onGoing), [courses.onGoing]);
 
   return (
     <SafeAreaView style={commonStyles.container} edges={['top']}>

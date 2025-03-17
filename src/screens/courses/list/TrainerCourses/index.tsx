@@ -1,5 +1,5 @@
 import 'array-flat-polyfill';
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Text, View, ImageBackground, FlatList } from 'react-native';
 import { useIsFocused, CompositeScreenProps } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -22,11 +22,10 @@ import {
   COMPLETED,
   FORTHCOMING,
   OPERATIONS,
-  SINGLE_COURSES_SUBPROGRAM_IDS,
   TRAINER,
 } from '../../../../core/data/constants';
 import styles from '../styles';
-import { getElearningSteps, formatNextSteps, getCourseStatus } from '../helper';
+import { getElearningSteps, getCourseStatus } from '../helper';
 import { CourseDisplayType } from '../types';
 import TrainerEmptyState from '../TrainerEmptyState';
 
@@ -88,6 +87,8 @@ const TrainerCourses = ({ navigation }: TrainerCoursesProps) => {
   const loggedUserId = useGetLoggedUserId();
 
   const [coursesDisplays, setCoursesDisplays] = useState<CourseDisplayType[]>([]);
+  const [nextSteps, setNextSteps] = useState<NextSlotsStepType[]>([]);
+
   const isFocused = useIsFocused();
 
   const getCourses = useCallback(async () => {
@@ -97,9 +98,12 @@ const TrainerCourses = ({ navigation }: TrainerCoursesProps) => {
           action: OPERATIONS,
           format: BLENDED,
           trainer: loggedUserId,
-        }) as OperationsCourseListResponseType;
-        const formatedCourses = formatCoursesDiplaysContent(fetchedCourses);
+        });
+        const formatedCourses = formatCoursesDiplaysContent(
+          (fetchedCourses as OperationsCourseListResponseType).courses
+        );
         setCoursesDisplays(formatedCourses);
+        setNextSteps(fetchedCourses.nextSteps);
       }
     } catch (e: any) {
       console.error(e);
@@ -120,14 +124,6 @@ const TrainerCourses = ({ navigation }: TrainerCoursesProps) => {
       getCourses();
     }
   }, [isFocused, getCourses, loggedUserId]);
-
-  const nextSteps: NextSlotsStepType[] = useMemo(() => (
-    coursesDisplays.length
-      ? formatNextSteps(
-        coursesDisplays[0].courses.filter(c => !SINGLE_COURSES_SUBPROGRAM_IDS.includes(c.subProgram._id))
-      )
-      : []
-  ), [coursesDisplays]);
 
   const renderHeader = () => <>
     <Text style={commonStyles.title} testID='header'>Espace intervenant</Text>

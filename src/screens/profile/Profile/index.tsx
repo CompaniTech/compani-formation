@@ -8,7 +8,7 @@ import { StackScreenProps } from '@react-navigation/stack';
 import { CompositeScreenProps, useIsFocused } from '@react-navigation/native';
 import { PictureType } from '../../../types/PictureTypes';
 import { RootBottomTabParamList, RootStackParamList } from '../../../types/NavigationType';
-import { formatPhone, getCourseProgress } from '../../../core/helpers/utils';
+import { formatPhone } from '../../../core/helpers/utils';
 import NiSecondaryButton from '../../../components/form/SecondaryButton';
 import NiPrimaryButton from '../../../components/form/PrimaryButton';
 import commonStyles from '../../../styles/common';
@@ -72,8 +72,8 @@ const Profile = ({ navigation }: ProfileProps) => {
     async function fetchData() {
       try {
         const { traineeCourses } = await Courses.getCourseList({ action: PEDAGOGY }) as PedagogyCourseListResponseType;
-        setOnGoingCoursesCount(traineeCourses.filter(course => getCourseProgress(course) < 1).length);
-        setAchievedCoursesCount(traineeCourses.filter(course => getCourseProgress(course) === 1).length);
+        setOnGoingCoursesCount(traineeCourses.onGoing.length);
+        setAchievedCoursesCount(traineeCourses.achieved.length);
       } catch (e: any) {
         console.error(e);
         setOnGoingCoursesCount(0);
