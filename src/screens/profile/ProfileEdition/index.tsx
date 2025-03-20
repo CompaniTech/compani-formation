@@ -33,6 +33,7 @@ import { errorReducer, initialErrorState, RESET_ERROR, SET_ERROR } from '../../.
 import { formatImage, formatPayload } from '../../../core/helpers/pictures';
 import CameraModal from '../../../components/camera/CameraModal';
 import ImagePickerManager from '../../../components/ImagePickerManager';
+import PhoneSelect from '../../../components/form/PhoneSelect';
 
 interface ProfileEditionProps extends CompositeScreenProps<
 StackScreenProps<RootStackParamList>,
@@ -53,7 +54,7 @@ const ProfileEdition = ({ navigation }: ProfileEditionProps) => {
       firstname: loggedUser.identity.firstname,
       lastname: loggedUser.identity.lastname,
     },
-    contact: { phone: loggedUser.contact?.phone || '' },
+    contact: { phone: loggedUser.contact?.phone || '', countryCode: loggedUser.contact?.countryCode || '+33' },
     local: { email: loggedUser.local.email },
   });
   const [unvalid, setUnvalid] = useState({ lastName: false, phone: false, email: false, emptyEmail: false });
@@ -128,7 +129,7 @@ const ProfileEdition = ({ navigation }: ProfileEditionProps) => {
         dispatchError({ type: RESET_ERROR });
         await Users.updateById(loggedUser._id, {
           ...editedUser,
-          contact: { phone: formatPhoneForPayload(editedUser.contact.phone) },
+          contact: formatPhoneForPayload(editedUser.contact),
         });
         const userId = loggedUser._id;
         const user = await Users.getById(userId);
@@ -158,6 +159,10 @@ const ProfileEdition = ({ navigation }: ProfileEditionProps) => {
     if (unvalid.emptyEmail && isValidationAttempted) return 'Ce champ est obligatoire';
 
     return '';
+  };
+
+  const setContact = (value, path) => {
+    setEditedUser({ ...editedUser, contact: { ...editedUser.contact, [path]: value } });
   };
 
   const savePicture = async (picture: PictureType) => {
@@ -205,11 +210,10 @@ const ProfileEdition = ({ navigation }: ProfileEditionProps) => {
           <NiInput caption="Nom" value={editedUser.identity.lastname}
             type="lastname" onChangeText={text => onChangeIdentity(LASTNAME, text)} customStyle={styles.input}
             validationMessage={unvalid.lastName && isValidationAttempted ? 'Ce champ est obligatoire' : ''} />
-          <NiInput caption="Téléphone" value={editedUser.contact.phone} type="phone"
-            onChangeText={text => setEditedUser({ ...editedUser, contact: { phone: text } })}
+          <PhoneSelect contact={editedUser.contact} setContact={setContact}
             validationMessage={unvalid.phone && isValidationAttempted
               ? 'Votre numéro de téléphone n\'est pas valide'
-              : ''} customStyle={styles.input} />
+              : ''}/>
           <NiInput caption="E-mail" value={editedUser.local.email} type="email" validationMessage={emailValidation()}
             onChangeText={text => setEditedUser({ ...editedUser, local: { email: text.trim() } })}
             customStyle={styles.input} />

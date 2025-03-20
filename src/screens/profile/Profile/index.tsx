@@ -203,7 +203,7 @@ const Profile = ({ navigation }: ProfileProps) => {
               <Text style={styles.contact}>Contact</Text>
               <Text style={styles.subTitle}>Téléphone</Text>
               <Text style={styles.infos}>
-                {loggedUser.contact?.phone ? formatPhone(loggedUser.contact.phone) : 'Non renseigné'}
+                {loggedUser.contact?.phone ? formatPhone(loggedUser.contact) : 'Non renseigné'}
               </Text>
               <Text style={styles.subTitle}>E-mail</Text>
               <Text style={styles.infos}>{loggedUser.local.email}</Text>
