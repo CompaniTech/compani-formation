@@ -108,7 +108,7 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
   }, [course, isSingle, savedAttendanceSheets]);
 
   const missingAttendanceSheets = useMemo(() => {
-    if (!course?.slots.length || !firstSlot) return [];
+    if (!course?.slots?.length || !firstSlot) return [];
 
     if ([INTRA, INTRA_HOLDING].includes(course?.type)) {
       const intraOrIntraHoldingCourseSavedSheets = savedAttendanceSheets as IntraOrIntraHoldingAttendanceSheetType[];
