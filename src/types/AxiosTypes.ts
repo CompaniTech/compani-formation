@@ -19,7 +19,7 @@ export type AuthenticationType = {
   refreshToken: string,
   user: { _id: string },
 };
-export type ForgotPasswordType = { phone: string } | void;
+export type ForgotPasswordType = { phone: string, countryCode: string } | void;
 export type PasswordTokenType = { token: string, user: { _id: string, email: string } };
 export type AuthenticationResponseType = { message: string, data: AuthenticationType }
 export type ForgotPasswordResponseType = { message: string, data: { mailInfo: ForgotPasswordType } }

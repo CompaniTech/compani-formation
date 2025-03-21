@@ -4,10 +4,11 @@ import { useCallback, useEffect } from 'react';
 import { Text, View, BackHandler, KeyboardAvoidingView, ScrollView, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import NiInput from '../../components/form/Input';
+import PhoneSelect from '../form/PhoneSelect';
 import NiPrimaryButton from '../../components/form/PrimaryButton';
 import styles from './styles';
 import accountCreationStyles from '../../styles/accountCreation';
-import { IS_IOS, IS_WEB, PHONE_REGEX } from '../../core/data/constants';
+import { COUNTRY_CODE_REGEX, IS_IOS, IS_WEB, PHONE_REGEX } from '../../core/data/constants';
 import { IS_LARGE_SCREEN, MARGIN } from '../../styles/metrics';
 
 interface CreateAccountFormProps {
@@ -55,8 +56,9 @@ const CreateAccountForm = ({ index, data, isLoading, setData, goBack, create, op
     switch (field) {
       case 'lastname':
         return value[0] !== '';
-      case 'phone':
-        return !!value[0].match(PHONE_REGEX) || !value[0];
+      case 'contact':
+        return !!value[0].countryCode.math(COUNTRY_CODE_REGEX) &&
+          (!!value[0].phone.match(PHONE_REGEX) || !value[0].phone);
       case 'password':
         return value[0].length >= 6;
       case 'confirmedPassword':
@@ -79,14 +81,29 @@ const CreateAccountForm = ({ index, data, isLoading, setData, goBack, create, op
     }
   };
 
+  const setContact = (value, path) => {
+    const contact = { ...data[0].value, [path]: value };
+    setData(
+      data.map(dataItem => ({
+        ...dataItem,
+        value: contact,
+        isValid: isFieldValid(dataItem.field, [contact]),
+      })), index
+    );
+  };
+
   const render = (
     <ScrollView contentContainerStyle={accountCreationStyles.container} showsVerticalScrollIndicator={IS_WEB}
       keyboardShouldPersistTaps='always'>
       <Text style={accountCreationStyles.title}>{data[0].title}</Text>
       {data.map((d, i) => <View style={accountCreationStyles.input} key={`container${i}`}>
-        <NiInput key={`content${i}`} caption={d.caption} value={d.value} type={d.type} optional={!d.required}
-          onChangeText={text => onChangeText(text, i)} disabled={isLoading} required={d.required}
-          validationMessage={!d.isValid && d.isValidationAttempted ? d.errorMessage : ''} />
+        {d.type === 'contact'
+          ? <PhoneSelect contact={d.value} setContact={setContact}
+            validationMessage={!d.isValid && d.isValidationAttempted ? d.errorMessage : ''}/>
+          : <NiInput key={`content${i}`} caption={d.caption} value={d.value} type={d.type} optional={!d.required}
+            onChangeText={text => onChangeText(text, i)} disabled={isLoading} required={d.required}
+            validationMessage={!d.isValid && d.isValidationAttempted ? d.errorMessage : ''} />
+        }
       </View>)}
       <View style={accountCreationStyles.footer}>
         {data.map((d, i) => <TouchableOpacity onPress={openUrl} key={`footer${i}`}>
