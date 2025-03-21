@@ -57,7 +57,7 @@ const CreateAccountForm = ({ index, data, isLoading, setData, goBack, create, op
       case 'lastname':
         return value[0] !== '';
       case 'contact':
-        return !!value[0].countryCode.math(COUNTRY_CODE_REGEX) &&
+        return !!value[0].countryCode.match(COUNTRY_CODE_REGEX) &&
           (!!value[0].phone.match(PHONE_REGEX) || !value[0].phone);
       case 'password':
         return value[0].length >= 6;
