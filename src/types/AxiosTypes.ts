@@ -3,6 +3,7 @@ import { AttendanceSheetType } from './AttendanceSheetTypes';
 import { CompanyType } from './CompanyType';
 import { BlendedCourseType, CourseType, ProgramType, SubProgramType } from './CourseTypes';
 import { QuestionnaireType, QuestionnaireWithCardsType } from './QuestionnaireType';
+import { NextSlotsStepType } from './StepTypes';
 import { UserType } from './UserType';
 
 // ACTIVITY
@@ -28,9 +29,16 @@ export type PasswordTokenResponseType = { message: string, data: PasswordTokenTy
 export type CompanyListResponseType = { message: string, data: { companies: CompanyType[] } }
 
 // COURSE
-export type BlendedCourseListResponseType = { message: string, data: { courses: BlendedCourseType[] } }
-export type PedagogyCourseListResponseType = { traineeCourses: CourseType[], tutorCourses: BlendedCourseType[] }
-export type OperationsCourseListResponseType = BlendedCourseType[]
+export type BlendedCourseListResponseType = {
+  message: string,
+  data: { courses: PedagogyCourseListResponseType | OperationsCourseListResponseType }
+}
+export type PedagogyCourseListResponseType = {
+  traineeCourses: {onGoing: CourseType[], achieved: CourseType[]},
+  tutorCourses: BlendedCourseType[],
+  nextSteps: NextSlotsStepType[],
+}
+export type OperationsCourseListResponseType = {courses: BlendedCourseType[], nextSteps: NextSlotsStepType[]}
 export type CourseResponseType = { message: string, data: { course: CourseType } }
 export type PdfResponseType = { data: string }
 
