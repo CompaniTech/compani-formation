@@ -1,6 +1,5 @@
 import { Audio, AVPlaybackSource } from 'expo-av';
 import BigNumber from 'bignumber.js';
-import get from 'lodash/get';
 import has from 'lodash/has';
 import CompaniDuration from '../helpers/dates/companiDurations';
 import {
@@ -18,14 +17,14 @@ export const capitalize = (s: string): string => {
   return s.charAt(0).toUpperCase() + s.slice(1);
 };
 
-export const formatPhone = (contact: {phone: string, countryCode: string}): string => (contact.phone
+export const formatPhone = (contact: { phone: string, countryCode: string }): string => (contact.phone
   ? `${contact.countryCode} ${contact.phone.substring(1)
     .replace(/^(\d{1})(\d{2})(\d{2})(\d{2})(\d{2})$/, '$1 $2 $3 $4 $5')}`
   : '');
 
-export const formatPhoneForPayload = (contact: {phone: string, countryCode: string}): Object => {
+export const formatPhoneForPayload = (contact: { phone: string, countryCode: string }): Object => {
   if (!has(contact, 'phone')) return {};
-  if (!get(contact, 'phone')) return { phone: '', countryCode: '' };
+  if (!contact.phone) return { phone: '', countryCode: '' };
   return { phone: contact.phone.replace(/[\s\-.]/g, ''), countryCode: contact.countryCode };
 };
 

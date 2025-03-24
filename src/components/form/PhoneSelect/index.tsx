@@ -5,7 +5,7 @@ import NiInput from '../Input';
 import styles from './styles';
 
 interface PhoneSelectProps {
-  contact: {phone: string, countryCode: string},
+  contact: { phone: string, countryCode: string },
   setContact: (value: string, path: string) => void,
   validationMessage?: string,
 }
