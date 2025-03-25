@@ -24,7 +24,7 @@ export const formatPhone = (contact: { phone: string, countryCode: string }): st
 
 export const formatPhoneForPayload = (contact: { phone: string, countryCode: string }): Object => {
   if (!has(contact, 'phone')) return {};
-  if (!contact.phone) return { phone: '', countryCode: '' };
+  if (!contact.phone) return { phone: '' };
   return { phone: contact.phone.replace(/[\s\-.]/g, ''), countryCode: contact.countryCode };
 };
 
