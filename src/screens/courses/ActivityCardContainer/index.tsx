@@ -91,12 +91,10 @@ const ActivityCardContainer = ({ route, navigation }: ActivityCardContainerProps
   }, []);
 
   const navigateNext = useCallback(() => {
-    if (mode === LEARNER) {
-      navigation.navigate('LearnerCourseProfile', { courseId: profileId, endedActivity: activity?._id });
-    } else if (mode === TRAINER) navigation.navigate('TrainerCourseProfile', { courseId: profileId });
-    else if (mode === TUTOR) {
+    if ([LEARNER, TUTOR].includes(mode)) {
       navigation.navigate('LearnerCourseProfile', { courseId: profileId, endedActivity: activity?._id, mode });
-    } else navigation.navigate('SubProgramProfile', { subProgramId: profileId });
+    } else if (mode === TRAINER) navigation.navigate('TrainerCourseProfile', { courseId: profileId });
+    else navigation.navigate('SubProgramProfile', { subProgramId: profileId });
   }, [activity?._id, mode, navigation, profileId]);
 
   const goBack = useCallback(
