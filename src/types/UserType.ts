@@ -4,7 +4,7 @@ export interface UserType {
   local: { email: string },
   picture?: { link: string },
   company?: { name: string },
-  contact?: { phone: string },
+  contact?: { phone: string, countryCode: string },
   companyLinkRequest?: { company: { _id: string, name: string } }
   firstMobileConnectionDate?: string,
   loginCode?: string,

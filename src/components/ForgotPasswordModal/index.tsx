@@ -6,6 +6,7 @@ import BottomModal from '../BottomModal';
 import NiPrimaryButton from '../form/PrimaryButton';
 import Authentication from '../../api/authentication';
 import { EMAIL, IDENTITY_VERIFICATION, MOBILE, PHONE } from '../../core/data/constants';
+import { formatPhone } from '../../core/helpers/utils';
 import { IS_LARGE_SCREEN } from '../../styles/metrics';
 import styles from './styles';
 import { errorReducer, initialErrorState, RESET_ERROR, SET_ERROR } from '../../reducers/error';
@@ -126,7 +127,7 @@ const ForgotPasswordModal = ({ visible, email, setForgotPasswordModal }: ForgotP
       setIsLoading(true);
       setChosenMethod(PHONE);
       const sms = await Authentication.forgotPassword({ email, origin: MOBILE, type: PHONE });
-      setCodeRecipient(get(sms, 'phone') || '');
+      setCodeRecipient(get(sms, 'phone') ? `${formatPhone(sms!)}` : '');
       dispatchError({ type: RESET_ERROR });
     } catch (e: any) {
       const payload = e.response.status === 409
@@ -161,7 +162,7 @@ const ForgotPasswordModal = ({ visible, email, setForgotPasswordModal }: ForgotP
             </Text>
             : <Text style={styles.afterCodeSentText}>
               Nous avons envoyé un SMS au
-              <Text style={styles.recipient}> {codeRecipient.replace(/\d{2}(?=.)/g, '$& ')} </Text>
+              <Text style={styles.recipient}> {codeRecipient} </Text>
               avec le code temporaire.
             </Text>}
           <Text style={styles.afterCodeSentText}>Saisie du code temporaire</Text>

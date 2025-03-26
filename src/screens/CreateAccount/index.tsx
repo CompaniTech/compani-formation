@@ -47,7 +47,7 @@ const formatCreationPayload = (formList: CreateAccountDataType[][], email) => {
 
   return Object.assign(
     data,
-    formList[2][0].value === '' ? null : { contact: { phone: formatPhoneForPayload(formList[2][0].value) } }
+    formList[2][0].value.phone === '' ? null : { contact: formatPhoneForPayload(formList[2][0].value) }
   );
 };
 
@@ -79,11 +79,10 @@ const CreateAccount = ({ route, navigation }: CreateAccountProps) => {
       required: true,
     }],
     [{
-      type: 'phone',
-      field: 'phone',
+      type: 'contact',
+      field: 'contact',
       title: 'Quel est votre téléphone ?',
-      caption: 'Téléphone',
-      value: '',
+      value: { phone: '', countryCode: '+33' },
       isValid: true,
       errorMessage: 'Votre numéro de téléphone n\'est pas valide',
       isValidationAttempted: false,

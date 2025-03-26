@@ -12,7 +12,7 @@ const PersonCell = ({ person }: PersonCellProps) => {
   const name = formatIdentity(person.identity, LONG_FIRSTNAME_LONG_LASTNAME) || '';
   const image = person?.picture?.link || '';
   const email = person?.local?.email || '';
-  const phone = person?.contact?.phone || '';
+  const contact = person?.contact?.phone ? person.contact : null;
   const source = image ? { uri: image } : require('../../../assets/images/default_avatar.webp');
   const isConnected = person?.firstMobileConnectionDate && 'Connecté(e) à l\'app';
 
@@ -22,7 +22,7 @@ const PersonCell = ({ person }: PersonCellProps) => {
       <View style={styles.text}>
         <Text style={styles.name}>{name}</Text>
         <Text style={styles.email}>{email}</Text>
-        {phone && <Text style={styles.phone}>{formatPhone(phone)}</Text>}
+        {contact && <Text style={styles.phone}>{formatPhone(contact)}</Text>}
         {isConnected && <Text style={styles.connected}>{isConnected}</Text>}
         {!isConnected && <Text style={styles.code}>Code de connexion: {person?.loginCode}</Text>}
       </View>

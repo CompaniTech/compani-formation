@@ -1,7 +1,7 @@
 import { Text, View, TouchableOpacity, Linking } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import styles from './styles';
-import { formatIdentity } from '../../core/helpers/utils';
+import { formatIdentity, formatPhone } from '../../core/helpers/utils';
 import { ICON } from '../../styles/metrics';
 import { GREY } from '../../styles/colors';
 import { UserType } from '../../types/UserType';
@@ -18,10 +18,10 @@ const ContactInfoContainer = ({ title, contact }: ContactInfoContainerProps) => 
     {contact
       ? <>
         <Text style={styles.identity}>{formatIdentity(contact.identity, LONG_FIRSTNAME_LONG_LASTNAME)}</Text>
-        <TouchableOpacity onPress={() => Linking.openURL(`tel:${contact?.contact?.phone}`)} style={styles.contact}
-          disabled={!contact?.contact?.phone}>
+        <TouchableOpacity style={styles.contact} disabled={!contact?.contact?.phone}
+          onPress={() => Linking.openURL(`tel:${contact.contact?.phone ? formatPhone(contact?.contact || {}) : ''}`)}>
           <Feather name='phone' size={ICON.MD} color={GREY[600]} />
-          <Text style={styles.contactContent}>{contact?.contact?.phone}</Text>
+          <Text style={styles.contactContent}>{contact.contact?.phone ? formatPhone(contact?.contact) : ''}</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => Linking.openURL(`mailto:${contact.local.email}`)} style={styles.contact}>
           <Feather name='mail' size={ICON.MD} color={GREY[600]}/>

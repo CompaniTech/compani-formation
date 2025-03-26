@@ -82,6 +82,7 @@ export const TUTOR = 'tutor';
 
 // REGEX
 export const PHONE_REGEX = /^(?:(?:\+|00)33|0)\s*[1-9](?:[\s.-]*\d{2}){4}(?:[\s]*)$/;
+export const COUNTRY_CODE_REGEX = /^\+([1-9][0-9]{0,2})$/;
 export const EMAIL_REGEX = /^[\w-.+]+@([\w-]+\.)+[\w-]{2,4}$/;
 
 // MEDIA TYPES

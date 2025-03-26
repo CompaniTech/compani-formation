@@ -20,6 +20,7 @@ const setUser = (state: MainStateType, action: PayloadAction<UserType>) => ({
     'picture.link',
     'company.name',
     'contact.phone',
+    'contact.countryCode',
     'role',
     'companyLinkRequest',
   ]) as UserType,
