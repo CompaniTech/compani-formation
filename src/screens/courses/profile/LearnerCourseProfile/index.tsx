@@ -45,6 +45,7 @@ import {
   LEARNER,
   PEDAGOGY,
   SINGLE_COURSES_SUBPROGRAM_IDS,
+  TUTOR,
 } from '../../../../core/data/constants';
 
 interface LearnerCourseProfileProps extends CompositeScreenProps<
@@ -195,7 +196,7 @@ const LearnerCourseProfile = ({ route, navigation }: LearnerCourseProfileProps) 
           <PendingActionsContainer questionnaires={questionnaires} profileId={course._id}
             attendanceSheets={attendanceSheetsToSign} />
     }
-    {mode === LEARNER && <View style={styles.progressBarContainer}>
+    {[LEARNER, TUTOR].includes(mode) && <View style={styles.progressBarContainer}>
       <Text style={styles.progressBarText}>ÉTAPES</Text>
       <View style={commonStyles.progressBarContainer}>
         <ProgressBar progress={getCourseProgress(course) * 100} />
