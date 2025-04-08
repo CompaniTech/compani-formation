@@ -73,7 +73,10 @@ const LearnerCourseProfile = ({ route, navigation }: LearnerCourseProfileProps) 
       try {
         const fetchedCourse = await Courses.getCourse(route.params.courseId, PEDAGOGY);
         if (mode === LEARNER) {
-          const fetchedQuestionnaires = await Questionnaires.getUserQuestionnaires({ course: route.params.courseId });
+          if (fetchedCourse.type !== SINGLE) {
+            const fetchedQuestionnaires = await Questionnaires.getUserQuestionnaires({ course: route.params.courseId });
+            setQuestionnaires(fetchedQuestionnaires);
+          }
           if (fetchedCourse.format === BLENDED) {
             const formattedCourse = {
               _id: fetchedCourse._id,
@@ -81,7 +84,6 @@ const LearnerCourseProfile = ({ route, navigation }: LearnerCourseProfileProps) 
             };
             setCourseToStore(formattedCourse as BlendedCourseType);
           }
-          setQuestionnaires(fetchedQuestionnaires);
         }
         const programImage = get(fetchedCourse, 'subProgram.program.image.link') || '';
         setCourse(fetchedCourse);
