@@ -185,7 +185,10 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
     const getCourse = async () => {
       try {
         const fetchedCourse = await Courses.getCourse(route.params.courseId, OPERATIONS) as BlendedCourseType;
-        await Promise.all([refreshAttendanceSheets(fetchedCourse._id), getQuestionnaireQRCode(fetchedCourse._id)]);
+        await Promise.all([
+          refreshAttendanceSheets(fetchedCourse._id),
+          ...(fetchedCourse.type !== SINGLE ? [getQuestionnaireQRCode(fetchedCourse._id)] : []),
+        ]);
 
         if (fetchedCourse.slots.length) setFirstSlot(fetchedCourse.slots[0]);
         setTitle(getTitle(fetchedCourse));
