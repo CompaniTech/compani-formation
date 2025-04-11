@@ -1,5 +1,4 @@
 import { Platform } from 'react-native';
-import Constants from 'expo-constants';
 import CompaniDate, { CompaniDateType } from '../helpers/dates/companiDates';
 
 export const APP_NAME = 'formation';
@@ -23,7 +22,7 @@ export const PEDAGOGY = 'pedagogy';
 export const INTRA = 'intra';
 export const INTER_B2B = 'inter_b2b';
 export const INTRA_HOLDING = 'intra_holding';
-export const SINGLE_COURSES_SUBPROGRAM_IDS = Constants?.expoConfig?.extra?.SINGLE_COURSES_SUBPROGRAM_IDS.split(';');
+export const SINGLE = 'single';
 
 // STEPS
 export const ON_SITE = 'on_site';

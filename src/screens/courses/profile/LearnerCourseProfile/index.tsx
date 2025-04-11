@@ -38,15 +38,7 @@ import { getCourseProgress } from '../../../../core/helpers/utils';
 import CourseProfileHeader from '../../../../components/CourseProfileHeader';
 import { FIRA_SANS_MEDIUM } from '../../../../styles/fonts';
 import { renderStepList, getTitle } from '../helper';
-import {
-  BLENDED,
-  IS_IOS,
-  IS_WEB,
-  LEARNER,
-  PEDAGOGY,
-  SINGLE_COURSES_SUBPROGRAM_IDS,
-  TUTOR,
-} from '../../../../core/data/constants';
+import { BLENDED, IS_IOS, IS_WEB, LEARNER, PEDAGOGY, SINGLE, TUTOR } from '../../../../core/data/constants';
 
 interface LearnerCourseProfileProps extends CompositeScreenProps<
 StackScreenProps<RootStackParamList, 'LearnerCourseProfile'>,
@@ -67,7 +59,7 @@ const LearnerCourseProfile = ({ route, navigation }: LearnerCourseProfileProps) 
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const attendanceSheetsToSign = useMemo(() =>
-    (SINGLE_COURSES_SUBPROGRAM_IDS.includes(course?.subProgram._id || '') && mode === LEARNER
+    (course?.type === SINGLE && mode === LEARNER
       ? (course as BlendedCourseType)?.attendanceSheets?.filter(as =>
         has(as, 'signatures.trainer') && !has(as, 'signatures.trainee')) || []
       : []),
@@ -81,7 +73,10 @@ const LearnerCourseProfile = ({ route, navigation }: LearnerCourseProfileProps) 
       try {
         const fetchedCourse = await Courses.getCourse(route.params.courseId, PEDAGOGY);
         if (mode === LEARNER) {
-          const fetchedQuestionnaires = await Questionnaires.getUserQuestionnaires({ course: route.params.courseId });
+          if (fetchedCourse.type !== SINGLE) {
+            const fetchedQuestionnaires = await Questionnaires.getUserQuestionnaires({ course: route.params.courseId });
+            setQuestionnaires(fetchedQuestionnaires);
+          }
           if (fetchedCourse.format === BLENDED) {
             const formattedCourse = {
               _id: fetchedCourse._id,
@@ -89,7 +84,6 @@ const LearnerCourseProfile = ({ route, navigation }: LearnerCourseProfileProps) 
             };
             setCourseToStore(formattedCourse as BlendedCourseType);
           }
-          setQuestionnaires(fetchedQuestionnaires);
         }
         const programImage = get(fetchedCourse, 'subProgram.program.image.link') || '';
         setCourse(fetchedCourse);
