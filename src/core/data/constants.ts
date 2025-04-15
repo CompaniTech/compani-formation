@@ -1,5 +1,5 @@
 import { Platform } from 'react-native';
-import Constants from 'expo-constants';
+import CompaniDate, { CompaniDateType } from '../helpers/dates/companiDates';
 
 export const APP_NAME = 'formation';
 export const LOCAL = 'local';
@@ -8,6 +8,8 @@ export const STAGING = 'staging';
 export const PRODUCTION = 'production';
 export const IS_IOS = Platform.OS === 'ios';
 export const IS_WEB = Platform.OS === 'web';
+
+export const TODAY : CompaniDateType = CompaniDate();
 
 export const LONG_FIRSTNAME_LONG_LASTNAME = 'FL';
 export const SHORT_FIRSTNAME_LONG_LASTNAME = 'fL';
@@ -20,7 +22,7 @@ export const PEDAGOGY = 'pedagogy';
 export const INTRA = 'intra';
 export const INTER_B2B = 'inter_b2b';
 export const INTRA_HOLDING = 'intra_holding';
-export const SINGLE_COURSES_SUBPROGRAM_IDS = Constants?.expoConfig?.extra?.SINGLE_COURSES_SUBPROGRAM_IDS.split(';');
+export const SINGLE = 'single';
 
 // STEPS
 export const ON_SITE = 'on_site';
@@ -79,6 +81,7 @@ export const TUTOR = 'tutor';
 
 // REGEX
 export const PHONE_REGEX = /^(?:(?:\+|00)33|0)\s*[1-9](?:[\s.-]*\d{2}){4}(?:[\s]*)$/;
+export const COUNTRY_CODE_REGEX = /^\+([1-9][0-9]{0,2})$/;
 export const EMAIL_REGEX = /^[\w-.+]+@([\w-]+\.)+[\w-]{2,4}$/;
 
 // MEDIA TYPES
@@ -121,6 +124,7 @@ export const RENDER = 'render';
 export const DD_MM_YYYY = 'dd/LL/yyyy';
 export const HH_MM = 'T';
 export const MONTH_SHORT = 'LLL';
+export const DAY = 'day';
 export const DAY_OF_MONTH = 'd';
 export const DAY_OF_WEEK_SHORT = 'ccc';
 export const YEAR = 'yyyy';

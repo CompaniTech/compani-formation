@@ -17,7 +17,6 @@ const ENVIRONMENT_VARIABLES = {
   TEST_EMAILS: process.env.TEST_EMAILS,
   TEST_IDS: process.env.TEST_IDS,
   PLATFORM: process.env.PLATFORM,
-  SINGLE_COURSES_SUBPROGRAM_IDS: process.env.SINGLE_COURSES_SUBPROGRAM_IDS,
 };
 
 const LOCAL = 'local';
@@ -45,16 +44,12 @@ export default {
     slug: 'compani',
     description: 'Nous aidons les intervenants, les managers du secteur et les dirigeants à pratiquer un accompagnement humain',
     platforms: ['ios', 'android', 'web'],
-    version: '2.32.0',
+    version: '2.33.0',
     orientation: 'portrait',
     primaryColor: '#005774',
     icon: './assets/images/ios_icon.png',
     backgroundColor: '#FFFFFF',
-    splash: {
-      image: './assets/images/splash.png',
-      resizeMode: 'cover',
-      backgroundColor: '#FFFFFF',
-    },
+    newArchEnabled: false,
     assetBundlePatterns: ['assets/images/*'],
     extra: {
       ...ENVIRONMENT_VARIABLES,
@@ -76,13 +71,19 @@ export default {
       color: '#005774',
     },
     ios: {
-      buildNumber: '2.32.0.1',
+      buildNumber: '2.33.0',
       bundleIdentifier: variables.bundleIdentifier,
       requireFullScreen: true,
       icon: './assets/images/ios_icon.png',
+      splash: {
+        image: './assets/images/splash_ios.png',
+        resizeMode: 'cover',
+        backgroundColor: '#FFFFFF',
+      },
       infoPlist: {
         NSCameraUsageDescription: 'Autorisez l\'accès à votre caméra pour pouvoir prendre une photo et la charger comme photo de profil dans Compani.',
         NSPhotoLibraryUsageDescription: 'Autorisez l\'accès à votre librairie pour pouvoir choisir une photo et la charger comme photo de profil dans Compani.',
+        ITSAppUsesNonExemptEncryption: false,
       },
       privacyManifests: {
         NSPrivacyAccessedAPITypes: [
@@ -106,7 +107,12 @@ export default {
         foregroundImage: './assets/images/android_icon.png',
         backgroundColor: '#005774',
       },
-      versionCode: 260,
+      splash: {
+        image: './assets/images/splash_android.png',
+        resizeMode: 'cover',
+        backgroundColor: '#FFFFFF',
+      },
+      versionCode: 270,
     },
     web: {
       favicon: './assets/images/android_icon_old.png',

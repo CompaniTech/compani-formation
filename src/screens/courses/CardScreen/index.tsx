@@ -6,7 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { runOnJS } from 'react-native-reanimated';
 import ExitModal from '../../../components/ExitModal';
-import { IS_IOS, SWIPE_SENSIBILITY } from '../../../core/data/constants';
+import { IS_IOS, IS_WEB, SWIPE_SENSIBILITY } from '../../../core/data/constants';
 import { useGetExitConfirmationModal, useSetExitConfirmationModal } from '../../../store/cards/hooks';
 import CardTemplate from '../cardTemplates/CardTemplate';
 import styles from './styles';
@@ -23,15 +23,18 @@ const CardScreen = ({ index, goBack }: CardScreenProps) => {
   const [isLeftSwipeEnabled, setIsLeftSwipeEnabled] = useState<boolean>(true);
   const [isRightSwipeEnabled, setIsRightSwipeEnabled] = useState<boolean>(false);
 
-  const onSwipe = Gesture.Pan().onEnd((event) => {
-    if (event.translationX > SWIPE_SENSIBILITY && index > 0 && isLeftSwipeEnabled) {
-      runOnJS(navigation.navigate)(`card-${index - 1}`);
-    }
+  const onSwipe = Gesture
+    .Pan()
+    .onTouchesMove((_, state) => { if (IS_WEB) state.activate(); })
+    .onEnd((event) => {
+      if (event.translationX > SWIPE_SENSIBILITY && index > 0 && isLeftSwipeEnabled) {
+        runOnJS(navigation.navigate)(`card-${index - 1}`);
+      }
 
-    if (event.translationX < -SWIPE_SENSIBILITY && isRightSwipeEnabled) {
-      runOnJS(navigation.navigate)(`card-${index + 1}`);
-    }
-  });
+      if (event.translationX < -SWIPE_SENSIBILITY && isRightSwipeEnabled) {
+        runOnJS(navigation.navigate)(`card-${index + 1}`);
+      }
+    });
 
   if (!IS_IOS) onSwipe.activeOffsetX([-SWIPE_SENSIBILITY, SWIPE_SENSIBILITY]);
 

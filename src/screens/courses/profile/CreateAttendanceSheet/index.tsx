@@ -3,7 +3,7 @@ import { createStackNavigator, StackScreenProps } from '@react-navigation/stack'
 import { CompositeScreenProps } from '@react-navigation/native';
 import AttendanceSheets from '../../../../api/attendanceSheets';
 import { RootStackParamList, RootCreateAttendanceSheetParamList } from '../../../../types/NavigationType';
-import { INTER_B2B, DD_MM_YYYY, HH_MM } from '../../../../core/data/constants';
+import { INTER_B2B, DD_MM_YYYY, HH_MM, SINGLE } from '../../../../core/data/constants';
 import { errorReducer, initialErrorState, RESET_ERROR, SET_ERROR } from '../../../../reducers/error';
 import AttendanceSheetSelectionForm from '../../../../components/AttendanceSheetSelectionForm';
 import UploadMethods from '../../../../components/UploadMethods';
@@ -69,7 +69,7 @@ const CreateAttendanceSheet = ({ route, navigation }: CreateAttendanceSheetProps
 
   useEffect(() => {
     setDataSelectionTitle(
-      course?.type === INTER_B2B
+      [INTER_B2B, SINGLE].includes(course?.type || '')
         ? 'Pour quel stagiaire souhaitez-vous charger une feuille d\'émargement ?'
         : 'Pour quelle date souhaitez-vous charger une feuille d\'émargement ?'
     );
@@ -77,7 +77,7 @@ const CreateAttendanceSheet = ({ route, navigation }: CreateAttendanceSheetProps
 
   const setDataOption = useCallback((option: string) => {
     setAttendanceSheetToAdd(option);
-    if (course?.type === INTER_B2B) {
+    if ([INTER_B2B, SINGLE].includes(course?.type || '')) {
       const name = missingAttendanceSheets.find(as => as.value === option)?.label || '';
       setTraineeName(name);
       if (isSingle) {
@@ -89,6 +89,10 @@ const CreateAttendanceSheet = ({ route, navigation }: CreateAttendanceSheetProps
     }
     if (option) dispatchErrorData({ type: RESET_ERROR });
   }, [course, isSingle, missingAttendanceSheets]);
+
+  useEffect(() => {
+    if (course && isSingle) setDataOption(course.trainees![0]._id);
+  }, [isSingle, course, setDataOption]);
 
   const setSlotsOptions = useCallback((options: string[]) => {
     setSlotsToAdd(options);
@@ -106,7 +110,9 @@ const CreateAttendanceSheet = ({ route, navigation }: CreateAttendanceSheetProps
     } else if (!attendanceSheetToAdd) {
       dispatchErrorData({
         type: SET_ERROR,
-        payload: course?.type === INTER_B2B ? 'Veuillez sélectionner un stagiaire' : 'Veuillez sélectionner une date',
+        payload: [INTER_B2B, SINGLE].includes(course?.type || '')
+          ? 'Veuillez sélectionner un stagiaire'
+          : 'Veuillez sélectionner une date',
       });
     } else {
       dispatchErrorData({ type: RESET_ERROR });

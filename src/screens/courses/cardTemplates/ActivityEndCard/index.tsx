@@ -10,7 +10,7 @@ import asyncStorage from '../../../../core/helpers/asyncStorage';
 import CompaniDuration from '../../../../core/helpers/dates/companiDurations';
 import { formatSecondsToISODuration } from '../../../../core/helpers/dates/utils';
 import { achievementJingle } from '../../../../core/helpers/utils';
-import { LEARNER } from '../../../../core/data/constants';
+import { LEARNER, TUTOR } from '../../../../core/data/constants';
 import {
   useGetQuestionnaireAnswersList,
   useGetQuizzAnswersList,
@@ -89,7 +89,9 @@ const ActivityEndCard = ({ mode, activity, finalTimer, goBack, stopTimer }: Acti
   }, [isFocused, setCardIndex, mode, stopTimer, saveHistory]);
 
   useEffect(() => {
-    if (finalTimer && mode === LEARNER) saveHistory(score, questionnaireAnswersList, quizzAnswersList, finalTimer);
+    if (finalTimer && [LEARNER, TUTOR].includes(mode)) {
+      saveHistory(score, questionnaireAnswersList, quizzAnswersList, finalTimer);
+    }
   }, [finalTimer, mode, questionnaireAnswersList, quizzAnswersList, saveHistory, score]);
 
   return (

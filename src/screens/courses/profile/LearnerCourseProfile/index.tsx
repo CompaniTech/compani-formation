@@ -38,14 +38,7 @@ import { getCourseProgress } from '../../../../core/helpers/utils';
 import CourseProfileHeader from '../../../../components/CourseProfileHeader';
 import { FIRA_SANS_MEDIUM } from '../../../../styles/fonts';
 import { renderStepList, getTitle } from '../helper';
-import {
-  BLENDED,
-  IS_IOS,
-  IS_WEB,
-  LEARNER,
-  PEDAGOGY,
-  SINGLE_COURSES_SUBPROGRAM_IDS,
-} from '../../../../core/data/constants';
+import { BLENDED, IS_IOS, IS_WEB, LEARNER, PEDAGOGY, SINGLE, TUTOR } from '../../../../core/data/constants';
 
 interface LearnerCourseProfileProps extends CompositeScreenProps<
 StackScreenProps<RootStackParamList, 'LearnerCourseProfile'>,
@@ -66,7 +59,7 @@ const LearnerCourseProfile = ({ route, navigation }: LearnerCourseProfileProps) 
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const attendanceSheetsToSign = useMemo(() =>
-    (SINGLE_COURSES_SUBPROGRAM_IDS.includes(course?.subProgram._id || '') && mode === LEARNER
+    (course?.type === SINGLE && mode === LEARNER
       ? (course as BlendedCourseType)?.attendanceSheets?.filter(as =>
         has(as, 'signatures.trainer') && !has(as, 'signatures.trainee')) || []
       : []),
@@ -80,7 +73,10 @@ const LearnerCourseProfile = ({ route, navigation }: LearnerCourseProfileProps) 
       try {
         const fetchedCourse = await Courses.getCourse(route.params.courseId, PEDAGOGY);
         if (mode === LEARNER) {
-          const fetchedQuestionnaires = await Questionnaires.getUserQuestionnaires({ course: route.params.courseId });
+          if (fetchedCourse.type !== SINGLE) {
+            const fetchedQuestionnaires = await Questionnaires.getUserQuestionnaires({ course: route.params.courseId });
+            setQuestionnaires(fetchedQuestionnaires);
+          }
           if (fetchedCourse.format === BLENDED) {
             const formattedCourse = {
               _id: fetchedCourse._id,
@@ -88,7 +84,6 @@ const LearnerCourseProfile = ({ route, navigation }: LearnerCourseProfileProps) 
             };
             setCourseToStore(formattedCourse as BlendedCourseType);
           }
-          setQuestionnaires(fetchedQuestionnaires);
         }
         const programImage = get(fetchedCourse, 'subProgram.program.image.link') || '';
         setCourse(fetchedCourse);
@@ -195,7 +190,7 @@ const LearnerCourseProfile = ({ route, navigation }: LearnerCourseProfileProps) 
           <PendingActionsContainer questionnaires={questionnaires} profileId={course._id}
             attendanceSheets={attendanceSheetsToSign} />
     }
-    {mode === LEARNER && <View style={styles.progressBarContainer}>
+    {[LEARNER, TUTOR].includes(mode) && <View style={styles.progressBarContainer}>
       <Text style={styles.progressBarText}>ÉTAPES</Text>
       <View style={commonStyles.progressBarContainer}>
         <ProgressBar progress={getCourseProgress(course) * 100} />
@@ -220,7 +215,7 @@ const LearnerCourseProfile = ({ route, navigation }: LearnerCourseProfileProps) 
   return course && has(course, 'subProgram.program') ? (
     <SafeAreaView style={commonStyles.container} edges={['top']}>
       <FlatList data={course.subProgram.steps} keyExtractor={item => item._id} ListHeaderComponent={renderHeader}
-        renderItem={({ item, index }) => renderStepList(course, mode, route, item, index)}
+        renderItem={({ item, index }) => renderStepList(mode, route, item, index)}
         showsVerticalScrollIndicator={IS_WEB} ListFooterComponent={renderFooter} />
     </SafeAreaView>
   )

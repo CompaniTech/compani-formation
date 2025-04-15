@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Alert, BackHandler, View } from 'react-native';
-import * as Camera from 'expo-camera/legacy';
+import * as Camera from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useIsFocused, useNavigation } from '@react-navigation/native';
 import { GREY, PINK } from '../../styles/colors';
-import { INTER_B2B, SINGLE_COURSES_SUBPROGRAM_IDS } from '../../core/data/constants';
+import { INTER_B2B, SINGLE } from '../../core/data/constants';
 import AttendanceSheets from '../../api/attendanceSheets';
 import styles from './styles';
 import NiPrimaryButton from '../../components/form/PrimaryButton';
@@ -33,9 +33,10 @@ const UploadMethods = ({ attendanceSheetToAdd, slotsToAdd = [], course, goToPare
   const [imagePickerManager, setImagePickerManager] = useState<boolean>(false);
   const [isSingle, setIsSingle] = useState<boolean>(false);
   const isFocused = useIsFocused();
+  const [, requestPermission] = Camera.useCameraPermissions();
 
   useEffect(() => {
-    setIsSingle(SINGLE_COURSES_SUBPROGRAM_IDS.includes(course.subProgram._id));
+    setIsSingle(course.type === SINGLE);
   }, [course]);
 
   const hardwareBackPress = useCallback(() => {
@@ -61,8 +62,8 @@ const UploadMethods = ({ attendanceSheetToAdd, slotsToAdd = [], course, goToPare
   const requestPermissionsForCamera = async () => {
     try {
       setIsLoading(true);
-      const { status } = await Camera.requestCameraPermissionsAsync();
-      if (status === 'granted') setCamera(true);
+      const { granted } = await requestPermission();
+      if (granted) setCamera(true);
       else alert('l\'appareil photo');
     } finally {
       setIsLoading(false);
@@ -88,7 +89,11 @@ const UploadMethods = ({ attendanceSheetToAdd, slotsToAdd = [], course, goToPare
           file,
           course: course._id,
           trainer: loggedUserId,
-          ...(course.type === INTER_B2B ? { trainee: attendanceSheetToAdd } : { date: attendanceSheetToAdd }),
+          ...(
+            [INTER_B2B, SINGLE].includes(course.type)
+              ? { trainee: attendanceSheetToAdd }
+              : { date: attendanceSheetToAdd }
+          ),
           ...(isSingle && { slots: slotsToAdd }),
         });
         await AttendanceSheets.upload(data);

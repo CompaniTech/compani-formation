@@ -39,11 +39,12 @@ import {
   OPERATIONS,
   PDF,
   SHORT_FIRSTNAME_LONG_LASTNAME,
-  SINGLE_COURSES_SUBPROGRAM_IDS,
   EXPECTATIONS,
   END_OF_COURSE,
   START_COURSE,
   END_COURSE,
+  TODAY,
+  SINGLE,
 } from '../../../../core/data/constants';
 import CompaniDate from '../../../../core/helpers/dates/companiDates';
 import PersonCell from '../../../../components/PersonCell';
@@ -107,7 +108,7 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
   }, [course, isSingle, savedAttendanceSheets]);
 
   const missingAttendanceSheets = useMemo(() => {
-    if (!course?.slots.length || !firstSlot) return [];
+    if (!course?.slots?.length || !firstSlot) return [];
 
     if ([INTRA, INTRA_HOLDING].includes(course?.type)) {
       const intraOrIntraHoldingCourseSavedSheets = savedAttendanceSheets as IntraOrIntraHoldingAttendanceSheetType[];
@@ -120,14 +121,12 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
             value: CompaniDate(slot.startDate).startOf('day').toISO(),
             label: CompaniDate(slot.startDate).format(DD_MM_YYYY),
           }))
-          .filter(date => !savedDates.includes(date.value) && CompaniDate().isSameOrAfter(date.value)),
+          .filter(date => !savedDates.includes(date.value) && TODAY.isSameOrAfter(date.value)),
         'value'
       );
     }
 
-    if (CompaniDate().isBefore(firstSlot?.startDate!)) return [];
-    const interCourseSavedSheets = savedAttendanceSheets as InterAttendanceSheetType[];
-    const savedTrainees = interCourseSavedSheets.map(sheet => sheet.trainee?._id);
+    if (TODAY.isBefore(firstSlot?.startDate!)) return [];
 
     if (isSingle) {
       if (Object.values(groupedSlotsToBeSigned).flat().length) {
@@ -136,6 +135,9 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
       }
       return [];
     }
+
+    const interCourseSavedSheets = savedAttendanceSheets as InterAttendanceSheetType[];
+    const savedTrainees = interCourseSavedSheets.map(sheet => sheet.trainee?._id);
 
     return [...new Set(
       course?.trainees?.filter(trainee => (!savedTrainees.includes(trainee._id)))
@@ -183,11 +185,14 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
     const getCourse = async () => {
       try {
         const fetchedCourse = await Courses.getCourse(route.params.courseId, OPERATIONS) as BlendedCourseType;
-        await Promise.all([refreshAttendanceSheets(fetchedCourse._id), getQuestionnaireQRCode(fetchedCourse._id)]);
+        await Promise.all([
+          refreshAttendanceSheets(fetchedCourse._id),
+          ...(fetchedCourse.type !== SINGLE ? [getQuestionnaireQRCode(fetchedCourse._id)] : []),
+        ]);
 
         if (fetchedCourse.slots.length) setFirstSlot(fetchedCourse.slots[0]);
         setTitle(getTitle(fetchedCourse));
-        setIsSingle(SINGLE_COURSES_SUBPROGRAM_IDS.includes(fetchedCourse.subProgram._id));
+        setIsSingle(fetchedCourse.type === SINGLE);
         setCourse(fetchedCourse as BlendedCourseType);
       } catch (e: any) {
         console.error(e);
@@ -219,7 +224,7 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
   useEffect(() => {
     if (!firstSlot) {
       setNoAttendancesMessage('Veuillez ajouter des créneaux pour téléverser des feuilles d\'émargement.');
-    } else if (CompaniDate().isBefore(firstSlot.startDate)) {
+    } else if (TODAY.isBefore(firstSlot.startDate)) {
       setNoAttendancesMessage('L\'émargement sera disponible une fois le premier créneau passé.');
     } else if (course?.type === INTER_B2B && !course?.trainees?.length) {
       setNoAttendancesMessage('Veuillez ajouter des stagiaires pour émarger la formation.');

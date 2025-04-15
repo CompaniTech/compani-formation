@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import * as Camera from 'expo-camera/legacy';
+import * as Camera from 'expo-camera';
 import NiModal from '../Modal';
 import NiPrimaryButton from '../form/PrimaryButton';
 import FeatherButton from '../icons/FeatherButton';
@@ -27,6 +27,7 @@ const PictureModal = ({
   deletePicture,
 }: PictureModalProps) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [, requestPermission] = Camera.useCameraPermissions();
 
   const alert = (component: string) => {
     Alert.alert(
@@ -37,20 +38,11 @@ const PictureModal = ({
     );
   };
 
-  const requestPermissionsForCamera = async () => {
-    try {
-      setIsLoading(true);
-      const { status } = await Camera.requestCameraPermissionsAsync();
-      if (status === 'granted') openCamera();
-      else alert('l\'appareil photo');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const takePicture = () => {
+  const takePicture = async () => {
     closePictureModal();
-    requestPermissionsForCamera();
+    const { granted } = await requestPermission();
+    if (granted) openCamera();
+    else alert('l\'appareil photo');
   };
 
   const requestPermissionsForImagePicker = async () => {
@@ -73,7 +65,7 @@ const PictureModal = ({
     try {
       setIsLoading(true);
       if (deletePicture) await deletePicture();
-    } catch (e) {
+    } catch (_) {
       Alert.alert(
         'Echec de la suppression',
         'Réessaie plus tard',

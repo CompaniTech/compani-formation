@@ -94,7 +94,7 @@ const SubProgramProfile = ({ route, navigation }: SubProgramProfileProps) => {
   return subProgram && subProgram.steps ? (
     <SafeAreaView style={commonStyles.container} edges={['top']}>
       <FlatList data={subProgram.steps} keyExtractor={item => item._id} ListHeaderComponent={renderHeader}
-        renderItem={({ item, index }) => renderStepList(subProgram, TESTER, route, item, index)}
+        renderItem={({ item, index }) => renderStepList(TESTER, route, item, index)}
         showsVerticalScrollIndicator={false} />
     </SafeAreaView>
   )

@@ -97,7 +97,7 @@ const TrainerCourseProfile = ({
   return course && has(course, 'subProgram.program') ? (
     <SafeAreaView style={commonStyles.container} edges={['top']}>
       <FlatList data={course.subProgram.steps} keyExtractor={item => item._id} ListHeaderComponent={renderHeader}
-        renderItem={({ item, index }) => renderStepList(course, TRAINER, route, item, index)}
+        renderItem={({ item, index }) => renderStepList(TRAINER, route, item, index)}
         showsVerticalScrollIndicator={false} />
     </SafeAreaView>
   )

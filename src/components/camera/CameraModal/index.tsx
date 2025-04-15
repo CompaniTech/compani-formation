@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { BackHandler, Alert, Modal } from 'react-native';
-import { CameraCapturedPicture } from 'expo-camera/legacy';
+import { CameraCapturedPicture } from 'expo-camera';
 import { PictureType } from '../../../types/PictureTypes';
 import NiCameraPreview from '../CameraPreview';
 import NiCamera from '../Camera';
@@ -43,7 +43,7 @@ const CameraModal = ({ visible, savePicture, onRequestClose, goBack }: CameraMod
       await savePicture(photo);
       unmount();
       if (goBack) goBack();
-    } catch (e) {
+    } catch (_) {
       Alert.alert(
         'Echec de l\'enregistrement',
         'Essayez de reprendre la photo',
