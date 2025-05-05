@@ -5,11 +5,10 @@ import * as ImagePicker from 'expo-image-picker';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useIsFocused, useNavigation } from '@react-navigation/native';
 import { GREY, PINK } from '../../styles/colors';
-import { INTER_B2B, SINGLE } from '../../core/data/constants';
+import { INTER_B2B, SINGLE, CAMERA, GALLERY } from '../../core/data/constants';
 import AttendanceSheets from '../../api/attendanceSheets';
 import styles from './styles';
 import NiPrimaryButton from '../../components/form/PrimaryButton';
-import CameraModal from '../../components/camera/CameraModal';
 import ImagePickerManager from '../../components/ImagePickerManager';
 import { useGetLoggedUserId } from '../../store/main/hooks';
 import { PictureType } from '../../types/PictureTypes';
@@ -29,7 +28,7 @@ const UploadMethods = ({ attendanceSheetToAdd, slotsToAdd = [], course, goToPare
   const navigation = useNavigation();
   const loggedUserId = useGetLoggedUserId();
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [camera, setCamera] = useState<boolean>(false);
+  const [type, setType] = useState<string>('');
   const [imagePickerManager, setImagePickerManager] = useState<boolean>(false);
   const [isSingle, setIsSingle] = useState<boolean>(false);
   const isFocused = useIsFocused();
@@ -63,8 +62,10 @@ const UploadMethods = ({ attendanceSheetToAdd, slotsToAdd = [], course, goToPare
     try {
       setIsLoading(true);
       const { granted } = await requestPermission();
-      if (granted) setCamera(true);
-      else alert('l\'appareil photo');
+      if (granted) {
+        setType(CAMERA);
+        setImagePickerManager(true);
+      } else alert('l\'appareil photo');
     } finally {
       setIsLoading(false);
     }
@@ -74,8 +75,10 @@ const UploadMethods = ({ attendanceSheetToAdd, slotsToAdd = [], course, goToPare
     try {
       setIsLoading(true);
       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-      if (status === 'granted') setImagePickerManager(true);
-      else alert('la galerie');
+      if (status === 'granted') {
+        setType(GALLERY);
+        setImagePickerManager(true);
+      } else alert('la galerie');
     } finally {
       setIsLoading(false);
     }
@@ -118,8 +121,7 @@ const UploadMethods = ({ attendanceSheetToAdd, slotsToAdd = [], course, goToPare
         {isSingle && <NiPrimaryButton caption='Ajouter une signature' customStyle={styles.button} disabled={isLoading}
           color={PINK[500]} onPress={() => navigation.navigate('attendance-signature')} bgColor={GREY[100]} />}
       </View>
-      {camera && <CameraModal onRequestClose={() => setCamera(false)} savePicture={savePicture} visible={camera} />}
-      {imagePickerManager && <ImagePickerManager onRequestClose={() => setImagePickerManager(false)}
+      {imagePickerManager && <ImagePickerManager type={type} onRequestClose={() => setImagePickerManager(false)}
         savePicture={savePicture} />}
     </SafeAreaView>
 
