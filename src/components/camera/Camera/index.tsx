@@ -49,7 +49,7 @@ const NiCamera = ({ setCapturedImage }: NiCameraProps) => {
   };
 
   const flipPhoto = async (photo: CameraCapturedPicture): Promise<CameraCapturedPicture> => {
-    const manipulate = cameraType === BACK ? [{ rotate: 90 }] : [{ flip: FlipType.Horizontal }, { rotate: 90 }];
+    const manipulate = cameraType === BACK ? [] : [{ flip: FlipType.Horizontal }];
     return manipulateAsync(photo.uri, manipulate);
   };
 
