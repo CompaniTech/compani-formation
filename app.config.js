@@ -101,7 +101,7 @@ export default {
     android: {
       package: variables.bundleIdentifier,
       googleServicesFile: './google-services.json',
-      permissions: ['CAMERA', 'READ_EXTERNAL_STORAGE', 'WRITE_EXTERNAL_STORAGE'],
+      permissions: ['CAMERA', 'CAMERA_ROLL', 'READ_EXTERNAL_STORAGE', 'WRITE_EXTERNAL_STORAGE'],
       icon: './assets/images/android_icon_old.png',
       adaptiveIcon: {
         foregroundImage: './assets/images/android_icon.png',

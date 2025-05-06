@@ -235,9 +235,9 @@ const Profile = ({ navigation }: ProfileProps) => {
           </TouchableOpacity>}
         <HomeScreenFooter source={require('../../../../assets/images/aux_joie.webp')} />
         <PictureModal visible={pictureModal} canDelete={hasPhoto} closePictureModal={() => setPictureModal(false)}
-          openCamera={() => openPicker(CAMERA)} deletePicture={deletePicture} type={type}
+          openCamera={() => openPicker(CAMERA)} deletePicture={deletePicture}
           openImagePickerManager={() => openPicker(GALLERY)} />
-        {imagePickerManager && <ImagePickerManager onRequestClose={() => setImagePickerManager(false)}
+        {imagePickerManager && <ImagePickerManager onRequestClose={() => setImagePickerManager(false)} type={type}
           savePicture={savePicture} />}
         <CompanySearchModal visible={isModalOpened} onRequestClose={onRequestClose} companyOptions={companyOptions} />
         <ValidationModal visible={isValidationModalOpened} onPressConfirmButton={createCompanyLinkRequest}
