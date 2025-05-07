@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Alert, BackHandler, View } from 'react-native';
-import * as Camera from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useIsFocused, useNavigation } from '@react-navigation/native';
@@ -11,7 +10,6 @@ import styles from './styles';
 import NiPrimaryButton from '../../components/form/PrimaryButton';
 import ImagePickerManager from '../../components/ImagePickerManager';
 import { useGetLoggedUserId } from '../../store/main/hooks';
-import { PictureType } from '../../types/PictureTypes';
 import { formatImage, formatPayload } from '../../core/helpers/pictures';
 import { CourseType } from '../../types/CourseTypes';
 import FeatherButton from '../icons/FeatherButton';
@@ -32,7 +30,7 @@ const UploadMethods = ({ attendanceSheetToAdd, slotsToAdd = [], course, goToPare
   const [imagePickerManager, setImagePickerManager] = useState<boolean>(false);
   const [isSingle, setIsSingle] = useState<boolean>(false);
   const isFocused = useIsFocused();
-  const [, requestPermission] = Camera.useCameraPermissions();
+  const [, requestPermission] = ImagePicker.useCameraPermissions();
 
   useEffect(() => {
     setIsSingle(course.type === SINGLE);
@@ -84,10 +82,10 @@ const UploadMethods = ({ attendanceSheetToAdd, slotsToAdd = [], course, goToPare
     }
   };
 
-  const savePicture = async (picture: PictureType) => {
+  const savePicture = async (picture: ImagePicker.ImagePickerAsset) => {
     try {
       if (course) {
-        const file = await formatImage(picture as Camera.CameraCapturedPicture, `emargement-${attendanceSheetToAdd}`);
+        const file = await formatImage(picture, `emargement-${attendanceSheetToAdd}`);
         const data = formatPayload({
           file,
           course: course._id,

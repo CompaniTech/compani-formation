@@ -14,11 +14,11 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StackScreenProps } from '@react-navigation/stack';
 import { CompositeScreenProps } from '@react-navigation/native';
+import { ImagePickerAsset } from 'expo-image-picker';
 import FeatherButton from '../../../components/icons/FeatherButton';
 import NiPrimaryButton from '../../../components/form/PrimaryButton';
 import { GREY } from '../../../styles/colors';
 import { ICON, IS_LARGE_SCREEN, MARGIN } from '../../../styles/metrics';
-import { PictureType } from '../../../types/PictureTypes';
 import styles from './styles';
 import NiInput from '../../../components/form/Input';
 import { RootStackParamList, RootBottomTabParamList } from '../../../types/NavigationType';
@@ -169,7 +169,7 @@ const ProfileEdition = ({ navigation }: ProfileEditionProps) => {
     setImagePickerManager(true);
   };
 
-  const savePicture = async (picture: PictureType) => {
+  const savePicture = async (picture: ImagePickerAsset) => {
     const { firstname, lastname } = loggedUser.identity;
     const fileName = `photo_${firstname}_${lastname}`;
     const file = await formatImage(picture, fileName);

@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Alert, ActivityIndicator, Text, View } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import { PictureType } from '../../types/PictureTypes';
 import { GALLERY } from '../../core/data/constants';
 import commonStyle from '../../styles/common';
 import { GREY } from '../../styles/colors';
@@ -10,7 +9,7 @@ import NiModal from '../Modal';
 
 interface ImagePickerManagerProps {
   type: string
-  savePicture: (image: PictureType) => void,
+  savePicture: (image: ImagePicker.ImagePickerAsset) => void,
   onRequestClose: () => void,
   goBack?: () => void,
 }

@@ -6,7 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import get from 'lodash/get';
 import { StackScreenProps } from '@react-navigation/stack';
 import { CompositeScreenProps, useIsFocused } from '@react-navigation/native';
-import { PictureType } from '../../../types/PictureTypes';
+import { ImagePickerAsset } from 'expo-image-picker';
 import { RootBottomTabParamList, RootStackParamList } from '../../../types/NavigationType';
 import { formatPhone } from '../../../core/helpers/utils';
 import NiSecondaryButton from '../../../components/form/SecondaryButton';
@@ -150,7 +150,7 @@ const Profile = ({ navigation }: ProfileProps) => {
     );
   };
 
-  const savePicture = async (picture: PictureType) => {
+  const savePicture = async (picture: ImagePickerAsset) => {
     const { firstname, lastname } = loggedUser.identity;
     const fileName = `photo_${firstname}_${lastname}`;
     const file = await formatImage(picture, fileName);

@@ -3,7 +3,7 @@
 import mime from 'mime';
 import * as ImageManipulator from 'expo-image-manipulator';
 import * as FileSystem from 'expo-file-system';
-import { CameraCapturedPicture } from 'expo-camera';
+import { ImagePickerAsset } from 'expo-image-picker';
 import { IMAGE_MAX_SIZE } from '../data/constants';
 import { ImageType, FormDataType } from '../../types/FileType';
 
@@ -20,7 +20,7 @@ export const compressPhoto = async (uri: string, size: number) => {
 };
 
 export const formatImage = async (
-  image: CameraCapturedPicture,
+  image: ImagePickerAsset,
   fileName: string
 ): Promise<ImageType> => {
   const fileInfos = await FileSystem.getInfoAsync(image.uri);
