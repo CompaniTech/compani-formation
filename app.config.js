@@ -84,6 +84,7 @@ export default {
         NSCameraUsageDescription: 'Autorisez l\'accès à votre caméra pour pouvoir prendre une photo et la charger comme photo de profil dans Compani.',
         NSPhotoLibraryUsageDescription: 'Autorisez l\'accès à votre librairie pour pouvoir choisir une photo et la charger comme photo de profil dans Compani.',
         ITSAppUsesNonExemptEncryption: false,
+        CFBundleLocalizations: ['fr'],
       },
       privacyManifests: {
         NSPrivacyAccessedAPITypes: [
@@ -101,7 +102,7 @@ export default {
     android: {
       package: variables.bundleIdentifier,
       googleServicesFile: './google-services.json',
-      permissions: ['CAMERA', 'READ_EXTERNAL_STORAGE', 'WRITE_EXTERNAL_STORAGE'],
+      permissions: ['CAMERA', 'CAMERA_ROLL', 'READ_EXTERNAL_STORAGE', 'WRITE_EXTERNAL_STORAGE'],
       icon: './assets/images/android_icon_old.png',
       adaptiveIcon: {
         foregroundImage: './assets/images/android_icon.png',

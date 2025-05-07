@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import * as Camera from 'expo-camera';
 import NiModal from '../Modal';
 import NiPrimaryButton from '../form/PrimaryButton';
 import FeatherButton from '../icons/FeatherButton';
@@ -27,7 +26,7 @@ const PictureModal = ({
   deletePicture,
 }: PictureModalProps) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [, requestPermission] = Camera.useCameraPermissions();
+  const [, requestPermission] = ImagePicker.useCameraPermissions();
 
   const alert = (component: string) => {
     Alert.alert(

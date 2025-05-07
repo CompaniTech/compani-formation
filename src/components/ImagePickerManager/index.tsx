@@ -1,19 +1,20 @@
 import { useState, useEffect } from 'react';
 import { Alert, ActivityIndicator, Text, View } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import { PictureType } from '../../types/PictureTypes';
+import { GALLERY } from '../../core/data/constants';
 import commonStyle from '../../styles/common';
 import { GREY } from '../../styles/colors';
 import styles from './styles';
 import NiModal from '../Modal';
 
 interface ImagePickerManagerProps {
-  savePicture: (image: PictureType) => void,
+  type: string
+  savePicture: (image: ImagePicker.ImagePickerAsset) => void,
   onRequestClose: () => void,
   goBack?: () => void,
 }
 
-const ImagePickerManager = ({ savePicture, onRequestClose, goBack }: ImagePickerManagerProps) => {
+const ImagePickerManager = ({ type, savePicture, onRequestClose, goBack }: ImagePickerManagerProps) => {
   const [isSaving, setIsSaving] = useState<boolean>(false);
 
   const unmount = () => {
@@ -42,13 +43,14 @@ const ImagePickerManager = ({ savePicture, onRequestClose, goBack }: ImagePicker
   useEffect(() => {
     async function pickImage() {
       try {
-        const result = await ImagePicker.launchImageLibraryAsync({
-          mediaTypes: 'images',
-          allowsEditing: true,
-          aspect: [1, 1],
-          quality: 1,
-        });
-
+        const result = type === GALLERY
+          ? await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: 'images',
+            allowsEditing: true,
+            aspect: [1, 1],
+            quality: 1,
+          })
+          : await ImagePicker.launchCameraAsync();
         if (result.canceled) unmount();
         else onSavePhoto(result.assets[0]);
       } catch (e) {
