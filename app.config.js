@@ -84,6 +84,7 @@ export default {
         NSCameraUsageDescription: 'Autorisez l\'accès à votre caméra pour pouvoir prendre une photo et la charger comme photo de profil dans Compani.',
         NSPhotoLibraryUsageDescription: 'Autorisez l\'accès à votre librairie pour pouvoir choisir une photo et la charger comme photo de profil dans Compani.',
         ITSAppUsesNonExemptEncryption: false,
+        CFBundleLocalizations: ['fr'],
       },
       privacyManifests: {
         NSPrivacyAccessedAPITypes: [
