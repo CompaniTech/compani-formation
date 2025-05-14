@@ -6,7 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import get from 'lodash/get';
 import { StackScreenProps } from '@react-navigation/stack';
 import { CompositeScreenProps, useIsFocused } from '@react-navigation/native';
-import { PictureType } from '../../../types/PictureTypes';
+import { ImagePickerAsset } from 'expo-image-picker';
 import { RootBottomTabParamList, RootStackParamList } from '../../../types/NavigationType';
 import { formatPhone } from '../../../core/helpers/utils';
 import NiSecondaryButton from '../../../components/form/SecondaryButton';
@@ -25,12 +25,11 @@ import CompanySearchModal from '../../../components/CompanySearchModal';
 import DeletionConfirmationModal from '../../../components/DeletionConfirmationModal';
 import UserAccountDeletedModal from '../../../components/UserAccountDeletedModal';
 import HomeScreenFooter from '../../../components/HomeScreenFooter';
-import CameraModal from '../../../components/camera/CameraModal';
 import ImagePickerManager from '../../../components/ImagePickerManager';
 import ValidationModal from '../../../components/companyLinkRequest/ValidationModal';
 import { formatImage, formatPayload } from '../../../core/helpers/pictures';
 import { useGetLoggedUser, useSetLoggedUser } from '../../../store/main/hooks';
-import { PEDAGOGY, IS_WEB, DIRECTORY } from '../../../core/data/constants';
+import { PEDAGOGY, IS_WEB, DIRECTORY, CAMERA, GALLERY } from '../../../core/data/constants';
 import { CompanyType } from '../../../types/CompanyType';
 import { PedagogyCourseListResponseType } from '../../../types/AxiosTypes';
 import styles from './styles';
@@ -56,7 +55,7 @@ const Profile = ({ navigation }: ProfileProps) => {
   const [deletionConfirmationModal, setDeletionConfirmationModal] = useState<boolean>(false);
   const [userAccountDeletedModal, setUserAccountDeletedModal] = useState<boolean>(false);
   const [userFirstName, setUserFirstName] = useState<string>('');
-  const [camera, setCamera] = useState<boolean>(false);
+  const [type, setType] = useState<string>('');
   const [imagePickerManager, setImagePickerManager] = useState<boolean>(false);
   const [companyOptions, setCompanyOptions] = useState<CompanyType[]>([]);
   const [selectedCompany, setSelectedCompany] = useState<CompanyType>({ _id: '', name: '' });
@@ -109,6 +108,11 @@ const Profile = ({ navigation }: ProfileProps) => {
     }
   };
 
+  const openPicker = (pickerType: string) => {
+    setType(pickerType);
+    setImagePickerManager(true);
+  };
+
   const onRequestClose = (value: CompanyType) => {
     if (value._id) {
       setSelectedCompany(value);
@@ -146,7 +150,7 @@ const Profile = ({ navigation }: ProfileProps) => {
     );
   };
 
-  const savePicture = async (picture: PictureType) => {
+  const savePicture = async (picture: ImagePickerAsset) => {
     const { firstname, lastname } = loggedUser.identity;
     const fileName = `photo_${firstname}_${lastname}`;
     const file = await formatImage(picture, fileName);
@@ -231,10 +235,9 @@ const Profile = ({ navigation }: ProfileProps) => {
           </TouchableOpacity>}
         <HomeScreenFooter source={require('../../../../assets/images/aux_joie.webp')} />
         <PictureModal visible={pictureModal} canDelete={hasPhoto} closePictureModal={() => setPictureModal(false)}
-          openCamera={() => setCamera(true)} deletePicture={deletePicture}
-          openImagePickerManager={() => setImagePickerManager(true)} />
-        {camera && <CameraModal onRequestClose={() => setCamera(false)} savePicture={savePicture} visible={camera} />}
-        {imagePickerManager && <ImagePickerManager onRequestClose={() => setImagePickerManager(false)}
+          openCamera={() => openPicker(CAMERA)} deletePicture={deletePicture}
+          openImagePickerManager={() => openPicker(GALLERY)} />
+        {imagePickerManager && <ImagePickerManager onRequestClose={() => setImagePickerManager(false)} type={type}
           savePicture={savePicture} />}
         <CompanySearchModal visible={isModalOpened} onRequestClose={onRequestClose} companyOptions={companyOptions} />
         <ValidationModal visible={isValidationModalOpened} onPressConfirmButton={createCompanyLinkRequest}

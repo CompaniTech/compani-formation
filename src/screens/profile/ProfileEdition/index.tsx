@@ -14,24 +14,23 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StackScreenProps } from '@react-navigation/stack';
 import { CompositeScreenProps } from '@react-navigation/native';
+import { ImagePickerAsset } from 'expo-image-picker';
 import FeatherButton from '../../../components/icons/FeatherButton';
 import NiPrimaryButton from '../../../components/form/PrimaryButton';
 import { GREY } from '../../../styles/colors';
 import { ICON, IS_LARGE_SCREEN, MARGIN } from '../../../styles/metrics';
-import { PictureType } from '../../../types/PictureTypes';
 import styles from './styles';
 import NiInput from '../../../components/form/Input';
 import { RootStackParamList, RootBottomTabParamList } from '../../../types/NavigationType';
 import Users from '../../../api/users';
 import { useGetLoggedUser, useSetLoggedUser } from '../../../store/main/hooks';
-import { EMAIL_REGEX, IS_IOS, IS_WEB, PHONE_REGEX } from '../../../core/data/constants';
+import { EMAIL_REGEX, IS_IOS, IS_WEB, PHONE_REGEX, CAMERA, GALLERY } from '../../../core/data/constants';
 import ExitModal from '../../../components/ExitModal';
 import NiErrorMessage from '../../../components/ErrorMessage';
 import { formatPhoneForPayload } from '../../../core/helpers/utils';
 import PictureModal from '../../../components/PictureModal';
 import { errorReducer, initialErrorState, RESET_ERROR, SET_ERROR } from '../../../reducers/error';
 import { formatImage, formatPayload } from '../../../core/helpers/pictures';
-import CameraModal from '../../../components/camera/CameraModal';
 import ImagePickerManager from '../../../components/ImagePickerManager';
 import PhoneSelect from '../../../components/form/PhoneSelect';
 
@@ -65,7 +64,7 @@ const ProfileEdition = ({ navigation }: ProfileEditionProps) => {
   const [hasPhoto, setHasPhoto] = useState<boolean>(false);
   const [pictureModal, setPictureModal] = useState<boolean>(false);
   const [isValidationAttempted, setIsValidationAttempted] = useState<boolean>(false);
-  const [camera, setCamera] = useState<boolean>(false);
+  const [type, setType] = useState<string>('');
   const [imagePickerManager, setImagePickerManager] = useState<boolean>(false);
 
   const keyboardDidHide = () => Keyboard.dismiss();
@@ -165,7 +164,12 @@ const ProfileEdition = ({ navigation }: ProfileEditionProps) => {
     setEditedUser({ ...editedUser, contact: { ...editedUser.contact, [path]: value } });
   };
 
-  const savePicture = async (picture: PictureType) => {
+  const openPicker = (pickerType: string) => {
+    setType(pickerType);
+    setImagePickerManager(true);
+  };
+
+  const savePicture = async (picture: ImagePickerAsset) => {
     const { firstname, lastname } = loggedUser.identity;
     const fileName = `photo_${firstname}_${lastname}`;
     const file = await formatImage(picture, fileName);
@@ -222,12 +226,10 @@ const ProfileEdition = ({ navigation }: ProfileEditionProps) => {
             <NiPrimaryButton caption="Valider" onPress={saveData} loading={isLoading} />
           </View>
           <PictureModal visible={pictureModal} canDelete={hasPhoto} closePictureModal={() => setPictureModal(false)}
-            deletePicture={deletePicture} openCamera={() => setCamera(true)}
-            openImagePickerManager={() => setImagePickerManager(true)} />
-          {camera && <CameraModal onRequestClose={() => setCamera(false)} savePicture={savePicture} visible={camera}
-            goBack={goBack} />}
+            deletePicture={deletePicture} openCamera={() => openPicker(CAMERA)}
+            openImagePickerManager={() => openPicker(GALLERY)} />
           {imagePickerManager && <ImagePickerManager onRequestClose={() => setImagePickerManager(false)}
-            savePicture={savePicture} goBack={goBack} />}
+            savePicture={savePicture} goBack={goBack} type={type} />}
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>

@@ -44,7 +44,7 @@ export default {
     slug: 'compani',
     description: 'Nous aidons les intervenants, les managers du secteur et les dirigeants à pratiquer un accompagnement humain',
     platforms: ['ios', 'android', 'web'],
-    version: '2.33.0',
+    version: '2.34.0',
     orientation: 'portrait',
     primaryColor: '#005774',
     icon: './assets/images/ios_icon.png',
@@ -71,7 +71,7 @@ export default {
       color: '#005774',
     },
     ios: {
-      buildNumber: '2.33.0',
+      buildNumber: '2.34.0',
       bundleIdentifier: variables.bundleIdentifier,
       requireFullScreen: true,
       icon: './assets/images/ios_icon.png',
@@ -84,6 +84,7 @@ export default {
         NSCameraUsageDescription: 'Autorisez l\'accès à votre caméra pour pouvoir prendre une photo et la charger comme photo de profil dans Compani.',
         NSPhotoLibraryUsageDescription: 'Autorisez l\'accès à votre librairie pour pouvoir choisir une photo et la charger comme photo de profil dans Compani.',
         ITSAppUsesNonExemptEncryption: false,
+        CFBundleLocalizations: ['fr'],
       },
       privacyManifests: {
         NSPrivacyAccessedAPITypes: [
@@ -101,7 +102,7 @@ export default {
     android: {
       package: variables.bundleIdentifier,
       googleServicesFile: './google-services.json',
-      permissions: ['CAMERA', 'READ_EXTERNAL_STORAGE', 'WRITE_EXTERNAL_STORAGE'],
+      permissions: ['CAMERA', 'CAMERA_ROLL', 'READ_EXTERNAL_STORAGE', 'WRITE_EXTERNAL_STORAGE'],
       icon: './assets/images/android_icon_old.png',
       adaptiveIcon: {
         foregroundImage: './assets/images/android_icon.png',
@@ -112,7 +113,7 @@ export default {
         resizeMode: 'cover',
         backgroundColor: '#FFFFFF',
       },
-      versionCode: 270,
+      versionCode: 280,
     },
     web: {
       favicon: './assets/images/android_icon_old.png',

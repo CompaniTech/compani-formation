@@ -89,6 +89,10 @@ export const IMAGE = 'image';
 export const AUDIO = 'audio';
 export const PDF = 'pdf';
 
+// IMAGE PICKER
+export const CAMERA = 'camera';
+export const GALLERY = 'gallery';
+
 // ORIGIN
 export const MOBILE = 'mobile';
 
