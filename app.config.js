@@ -134,6 +134,8 @@ export default {
       ['@sentry/react-native/expo', { organization: 'alenvi', project: 'mobile' }],
       'expo-font',
       'expo-asset',
+      'expo-video',
+      'expo-audio',
     ],
   },
 };
