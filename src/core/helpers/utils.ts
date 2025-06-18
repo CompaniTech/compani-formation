@@ -1,4 +1,4 @@
-import { Audio, AVPlaybackSource } from 'expo-av';
+import { AudioSource, createAudioPlayer } from 'expo-audio';
 import BigNumber from 'bignumber.js';
 import has from 'lodash/has';
 import CompaniDuration from '../helpers/dates/companiDurations';
@@ -33,13 +33,13 @@ export const formatWordToPlural = (items: object[], text: string): string =>
 
 export const capitalizeFirstLetter = (s: string): string => `${s.charAt(0).toUpperCase()}${s.substr(1)}`;
 
-const loadPlayAndUnloadAudio = async (track: AVPlaybackSource) => {
-  const { sound } = await Audio.Sound.createAsync(track);
+const loadPlayAndUnloadAudio = (track: AudioSource) => {
+  const player = createAudioPlayer(track);
 
-  await sound.playAsync();
-  sound.setOnPlaybackStatusUpdate((status) => {
-    if (!status.isLoaded || !status.didJustFinish) return;
-    sound.unloadAsync();
+  player.play();
+
+  player.addListener('playbackStatusUpdate', (status) => {
+    if (status.didJustFinish) player.release();
   });
 };
 
