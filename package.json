@@ -64,7 +64,7 @@
     "bignumber.js": "~9.3.0",
     "eslint-config-airbnb-base": "~15.0.0",
     "eslint-plugin-import": "~2.31.0",
-    "eslint-plugin-jest": "~28.11.0",
+    "eslint-plugin-jest": "~29.0.1",
     "expo": "^53.0.0",
     "expo-application": "~6.1.4",
     "expo-asset": "~11.1.5",
