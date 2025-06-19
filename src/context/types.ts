@@ -1,4 +1,4 @@
-import { Dispatch, ContextType } from 'react';
+import { Dispatch, ContextType, JSX } from 'react';
 
 export interface ActionType {
   type: string;
