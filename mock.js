@@ -11,3 +11,5 @@ jest.mock('react-native-gesture-handler', () => ({
   // eslint-disable-next-line react/prop-types
   GestureHandlerRootView: ({ children }) => <>{children}</>,
 }));
+jest.mock('expo-audio', () => {});
+jest.mock('expo-video', () => {});
