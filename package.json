@@ -87,7 +87,7 @@
     "expo-system-ui": "~5.0.8",
     "expo-updates": "~0.28.14",
     "expo-video": "~2.2.2",
-    "luxon": "~3.5.0",
+    "luxon": "~3.6.1",
     "metro": "^0.82.0",
     "metro-config": "~0.82.0",
     "metro-resolver": "~0.82.0",
