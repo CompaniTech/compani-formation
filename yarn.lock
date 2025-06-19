@@ -4265,10 +4265,10 @@ expo-device@~7.1.4:
   dependencies:
     ua-parser-js "^0.7.33"
 
-expo-doctor@~1.4.0:
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/expo-doctor/-/expo-doctor-1.4.0.tgz#d57155dc7947f3345da2e458a1f12489e8fc8394"
-  integrity sha512-ifeXO8GCHL+5emNRAsd4whX+vHFZgUkqC1J/PmUiK+L05ULICMLF1tEL6a66HEOvIt1A2yieGmYSk37I6Yfq8Q==
+expo-doctor@~1.13.3:
+  version "1.13.3"
+  resolved "https://registry.yarnpkg.com/expo-doctor/-/expo-doctor-1.13.3.tgz#ac7b558272cc1dc8638167bfe05199ab5bde4cbf"
+  integrity sha512-jkVAYdByZf15LCIdumHa/VP9KijFDfeq9gdXD+A2koG8J9ITCKsXXevu2rS1Ibo+YwIkFXu9ovLcB1A/y3kkow==
 
 expo-eas-client@~0.14.3:
   version "0.14.3"
