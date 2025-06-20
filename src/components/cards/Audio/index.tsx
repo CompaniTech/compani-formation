@@ -45,7 +45,7 @@ const NiAudio = ({ mediaSource }: NiAudioProps) => {
       ? <View style={styles.webContainer}>
         <Ionicons name="musical-note" size={WEB_AUDIO_ICON_SIZE} style={styles.webBackgroundIcon} />
         {renderPlayer(ICON.XXXL)}
-        <Text style={styles.timer}>{convertSeconds(Math.floor(status.currentTime))}/
+        <Text>{convertSeconds(Math.floor(status.currentTime))}/
           {convertSeconds(Math.floor(status.duration) - Math.floor(status.currentTime))}
         </Text>
       </View>

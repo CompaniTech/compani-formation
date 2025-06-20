@@ -14,7 +14,7 @@ const NiVideo = ({ mediaSource }: NiVideoProps) => {
 
   return (
     <View>
-      <VideoView style={styles.media} player={player} allowsFullscreen={IS_IOS || IS_WEB} />
+      <VideoView style={styles.media} player={player} allowsFullscreen={IS_IOS || IS_WEB} crossOrigin="anonymous" />
     </View>
   );
 };
