@@ -39,9 +39,9 @@ const ImagePreview = ({ source, deleteFile, onRequestClose, showButton = true }:
   }, [unmount]);
 
   useEffect(() => {
-    BackHandler.addEventListener('hardwareBackPress', hardwareBackPress);
+    const subscription = BackHandler.addEventListener('hardwareBackPress', hardwareBackPress);
 
-    return () => { BackHandler.removeEventListener('hardwareBackPress', hardwareBackPress); };
+    subscription.remove();
   }, [hardwareBackPress]);
 
   const onDeleteFile = async () => {

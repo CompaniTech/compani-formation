@@ -1,3 +1,4 @@
+import { JSX } from 'react';
 import { View } from 'react-native';
 import { DraxView } from 'react-native-drax';
 import { FillTheGapAnswers } from '../../../screens/courses/cardTemplates/FillTheGapCard';

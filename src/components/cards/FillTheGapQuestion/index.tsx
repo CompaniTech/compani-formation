@@ -1,3 +1,4 @@
+import { JSX } from 'react';
 import { Text, View } from 'react-native';
 import cardsStyle from '../../../styles/cards';
 import styles from './styles';

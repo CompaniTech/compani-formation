@@ -1,22 +1,22 @@
 import { StyleSheet } from 'react-native';
 import { GREY, PINK } from '../../../styles/colors';
-import { PADDING, MARGIN, ICON, SCREEN_HEIGHT, WEB_AUDIO_ICON_SIZE } from '../../../styles/metrics';
+import { PADDING, MARGIN, SCREEN_HEIGHT, WEB_AUDIO_ICON_SIZE } from '../../../styles/metrics';
 
 const styles = StyleSheet.create({
   container: {
     backgroundColor: GREY[200],
     paddingVertical: PADDING.MD,
-    paddingHorizontal: PADDING.LG,
+    paddingHorizontal: PADDING.MD,
     marginBottom: MARGIN.LG,
     flexDirection: 'row',
     alignItems: 'center',
   },
   icon: {
-    width: ICON.MD,
     alignSelf: 'center',
   },
   timer: {
-    paddingHorizontal: PADDING.SM,
+    width: '15%',
+    textAlign: 'center',
   },
   track: {
     flex: 1,
