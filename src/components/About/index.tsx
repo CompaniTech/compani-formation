@@ -39,7 +39,7 @@ const About = ({ program, buttonCaption = 'Continuer', children, onPress }: Abou
   useEffect(() => {
     const subscription = BackHandler.addEventListener('hardwareBackPress', hardwareBackPress);
 
-    subscription.remove();
+    return () => { subscription.remove(); };
   }, [hardwareBackPress]);
 
   return (

@@ -74,7 +74,7 @@ const TrainerCourseProfile = ({
   useEffect(() => {
     const subscription = BackHandler.addEventListener('hardwareBackPress', hardwareBackPress);
 
-    subscription.remove();
+    return () => { subscription.remove(); };
   }, [hardwareBackPress]);
 
   const goTo = (screen: typeof ABOUT_SCREEN | typeof ADMIN_SCREEN) => {

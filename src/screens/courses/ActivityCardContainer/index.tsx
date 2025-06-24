@@ -119,7 +119,7 @@ const ActivityCardContainer = ({ route, navigation }: ActivityCardContainerProps
   useEffect(() => {
     const subscription = BackHandler.addEventListener('hardwareBackPress', hardwareBackPress);
 
-    subscription.remove();
+    return () => () => { subscription.remove(); };
   }, [hardwareBackPress]);
 
   const Tab = createMaterialTopTabNavigator<RootCardParamList>();

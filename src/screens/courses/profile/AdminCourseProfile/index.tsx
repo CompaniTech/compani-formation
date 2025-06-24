@@ -245,7 +245,7 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
   useEffect(() => {
     const subscription = BackHandler.addEventListener('hardwareBackPress', hardwareBackPress);
 
-    subscription.remove();
+    return () => { subscription.remove(); };
   }, [hardwareBackPress]);
 
   const renderTrainee = (person: TraineeType) => <PersonCell person={person} />;

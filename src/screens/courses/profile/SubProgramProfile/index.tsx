@@ -79,7 +79,7 @@ const SubProgramProfile = ({ route, navigation }: SubProgramProfileProps) => {
   useEffect(() => {
     const subscription = BackHandler.addEventListener('hardwareBackPress', hardwareBackPress);
 
-    subscription.remove();
+    return () => { subscription.remove(); };
   }, [hardwareBackPress]);
 
   const renderHeader = () => <ImageBackground source={source} imageStyle={styles.image}>

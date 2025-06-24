@@ -31,7 +31,7 @@ const CreateAccountForm = ({ index, data, isLoading, setData, goBack, create, op
   useEffect(() => {
     const subscription = BackHandler.addEventListener('hardwareBackPress', hardwareBackPress);
 
-    subscription.remove();
+    return () => { subscription.remove(); };
   }, [hardwareBackPress]);
 
   const onChangeText = (text: string, fieldToChangeIndex: number) => {

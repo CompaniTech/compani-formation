@@ -35,7 +35,7 @@ const EmailForm = ({ route, navigation }: EmailFormProps) => {
   useEffect(() => {
     const subscription = BackHandler.addEventListener('hardwareBackPress', hardwareBackPress);
 
-    subscription.remove();
+    return () => { subscription.remove(); };
   }, [hardwareBackPress]);
 
   useEffect(() => {

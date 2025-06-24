@@ -35,7 +35,7 @@ const AttendanceSheetSelectionForm = ({
   useEffect(() => {
     const subscription = BackHandler.addEventListener('hardwareBackPress', hardwareBackPress);
 
-    subscription.remove();
+    return () => { subscription.remove(); };
   }, [hardwareBackPress]);
 
   return <SafeAreaView style={styles.safeArea} edges={['top']}>
