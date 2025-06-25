@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
     marginHorizontal: MARGIN.XL,
   },
   identityBackground: {
-    height: 264,
+    minHeight: 264,
     alignItems: 'center',
     width: '100%',
   },
