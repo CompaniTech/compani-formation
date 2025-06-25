@@ -29,9 +29,9 @@ const CreateAccountForm = ({ index, data, isLoading, setData, goBack, create, op
   }, [goBack, index, isLoading]);
 
   useEffect(() => {
-    BackHandler.addEventListener('hardwareBackPress', hardwareBackPress);
+    const subscription = BackHandler.addEventListener('hardwareBackPress', hardwareBackPress);
 
-    return () => { BackHandler.removeEventListener('hardwareBackPress', hardwareBackPress); };
+    return () => { subscription.remove(); };
   }, [hardwareBackPress]);
 
   const onChangeText = (text: string, fieldToChangeIndex: number) => {

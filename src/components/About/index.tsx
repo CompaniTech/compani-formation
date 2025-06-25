@@ -37,9 +37,9 @@ const About = ({ program, buttonCaption = 'Continuer', children, onPress }: Abou
   }, [navigation]);
 
   useEffect(() => {
-    BackHandler.addEventListener('hardwareBackPress', hardwareBackPress);
+    const subscription = BackHandler.addEventListener('hardwareBackPress', hardwareBackPress);
 
-    return () => { BackHandler.removeEventListener('hardwareBackPress', hardwareBackPress); };
+    return () => { subscription.remove(); };
   }, [hardwareBackPress]);
 
   return (

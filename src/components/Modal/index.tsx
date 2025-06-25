@@ -9,8 +9,8 @@ interface NiModalProps {
 }
 
 const NiModal = ({ visible, children, onRequestClose }: NiModalProps) => (
-  <Modal visible={visible} transparent={true} onRequestClose={onRequestClose}>
-    <KeyboardAvoidingView style={styles.modalContainer} behavior={IS_IOS ? 'padding' : 'height'}>
+  <Modal visible={visible} transparent={true} onRequestClose={onRequestClose} animationType='fade'>
+    <KeyboardAvoidingView style={styles.modalContainer} behavior={IS_IOS ? 'padding' : 'height' }>
       <View style={styles.modalContent}>
         {children}
       </View>

@@ -1,13 +1,10 @@
 import { StyleSheet } from 'react-native';
 import { TRANSPARENT_DARK_GREY } from '../../../styles/colors';
-import { MARGIN, CARD_MEDIA_MAX_HEIGHT, BORDER_RADIUS, ICON } from '../../../styles/metrics';
+import { CARD_MEDIA_MAX_HEIGHT, BORDER_RADIUS, ICON } from '../../../styles/metrics';
 
-const styles = (isMediaLoading: boolean) => StyleSheet.create({
+const styles = StyleSheet.create({
   media: {
     height: CARD_MEDIA_MAX_HEIGHT,
-    marginBottom: MARGIN.LG,
-    display: !isMediaLoading ? 'flex' : 'none',
-    position: 'relative',
   },
   play: {
     position: 'absolute',

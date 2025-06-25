@@ -82,9 +82,9 @@ const ProfileEdition = ({ navigation }: ProfileEditionProps) => {
   };
 
   useEffect(() => {
-    BackHandler.addEventListener('hardwareBackPress', hardwareBackPress);
+    const subscription = BackHandler.addEventListener('hardwareBackPress', hardwareBackPress);
 
-    return () => { BackHandler.removeEventListener('hardwareBackPress', hardwareBackPress); };
+    return () => { subscription.remove(); };
   }, []);
 
   useEffect(() => {
