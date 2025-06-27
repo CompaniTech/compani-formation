@@ -14,6 +14,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
   },
+  loading: {
+    flex: 1,
+    justifyContent: 'center',
+  },
   container: {
     flex: 1,
     marginHorizontal: MARGIN.LG,
@@ -33,7 +37,7 @@ const styles = StyleSheet.create({
     color: GREY[600],
   },
   totalProgress: {
-    ...FIRA_SANS_BOLD.MD,
+    ...FIRA_SANS_BOLD.LG,
   },
   stepContainer: {
     flexDirection: 'row',
