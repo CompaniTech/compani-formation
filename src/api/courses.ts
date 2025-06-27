@@ -8,6 +8,7 @@ import {
   PdfResponseType,
   PedagogyCourseListResponseType,
   OperationsCourseListResponseType,
+  FollowUpType,
 } from '../types/AxiosTypes';
 import { MOBILE, OPERATIONS, PDF } from '../core/data/constants';
 
@@ -50,5 +51,11 @@ export default {
     );
 
     return response.data;
+  },
+  getFollowUp: async (courseId: string, params: { trainee: string }): Promise<FollowUpType> => {
+    const baseURL = await Environment.getBaseUrl();
+    const response = await axiosLogged.get(`${baseURL}/courses/${courseId}/follow-up`, { params });
+
+    return response.data.data.followUp;
   },
 };

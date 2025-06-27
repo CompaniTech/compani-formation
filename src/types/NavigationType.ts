@@ -21,6 +21,7 @@ export type RootStackParamList = {
     endedQuestionnaire?: string | null,
     mode?: CourseModeType,
   };
+  TraineeFollowUp: { courseId: string, trainee: string };
   TrainerCourseProfile: { courseId: string };
   SubProgramProfile: { subProgramId: string };
   CourseProfileHeader: undefined,
