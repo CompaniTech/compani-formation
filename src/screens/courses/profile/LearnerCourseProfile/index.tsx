@@ -24,7 +24,7 @@ import { RootStackParamList, RootBottomTabParamList } from '../../../../types/Na
 import Courses from '../../../../api/courses';
 import Questionnaires from '../../../../api/questionnaires';
 import { WHITE, GREY } from '../../../../styles/colors';
-import { ICON } from '../../../../styles/metrics';
+import { HIT_SLOP, ICON } from '../../../../styles/metrics';
 import commonStyles from '../../../../styles/common';
 import { CourseType, BlendedCourseType, ELearningProgramType } from '../../../../types/CourseTypes';
 import styles from '../styles';
@@ -180,6 +180,11 @@ const LearnerCourseProfile = ({ route, navigation }: LearnerCourseProfileProps) 
     }
   };
 
+  const goToTraineeProgress = () => {
+    if (!course) return;
+    navigation.navigate('TraineeFollowUp', { courseId: course._id, trainee: course.trainees![0] as string });
+  };
+
   const renderHeader = () => course && has(course, 'subProgram.program') && <>
     <CourseProfileHeader source={source} goBack={goBack} title={title} />
     <View style={styles.buttonsContainer}>
@@ -197,6 +202,10 @@ const LearnerCourseProfile = ({ route, navigation }: LearnerCourseProfileProps) 
       </View>
       <Text style={styles.progressBarText}>{(getCourseProgress(course) * 100).toFixed(0)}%</Text>
     </View>}
+    {mode === TUTOR && <TouchableOpacity hitSlop={HIT_SLOP} onPress={goToTraineeProgress}
+      style={styles.traineeProgressContainer}>
+      <Text style={styles.traineeProgress}>Accéder à la progression de l&apos;apprenant</Text>
+    </TouchableOpacity>}
   </>;
 
   const renderFooter = () => <View style={styles.buttonContainer}>
