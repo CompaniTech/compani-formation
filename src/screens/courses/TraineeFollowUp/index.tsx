@@ -56,7 +56,7 @@ const TraineeFollowUp = ({ route, navigation }: TraineeFollowUpProps) => {
       <View style={commonStyles.progressBarContainer}>
         <ProgressBar progress={step.progress.eLearning * 100} />
       </View>
-      <Text style={styles.progressBarText}>{(step.progress.eLearning * 100).toFixed(0)}%</Text>
+      <Text style={styles.progressBarText}>{Math.round(step.progress.eLearning * 100)}%</Text>
     </View>
     <View style={commonStyles.sectionDelimiter} />
   </>;
@@ -73,13 +73,13 @@ const TraineeFollowUp = ({ route, navigation }: TraineeFollowUpProps) => {
         : <View style={styles.container}>
           <Text style={styles.title}>Suivi e-learning de {traineeIdentity}</Text>
           <View style={styles.progressContainer}>
-            <Text style={styles.totalProgress}>Progression Totale</Text>
+            <Text style={styles.totalProgress}>Progression totale</Text>
             <View style={commonStyles.progressBarContainer}>
               <ProgressBar progress={totalProgress * 100} />
             </View>
-            <Text style={styles.progressBarText}>{(totalProgress * 100).toFixed(0)}%</Text>
+            <Text style={styles.progressBarText}>{Math.round(totalProgress * 100)}%</Text>
           </View>
-          <FlatList data={steps} keyExtractor={item => `${item._id}`} renderItem={({ item }) => renderStep(item)} />
+          <FlatList data={steps} keyExtractor={item => item._id} renderItem={({ item }) => renderStep(item)} />
         </View>}
     </SafeAreaView>
   );
