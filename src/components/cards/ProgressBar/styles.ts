@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { GREY, YELLOW } from '../../../styles/colors';
+import { GREEN, GREY, YELLOW } from '../../../styles/colors';
 import { BORDER_RADIUS, BORDER_WIDTH, PROGRESS_BAR_HEIGHT } from '../../../styles/metrics';
 
 const styles = (progressPercentage: number) => StyleSheet.create({
@@ -14,7 +14,7 @@ const styles = (progressPercentage: number) => StyleSheet.create({
   },
   content: {
     display: 'flex',
-    backgroundColor: YELLOW[500],
+    backgroundColor: progressPercentage === 100 ? GREEN[500] : YELLOW[500],
     borderRadius: BORDER_RADIUS.XL,
     width: `${progressPercentage}%`,
     borderRightWidth: BORDER_WIDTH,

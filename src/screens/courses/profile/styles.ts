@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
 import { WHITE, GREY, PINK } from '../../../styles/colors';
 import { BORDER_RADIUS, BUTTON_HEIGHT, MARGIN, PADDING } from '../../../styles/metrics';
-import { NUNITO_SEMI, FIRA_SANS_MEDIUM } from '../../../styles/fonts';
+import { NUNITO_SEMI, FIRA_SANS_MEDIUM, FIRA_SANS_REGULAR } from '../../../styles/fonts';
 
 const styles = StyleSheet.create({
   separator: {
@@ -50,6 +50,13 @@ const styles = StyleSheet.create({
   adminButton: {
     width: '95%',
     marginBottom: 24,
+  },
+  traineeProgressContainer: {
+    alignItems: 'center',
+  },
+  traineeProgress: {
+    ...FIRA_SANS_REGULAR.SM,
+    color: PINK[500],
   },
 });
 

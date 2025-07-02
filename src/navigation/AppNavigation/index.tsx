@@ -17,6 +17,7 @@ import BlendedAbout from '../../screens/explore/BlendedAbout';
 import ElearningAbout from '../../screens/explore/ELearningAbout';
 import LearnerCourseProfile from '../../screens/courses/profile/LearnerCourseProfile';
 import TrainerCourseProfile from '../../screens/courses/profile/TrainerCourseProfile';
+import TraineeFollowUp from '../../screens/courses/TraineeFollowUp';
 import AdminCourseProfile from '../../screens/courses/profile/AdminCourseProfile';
 import SubProgramProfile from '../../screens/courses/profile/SubProgramProfile';
 import ActivityCardContainer from '../../screens/courses/ActivityCardContainer';
@@ -43,6 +44,7 @@ const AppNavigation = () => {
     BlendedAbout,
     ElearningAbout,
     AdminCourseProfile,
+    TraineeFollowUp,
     CreateAttendanceSheet,
     UpdateAttendanceSheet,
     HandleAttendanceSheetNotification,

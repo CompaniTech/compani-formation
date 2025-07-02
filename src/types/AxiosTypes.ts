@@ -3,7 +3,7 @@ import { AttendanceSheetType } from './AttendanceSheetTypes';
 import { CompanyType } from './CompanyType';
 import { BlendedCourseType, CourseType, ProgramType, SubProgramType } from './CourseTypes';
 import { QuestionnaireType, QuestionnaireWithCardsType } from './QuestionnaireType';
-import { NextSlotsStepType } from './StepTypes';
+import { NextSlotsStepType, StepType } from './StepTypes';
 import { UserType } from './UserType';
 
 // ACTIVITY
@@ -41,6 +41,9 @@ export type PedagogyCourseListResponseType = {
 export type OperationsCourseListResponseType = {courses: BlendedCourseType[], nextSteps: NextSlotsStepType[]}
 export type CourseResponseType = { message: string, data: { course: CourseType } }
 export type PdfResponseType = { data: string }
+export type FollowUpType = {
+  trainee: UserType & { progress: { blended: number, eLearning: number}, steps: StepType[] }
+}
 
 // PROGRAM
 export type ElearningProgramType = ProgramType & { categories: { name: string }[] };
