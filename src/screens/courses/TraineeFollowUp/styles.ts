@@ -26,6 +26,7 @@ const styles = StyleSheet.create({
   title: {
     ...FIRA_SANS_BLACK.XL,
     marginBottom: MARGIN.MD,
+    color: GREY[900],
   },
   progressContainer: {
     flexDirection: 'row',
@@ -38,6 +39,7 @@ const styles = StyleSheet.create({
   },
   totalProgress: {
     ...FIRA_SANS_BOLD.LG,
+    color: GREY[900],
   },
   stepContainer: {
     flexDirection: 'row',
@@ -46,6 +48,7 @@ const styles = StyleSheet.create({
   },
   stepTitle: {
     ...FIRA_SANS_BOLD.SM,
+    color: GREY[900],
     width: '60%',
   },
 });

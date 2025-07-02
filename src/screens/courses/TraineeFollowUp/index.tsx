@@ -13,8 +13,7 @@ import { ICON } from '../../../styles/metrics';
 import { GREY } from '../../../styles/colors';
 import { formatIdentity } from '../../../core/helpers/utils';
 
-interface TraineeFollowUpProps extends StackScreenProps<RootStackParamList, 'TraineeFollowUp'> {
-}
+interface TraineeFollowUpProps extends StackScreenProps<RootStackParamList, 'TraineeFollowUp'> {}
 const TraineeFollowUp = ({ route, navigation }: TraineeFollowUpProps) => {
   const { courseId, trainee } = route.params;
   const [steps, setSteps] = useState<StepType[]>([]);
