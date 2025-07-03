@@ -15,7 +15,6 @@ import {
 import { useGetLoggedUserId } from '../../../../store/main/hooks';
 import { DataOptionsType } from '../../../../store/attendanceSheets/slice';
 import CompaniDate from '../../../../core/helpers/dates/companiDates';
-import { ascendingSort } from '../../../../core/helpers/dates/utils';
 import { formatPayload } from '../../../../core/helpers/pictures';
 import RadioButtonList from '../../../../components/form/RadioButtonList';
 import MultipleCheckboxList from '../../../../components/form/MultipleCheckboxList';
@@ -59,7 +58,6 @@ const CreateAttendanceSheet = ({ route, navigation }: CreateAttendanceSheetProps
   const slotsOptions = useMemo(() =>
     Object.values(groupedSlotsToBeSigned)
       .map(slotGroup => [...slotGroup]
-        .sort(ascendingSort('startDate'))
         .map(slot => ({
           label:
         `${CompaniDate(slot.startDate).format(`${DD_MM_YYYY} ${HH_MM}`)} - ${CompaniDate(slot.endDate).format(HH_MM)}`,
