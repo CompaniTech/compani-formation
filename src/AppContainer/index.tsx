@@ -153,6 +153,11 @@ const AppContainer = ({ onLayout }: AppContainerProps) => {
   }, [handleUnauthorizedRequest]);
 
   useEffect(() => {
+    // If companiToken is null (at logout), reset axioslogged
+    initializeAxiosLogged(companiToken);
+  }, [companiToken, initializeAxiosLogged]);
+
+  useEffect(() => {
     async function setUser() {
       try {
         const userId = await asyncStorage.getUserId();
@@ -167,10 +172,8 @@ const AppContainer = ({ onLayout }: AppContainerProps) => {
       }
     }
 
-    // If companiToken is null (at logout), reset axioslogged
-    initializeAxiosLogged(companiToken);
     if (companiToken) setUser();
-  }, [companiToken, initializeAxiosLogged, setLoggedUser, signOut]);
+  }, [companiToken, setLoggedUser, signOut]);
 
   const shouldUpdate = async (nextState) => {
     try {
