@@ -41,6 +41,7 @@ const SubProgramProfile = ({ route, navigation }: SubProgramProfileProps) => {
     useState<ImageSourcePropType>(require('../../../../../assets/images/authentication_background_image.webp'));
   const [programName, setProgramName] = useState<string>('');
   const [refreshing, setRefreshing] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
     setProgramName(get(subProgram, 'program.name') || '');
@@ -55,6 +56,7 @@ const SubProgramProfile = ({ route, navigation }: SubProgramProfileProps) => {
       const fetchedSubProgram = await SubPrograms.getSubProgram(route.params.subProgramId);
       if (!isEqual(fetchedSubProgram, subProgram)) setSubProgram(fetchedSubProgram);
       setRefreshing(false);
+      setIsLoaded(true);
     } catch (e: any) {
       console.error(e);
       setSubProgram(null);
@@ -67,9 +69,9 @@ const SubProgramProfile = ({ route, navigation }: SubProgramProfileProps) => {
   useEffect(() => {
     if (isFocused) {
       setStatusBarVisible(true);
-      if (!subProgram) getSubProgram();
+      if (!isLoaded) getSubProgram();
     }
-  }, [getSubProgram, isFocused, setStatusBarVisible, subProgram]);
+  }, [getSubProgram, isFocused, setStatusBarVisible, isLoaded]);
 
   const goBack = useCallback(() => {
     navigation.goBack();

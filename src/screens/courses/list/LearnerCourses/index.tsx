@@ -62,6 +62,7 @@ const LearnerCourses = ({ navigation }: LearnerCoursesProps) => {
   const [elearningDraftSubPrograms, setElearningDraftSubPrograms] = useState<SubProgramType[]>(new Array(0));
   const [nextSteps, setNextSteps] = useState<NextSlotsStepType[]>([]);
   const [refreshing, setRefreshing] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   const getCourses = useCallback(async () => {
     try {
@@ -69,6 +70,7 @@ const LearnerCourses = ({ navigation }: LearnerCoursesProps) => {
       dispatch({ type: SET_COURSES, payload: fetchedCourses as PedagogyCourseListType });
       setNextSteps((fetchedCourses as PedagogyCourseListType).nextSteps);
       setRefreshing(false);
+      setIsLoaded(true);
     } catch (e: any) {
       console.error(e);
       dispatch({ type: RESET_COURSES });
@@ -79,6 +81,8 @@ const LearnerCourses = ({ navigation }: LearnerCoursesProps) => {
     try {
       const fetchedSubPrograms = await SubPrograms.getELearningDraftSubPrograms();
       setElearningDraftSubPrograms(fetchedSubPrograms);
+      setRefreshing(false);
+      setIsLoaded(true);
     } catch (e: any) {
       console.error(e);
       setElearningDraftSubPrograms([]);
@@ -92,21 +96,9 @@ const LearnerCourses = ({ navigation }: LearnerCoursesProps) => {
       await Promise.all([getCourses(), getElearningDraftSubPrograms()]);
     }
     if (loggedUserId && isFocused) {
-      const { onGoing, achieved, tutor } = courses;
-      const isEmpty = !(
-        onGoing.length || achieved.length || tutor.length || nextSteps.length || elearningDraftSubPrograms.length
-      );
-      if (isEmpty) fetchData();
+      if (!isLoaded) fetchData();
     }
-  }, [
-    loggedUserId,
-    isFocused,
-    getCourses,
-    getElearningDraftSubPrograms,
-    courses,
-    nextSteps,
-    elearningDraftSubPrograms,
-  ]);
+  }, [loggedUserId, isFocused, getCourses, getElearningDraftSubPrograms, isLoaded]);
 
   const onPressProgramCell = (id: string, isCourse: boolean) => {
     if (isCourse) navigation.navigate('LearnerCourseProfile', { courseId: id });

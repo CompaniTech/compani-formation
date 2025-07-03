@@ -60,6 +60,7 @@ const LearnerCourseProfile = ({ route, navigation }: LearnerCourseProfileProps) 
     useState<ImageSourcePropType>(require('../../../../../assets/images/authentication_background_image.webp'));
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   const attendanceSheetsToSign = useMemo(() =>
     (course?.type === SINGLE && mode === LEARNER
@@ -92,6 +93,7 @@ const LearnerCourseProfile = ({ route, navigation }: LearnerCourseProfileProps) 
       if (!isEqual(fetchedCourse, course)) setCourse(fetchedCourse);
       if (programImage) setSource({ uri: programImage });
       setRefreshing(false);
+      setIsLoaded(true);
     } catch (e: any) {
       console.error(e);
       setCourse(null);
@@ -101,9 +103,9 @@ const LearnerCourseProfile = ({ route, navigation }: LearnerCourseProfileProps) 
   useEffect(() => {
     if (isFocused) {
       setStatusBarVisible(true);
-      if (!course || endedActivity) getCourse();
+      if (!isLoaded || endedActivity) getCourse();
     }
-  }, [course, isFocused, getCourse, setStatusBarVisible, endedActivity]);
+  }, [isFocused, getCourse, setStatusBarVisible, endedActivity, isLoaded]);
 
   useEffect(() => () => {
     const currentRoute = navigation.getState().routes[navigation.getState().index];

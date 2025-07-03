@@ -89,6 +89,7 @@ const TrainerCourses = ({ navigation }: TrainerCoursesProps) => {
   const [coursesDisplays, setCoursesDisplays] = useState<CourseDisplayType[]>([]);
   const [nextSteps, setNextSteps] = useState<NextSlotsStepType[]>([]);
   const [refreshing, setRefreshing] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   const isFocused = useIsFocused();
 
@@ -106,6 +107,7 @@ const TrainerCourses = ({ navigation }: TrainerCoursesProps) => {
         setCoursesDisplays(formatedCourses);
         setNextSteps(fetchedCourses.nextSteps);
         setRefreshing(false);
+        setIsLoaded(true);
       }
     } catch (e: any) {
       console.error(e);
@@ -123,9 +125,9 @@ const TrainerCourses = ({ navigation }: TrainerCoursesProps) => {
 
   useEffect(() => {
     if (isFocused) {
-      if (!(coursesDisplays.length || nextSteps.length)) getCourses();
+      if (!isLoaded) getCourses();
     }
-  }, [isFocused, getCourses, loggedUserId, coursesDisplays.length, nextSteps.length]);
+  }, [isFocused, getCourses, loggedUserId, isLoaded]);
 
   const renderHeader = () => <>
     <Text style={commonStyles.title} testID='header'>Espace intervenant</Text>

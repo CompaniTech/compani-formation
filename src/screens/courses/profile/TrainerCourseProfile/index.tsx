@@ -41,6 +41,7 @@ const TrainerCourseProfile = ({
     useState<ImageSourcePropType>(require('../../../../../assets/images/authentication_background_image.webp'));
   const [title, setTitle] = useState<string>('');
   const [refreshing, setRefreshing] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   const isFocused = useIsFocused();
 
@@ -53,6 +54,7 @@ const TrainerCourseProfile = ({
       setTitle(getTitle(fetchedCourse));
       if (programImage) setSource({ uri: programImage });
       setRefreshing(false);
+      setIsLoaded(true);
     } catch (e: any) {
       console.error(e);
       setCourse(null);
@@ -62,9 +64,9 @@ const TrainerCourseProfile = ({
   useEffect(() => {
     if (isFocused) {
       setStatusBarVisible(true);
-      if (!course) getCourse();
+      if (!isLoaded) getCourse();
     }
-  }, [course, isFocused, getCourse, setStatusBarVisible]);
+  }, [isFocused, getCourse, setStatusBarVisible, isLoaded]);
 
   const goBack = useCallback(() => {
     navigation.goBack();
