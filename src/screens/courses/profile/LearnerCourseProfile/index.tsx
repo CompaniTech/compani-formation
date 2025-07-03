@@ -9,11 +9,13 @@ import {
   ImageSourcePropType,
   ActivityIndicator,
   FlatList,
+  RefreshControl,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useIsFocused, CompositeScreenProps } from '@react-navigation/native';
 import get from 'lodash/get';
 import has from 'lodash/has';
+import isEqual from 'lodash/isEqual';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 import * as IntentLauncher from 'expo-intent-launcher';
@@ -46,7 +48,7 @@ StackScreenProps<RootBottomTabParamList>
 >{}
 
 const LearnerCourseProfile = ({ route, navigation }: LearnerCourseProfileProps) => {
-  const { mode = LEARNER } = route.params;
+  const { mode = LEARNER, endedActivity } = route.params;
   const setStatusBarVisible = useSetStatusBarVisible();
   const userId: string | null = useGetLoggedUserId();
   const setCourseToStore = useSetCourse();
@@ -57,6 +59,7 @@ const LearnerCourseProfile = ({ route, navigation }: LearnerCourseProfileProps) 
   const [source, setSource] =
     useState<ImageSourcePropType>(require('../../../../../assets/images/authentication_background_image.webp'));
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   const attendanceSheetsToSign = useMemo(() =>
     (course?.type === SINGLE && mode === LEARNER
@@ -68,37 +71,39 @@ const LearnerCourseProfile = ({ route, navigation }: LearnerCourseProfileProps) 
   const title = useMemo(() => getTitle(course), [course]);
 
   const isFocused = useIsFocused();
-  useEffect(() => {
-    const getCourse = async () => {
-      try {
-        const fetchedCourse = await Courses.getCourse(route.params.courseId, PEDAGOGY);
-        if (mode === LEARNER) {
-          if (fetchedCourse.type !== SINGLE) {
-            const fetchedQuestionnaires = await Questionnaires.getUserQuestionnaires({ course: route.params.courseId });
-            setQuestionnaires(fetchedQuestionnaires);
-          }
-          if (fetchedCourse.format === BLENDED) {
-            const formattedCourse = {
-              _id: fetchedCourse._id,
-              subProgram: { steps: fetchedCourse.subProgram.steps.map(s => ({ _id: s._id, name: s.name })) },
-            };
-            setCourseToStore(formattedCourse as BlendedCourseType);
-          }
-        }
-        const programImage = get(fetchedCourse, 'subProgram.program.image.link') || '';
-        setCourse(fetchedCourse);
-        if (programImage) setSource({ uri: programImage });
-      } catch (e: any) {
-        console.error(e);
-        setCourse(null);
-      }
-    };
 
+  const getCourse = useCallback(async () => {
+    try {
+      const fetchedCourse = await Courses.getCourse(route.params.courseId, PEDAGOGY);
+      if (mode === LEARNER) {
+        if (fetchedCourse.type !== SINGLE) {
+          const fetchedQuestionnaires = await Questionnaires.getUserQuestionnaires({ course: route.params.courseId });
+          setQuestionnaires(fetchedQuestionnaires);
+        }
+        if (fetchedCourse.format === BLENDED) {
+          const formattedCourse = {
+            _id: fetchedCourse._id,
+            subProgram: { steps: fetchedCourse.subProgram.steps.map(s => ({ _id: s._id, name: s.name })) },
+          };
+          setCourseToStore(formattedCourse as BlendedCourseType);
+        }
+      }
+      const programImage = get(fetchedCourse, 'subProgram.program.image.link') || '';
+      if (!isEqual(fetchedCourse, course)) setCourse(fetchedCourse);
+      if (programImage) setSource({ uri: programImage });
+      setRefreshing(false);
+    } catch (e: any) {
+      console.error(e);
+      setCourse(null);
+    }
+  }, [course, mode, route.params.courseId, setCourseToStore]);
+
+  useEffect(() => {
     if (isFocused) {
       setStatusBarVisible(true);
-      getCourse();
+      if (!course || endedActivity) getCourse();
     }
-  }, [isFocused, setStatusBarVisible, route.params.courseId, setCourseToStore, mode]);
+  }, [course, isFocused, getCourse, setStatusBarVisible, endedActivity]);
 
   useEffect(() => () => {
     const currentRoute = navigation.getState().routes[navigation.getState().index];
@@ -108,7 +113,7 @@ const LearnerCourseProfile = ({ route, navigation }: LearnerCourseProfileProps) 
   }, [navigation, resetAttendanceSheetReducer]);
 
   const goBack = useCallback(() => {
-    navigation.navigate('LearnerCourses');
+    navigation.goBack();
   }, [navigation]);
 
   const hardwareBackPress = useCallback(() => {
@@ -120,7 +125,7 @@ const LearnerCourseProfile = ({ route, navigation }: LearnerCourseProfileProps) 
     const subscription = BackHandler.addEventListener('hardwareBackPress', hardwareBackPress);
 
     return () => { subscription.remove(); };
-  }, [hardwareBackPress]);
+  }, [hardwareBackPress, isFocused]);
 
   const getPdfName = (c: BlendedCourseType) => {
     const misc = c.misc ? `_${c.misc}` : '';
@@ -212,11 +217,18 @@ const LearnerCourseProfile = ({ route, navigation }: LearnerCourseProfileProps) 
     </TouchableOpacity>}
   </View>;
 
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    getCourse();
+  }, [getCourse]);
+
+  const renderRefreshControl = <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />;
+
   return course && has(course, 'subProgram.program') ? (
     <SafeAreaView style={commonStyles.container} edges={['top']}>
       <FlatList data={course.subProgram.steps} keyExtractor={item => item._id} ListHeaderComponent={renderHeader}
-        renderItem={({ item, index }) => renderStepList(mode, route, item, index)}
-        showsVerticalScrollIndicator={IS_WEB} ListFooterComponent={renderFooter} />
+        renderItem={({ item, index }) => renderStepList(mode, route, item, index)} ListFooterComponent={renderFooter}
+        showsVerticalScrollIndicator={IS_WEB} refreshControl={renderRefreshControl} />
     </SafeAreaView>
   )
     : <View style={commonStyles.loadingContainer}>

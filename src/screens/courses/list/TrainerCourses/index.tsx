@@ -1,6 +1,6 @@
 import 'array-flat-polyfill';
 import { useState, useEffect, useCallback } from 'react';
-import { Text, View, ImageBackground, FlatList } from 'react-native';
+import { Text, View, ImageBackground, FlatList, RefreshControl } from 'react-native';
 import { useIsFocused, CompositeScreenProps } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StackScreenProps } from '@react-navigation/stack';
@@ -88,6 +88,7 @@ const TrainerCourses = ({ navigation }: TrainerCoursesProps) => {
 
   const [coursesDisplays, setCoursesDisplays] = useState<CourseDisplayType[]>([]);
   const [nextSteps, setNextSteps] = useState<NextSlotsStepType[]>([]);
+  const [refreshing, setRefreshing] = useState(false);
 
   const isFocused = useIsFocused();
 
@@ -104,6 +105,7 @@ const TrainerCourses = ({ navigation }: TrainerCoursesProps) => {
         );
         setCoursesDisplays(formatedCourses);
         setNextSteps(fetchedCourses.nextSteps);
+        setRefreshing(false);
       }
     } catch (e: any) {
       console.error(e);
@@ -121,9 +123,9 @@ const TrainerCourses = ({ navigation }: TrainerCoursesProps) => {
 
   useEffect(() => {
     if (isFocused) {
-      getCourses();
+      if (!(coursesDisplays.length || nextSteps.length)) getCourses();
     }
-  }, [isFocused, getCourses, loggedUserId]);
+  }, [isFocused, getCourses, loggedUserId, coursesDisplays.length, nextSteps.length]);
 
   const renderHeader = () => <>
     <Text style={commonStyles.title} testID='header'>Espace intervenant</Text>
@@ -145,12 +147,20 @@ const TrainerCourses = ({ navigation }: TrainerCoursesProps) => {
         countStyle={content.countStyle} renderItem={renderItem} />
     </ImageBackground>;
 
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    getCourses();
+  }, [getCourses]);
+
+  const renderRefreshControl = <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />;
+
   return (
     <SafeAreaView style={commonStyles.container} edges={['top']}>
       <View style={styles.container}>
         <FlatList data={coursesDisplays} keyExtractor={item => item.title} ListHeaderComponent={renderHeader}
           renderItem={({ item }) => renderCourseDisplay(item)} showsVerticalScrollIndicator={false}
-          ListEmptyComponent={<TrainerEmptyState />} ListFooterComponent={renderFooter}/>
+          ListEmptyComponent={<TrainerEmptyState />} ListFooterComponent={renderFooter}
+          refreshControl={renderRefreshControl} />
       </View>
     </SafeAreaView>
   );
