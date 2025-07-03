@@ -23,6 +23,7 @@ const styles = StyleSheet.create({
   },
   title: {
     ...FIRA_SANS_BOLD.MD,
+    color: GREY[900],
     padding: PADDING.MD,
     backgroundColor: WHITE,
     borderBottomLeftRadius: BORDER_RADIUS.SM,
@@ -30,6 +31,7 @@ const styles = StyleSheet.create({
   },
   description: {
     ...FIRA_SANS_REGULAR.MD,
+    color: GREY[900],
     padding: PADDING.MD,
   },
   eLearning: {

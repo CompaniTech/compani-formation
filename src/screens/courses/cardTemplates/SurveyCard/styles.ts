@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
   },
   question: {
     ...FIRA_SANS_REGULAR.LG,
-    color: GREY[800],
+    color: GREY[900],
     justifyContent: 'flex-start',
   },
   labelContainer: {

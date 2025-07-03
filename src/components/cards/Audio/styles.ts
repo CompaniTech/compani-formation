@@ -1,6 +1,7 @@
 import { StyleSheet } from 'react-native';
 import { GREY, PINK } from '../../../styles/colors';
 import { PADDING, MARGIN, SCREEN_HEIGHT, WEB_AUDIO_ICON_SIZE } from '../../../styles/metrics';
+import { FIRA_SANS_REGULAR } from '../../../styles/fonts';
 
 const styles = StyleSheet.create({
   container: {
@@ -15,6 +16,8 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   timer: {
+    ...FIRA_SANS_REGULAR.SM,
+    color: GREY[900],
     width: '15%',
     textAlign: 'center',
   },

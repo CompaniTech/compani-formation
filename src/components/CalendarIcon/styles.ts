@@ -34,6 +34,7 @@ const styles = (inputColor: string) => StyleSheet.create({
   },
   dayOfMonth: {
     ...NUNITO_REGULAR.XL,
+    color: GREY[900],
     height: 32,
     paddingHorizontal: PADDING.SM,
   },
@@ -44,6 +45,7 @@ const styles = (inputColor: string) => StyleSheet.create({
   },
   toPlan: {
     ...NUNITO_REGULAR.XXL,
+    color: GREY[900],
   },
   datesLengthContainer: {
     position: 'absolute',

@@ -41,6 +41,7 @@ const styles = StyleSheet.create({
   },
   savedSheetText: {
     ...FIRA_SANS_REGULAR.MD,
+    color: GREY[900],
     textAlign: 'center',
   },
   attendancesContainer: {
@@ -64,6 +65,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: PADDING.LG,
     paddingVertical: PADDING.MD,
     ...FIRA_SANS_ITALIC.SM,
+    color: GREY[900],
   },
   attendanceSheetButton: {
     marginHorizontal: MARGIN.MD,

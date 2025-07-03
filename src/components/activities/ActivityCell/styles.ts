@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { FIRA_SANS_REGULAR, NUNITO_SEMI } from '../../../styles/fonts';
-import { WHITE } from '../../../styles/colors';
+import { GREY, WHITE } from '../../../styles/colors';
 import { BORDER_RADIUS, PADDING } from '../../../styles/metrics';
 import { ColorStateType } from './types';
 
@@ -12,6 +12,7 @@ const styles = (checkBackgroundColor: ColorStateType['check']) => StyleSheet.cre
   },
   activityName: {
     ...FIRA_SANS_REGULAR.MD,
+    color: GREY[900],
     textAlign: 'center',
   },
   iconContainer: {
