@@ -9,11 +9,13 @@ const styles = StyleSheet.create({
   },
   title: {
     ...FIRA_SANS_BOLD.LG,
+    color: GREY[900],
     marginBottom: MARGIN.MD,
 
   },
   contentText: {
     ...FIRA_SANS_REGULAR.MD,
+    color: GREY[900],
     marginBottom: MARGIN.XL,
   },
   buttons: {

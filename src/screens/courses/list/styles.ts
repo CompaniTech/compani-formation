@@ -84,6 +84,7 @@ const styles = StyleSheet.create({
   },
   emptyStateText: {
     ...FIRA_SANS_BOLD.MD,
+    color: GREY[900],
     textAlign: 'center',
   },
 });

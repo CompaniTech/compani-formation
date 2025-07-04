@@ -19,6 +19,7 @@ export default StyleSheet.create({
   },
   company: {
     ...FIRA_SANS_REGULAR.MD,
+    color: GREY[900],
     marginHorizontal: MARGIN.MD,
   },
   holding: {

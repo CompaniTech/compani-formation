@@ -9,7 +9,6 @@ import { FIRA_SANS_MEDIUM } from '../../../styles/fonts';
 
 const styles = StyleSheet.create({
   questionContainer: {
-    ...FIRA_SANS_MEDIUM.MD,
     flexWrap: 'wrap',
     flexDirection: 'row',
     alignItems: 'center',
@@ -26,7 +25,7 @@ const styles = StyleSheet.create({
   question: {
     ...FIRA_SANS_MEDIUM.MD,
     lineHeight: INPUT_HEIGHT,
-    color: GREY[800],
+    color: GREY[900],
   },
 });
 

@@ -37,6 +37,7 @@ const styles = (isSelected: boolean, borderColor: string) => StyleSheet.create({
   },
   innerInput: {
     ...FIRA_SANS_MEDIUM.MD,
+    color: GREY[900],
     flex: 1,
     paddingHorizontal: PADDING.MD,
     height: INPUT_HEIGHT,

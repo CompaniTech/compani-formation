@@ -34,6 +34,7 @@ export default StyleSheet.create({
   },
   number: {
     ...FIRA_SANS_REGULAR.XXL,
+    color: GREY[900],
     marginHorizontal: MARGIN.XXS,
     maxWidth: '25%',
     textAlign: 'center',

@@ -12,6 +12,7 @@ const styles = StyleSheet.create({
   },
   title: {
     ...NUNITO_LIGHT.LG,
+    color: GREY[900],
     textAlign: 'center',
     paddingBottom: PADDING.LG,
   },

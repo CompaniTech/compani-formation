@@ -16,7 +16,7 @@ const styles = (isSelected: boolean) => StyleSheet.create({
   },
   question: {
     ...FIRA_SANS_REGULAR.LG,
-    color: GREY[800],
+    color: GREY[900],
     marginHorizontal: MARGIN.LG,
     marginBottom: MARGIN.XL,
     marginTop: isSelected ? MARGIN.MD : 0,

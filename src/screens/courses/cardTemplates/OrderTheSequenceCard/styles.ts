@@ -23,6 +23,7 @@ const styles = (backgroundColor: string) => StyleSheet.create({
   },
   question: {
     ...FIRA_SANS_REGULAR.MD,
+    color: GREY[900],
   },
   footerContainer: {
     backgroundColor,

@@ -19,9 +19,10 @@ export default StyleSheet.create({
     opacity: 0.6,
   },
   title: {
+    ...FIRA_SANS_BLACK.XL,
+    color: GREY[900],
     marginLeft: MAIN_MARGIN_LEFT,
     marginVertical: MARGIN.XL,
-    ...FIRA_SANS_BLACK.XL,
   },
   sectionTitle: {
     flexDirection: 'row',
