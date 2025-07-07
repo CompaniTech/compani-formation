@@ -1,6 +1,6 @@
 import 'array-flat-polyfill';
 import { useState, useEffect, useCallback, useReducer } from 'react';
-import { Text, View, ScrollView, ImageBackground } from 'react-native';
+import { Text, View, ScrollView, ImageBackground, RefreshControl } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useIsFocused, CompositeScreenProps } from '@react-navigation/native';
 import { StackScreenProps } from '@react-navigation/stack';
@@ -61,12 +61,16 @@ const LearnerCourses = ({ navigation }: LearnerCoursesProps) => {
   const [courses, dispatch] = useReducer(courseReducer, { onGoing: [], achieved: [], tutor: [] });
   const [elearningDraftSubPrograms, setElearningDraftSubPrograms] = useState<SubProgramType[]>(new Array(0));
   const [nextSteps, setNextSteps] = useState<NextSlotsStepType[]>([]);
+  const [refreshing, setRefreshing] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   const getCourses = useCallback(async () => {
     try {
       const fetchedCourses = await Courses.getCourseList({ action: PEDAGOGY });
       dispatch({ type: SET_COURSES, payload: fetchedCourses as PedagogyCourseListType });
       setNextSteps((fetchedCourses as PedagogyCourseListType).nextSteps);
+      setRefreshing(false);
+      setIsLoaded(true);
     } catch (e: any) {
       console.error(e);
       dispatch({ type: RESET_COURSES });
@@ -77,6 +81,8 @@ const LearnerCourses = ({ navigation }: LearnerCoursesProps) => {
     try {
       const fetchedSubPrograms = await SubPrograms.getELearningDraftSubPrograms();
       setElearningDraftSubPrograms(fetchedSubPrograms);
+      setRefreshing(false);
+      setIsLoaded(true);
     } catch (e: any) {
       console.error(e);
       setElearningDraftSubPrograms([]);
@@ -90,9 +96,9 @@ const LearnerCourses = ({ navigation }: LearnerCoursesProps) => {
       await Promise.all([getCourses(), getElearningDraftSubPrograms()]);
     }
     if (loggedUserId && isFocused) {
-      fetchData();
+      if (!isLoaded) fetchData();
     }
-  }, [loggedUserId, isFocused, getCourses, getElearningDraftSubPrograms]);
+  }, [loggedUserId, isFocused, getCourses, getElearningDraftSubPrograms, isLoaded]);
 
   const onPressProgramCell = (id: string, isCourse: boolean) => {
     if (isCourse) navigation.navigate('LearnerCourseProfile', { courseId: id });
@@ -114,9 +120,17 @@ const LearnerCourses = ({ navigation }: LearnerCoursesProps) => {
     theoreticalDuration={getTheoreticalDuration(getElearningSteps(subProgram.steps))}
     onPress={() => onPressProgramCell(subProgram._id, false)} />;
 
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    Promise.all([getCourses(), getElearningDraftSubPrograms()]);
+  }, [getCourses, getElearningDraftSubPrograms]);
+
+  const renderRefreshControl = <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />;
+
   return (
     <SafeAreaView style={commonStyles.container} edges={['top']}>
-      <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={IS_WEB}>
+      <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={IS_WEB}
+        refreshControl={renderRefreshControl}>
         <Text style={commonStyles.title} testID='header'>Mes formations</Text>
         {!!nextSteps.length &&
           <View style={styles.nextSteps}>

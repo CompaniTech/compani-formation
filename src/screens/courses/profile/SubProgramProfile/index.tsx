@@ -7,11 +7,13 @@ import {
   ImageSourcePropType,
   FlatList,
   ActivityIndicator,
+  RefreshControl,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useIsFocused, CompositeScreenProps } from '@react-navigation/native';
 import { StackScreenProps } from '@react-navigation/stack';
 import get from 'lodash/get';
+import isEqual from 'lodash/isEqual';
 import { LinearGradient } from 'expo-linear-gradient';
 import SubPrograms from '../../../../api/subPrograms';
 import { GREY, WHITE } from '../../../../styles/colors';
@@ -38,6 +40,8 @@ const SubProgramProfile = ({ route, navigation }: SubProgramProfileProps) => {
   const [source, setSource] =
     useState<ImageSourcePropType>(require('../../../../../assets/images/authentication_background_image.webp'));
   const [programName, setProgramName] = useState<string>('');
+  const [refreshing, setRefreshing] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
     setProgramName(get(subProgram, 'program.name') || '');
@@ -50,12 +54,14 @@ const SubProgramProfile = ({ route, navigation }: SubProgramProfileProps) => {
   const getSubProgram = useCallback(async () => {
     try {
       const fetchedSubProgram = await SubPrograms.getSubProgram(route.params.subProgramId);
-      setSubProgram(fetchedSubProgram);
+      if (!isEqual(fetchedSubProgram, subProgram)) setSubProgram(fetchedSubProgram);
+      setRefreshing(false);
+      setIsLoaded(true);
     } catch (e: any) {
       console.error(e);
       setSubProgram(null);
     }
-  }, [route.params.subProgramId]);
+  }, [route.params.subProgramId, subProgram]);
 
   useEffect(() => { getSubProgram(); }, [getSubProgram]);
 
@@ -63,12 +69,12 @@ const SubProgramProfile = ({ route, navigation }: SubProgramProfileProps) => {
   useEffect(() => {
     if (isFocused) {
       setStatusBarVisible(true);
-      getSubProgram();
+      if (!isLoaded) getSubProgram();
     }
-  }, [getSubProgram, isFocused, setStatusBarVisible]);
+  }, [getSubProgram, isFocused, setStatusBarVisible, isLoaded]);
 
   const goBack = useCallback(() => {
-    navigation.navigate('LearnerCourses');
+    navigation.goBack();
   }, [navigation]);
 
   const hardwareBackPress = useCallback(() => {
@@ -80,7 +86,7 @@ const SubProgramProfile = ({ route, navigation }: SubProgramProfileProps) => {
     const subscription = BackHandler.addEventListener('hardwareBackPress', hardwareBackPress);
 
     return () => { subscription.remove(); };
-  }, [hardwareBackPress]);
+  }, [hardwareBackPress, isFocused]);
 
   const renderHeader = () => <ImageBackground source={source} imageStyle={styles.image}>
     <LinearGradient colors={['transparent', 'rgba(0, 0, 0, 0.4)']} style={styles.gradient} />
@@ -91,11 +97,18 @@ const SubProgramProfile = ({ route, navigation }: SubProgramProfileProps) => {
     </View>
   </ImageBackground>;
 
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    getSubProgram();
+  }, [getSubProgram]);
+
+  const renderRefreshControl = <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />;
+
   return subProgram && subProgram.steps ? (
     <SafeAreaView style={commonStyles.container} edges={['top']}>
       <FlatList data={subProgram.steps} keyExtractor={item => item._id} ListHeaderComponent={renderHeader}
         renderItem={({ item, index }) => renderStepList(TESTER, route, item, index)}
-        showsVerticalScrollIndicator={false} />
+        showsVerticalScrollIndicator={false} refreshControl={renderRefreshControl} />
     </SafeAreaView>
   )
     : <View style={commonStyles.loadingContainer}>

@@ -1,5 +1,5 @@
 import { createRef, useEffect, useReducer, useState } from 'react';
-import { Text, View, TextInput, Keyboard, TextInputKeyPressEventData } from 'react-native';
+import { Text, View, TextInput, Keyboard, TextInputKeyPressEventData, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import get from 'lodash/get';
 import BottomModal from '../BottomModal';
@@ -181,10 +181,10 @@ const ForgotPasswordModal = ({ visible, email, setForgotPasswordModal }: ForgotP
 
   return (
     <BottomModal onRequestClose={onRequestClose} visible={visible}>
-      <View style={styles.modalContent}>
+      <ScrollView contentContainerStyle={styles.modalContent}>
         <Text style={styles.title}>Confirmez votre identité</Text>
         {!codeRecipient ? beforeCodeSent() : afterCodeSent()}
-      </View>
+      </ScrollView>
     </BottomModal>
   );
 };
