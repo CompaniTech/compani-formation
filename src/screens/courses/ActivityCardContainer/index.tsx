@@ -6,7 +6,6 @@ import { AppState, AppStateStatus, BackHandler, Image } from 'react-native';
 import { StackScreenProps } from '@react-navigation/stack';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import Activities from '../../../api/activities';
-import { LEARNER, TRAINER, TUTOR } from '../../../core/data/constants';
 import { tabsNames } from '../../../core/data/tabs';
 import {
   useGetCardIndex,
@@ -38,7 +37,7 @@ const ActivityCardContainer = ({ route, navigation }: ActivityCardContainerProps
   const interval = useRef<ReturnType<typeof setInterval> | null>(null);
   const timer = useRef<number>(0);
   const [finalTimer, setFinalTimer] = useState<number>(0);
-  const { profileId, mode } = route.params;
+  const { mode } = route.params;
 
   useEffect(() => { setStatusBarVisible(false); }, [setStatusBarVisible]);
 
@@ -90,23 +89,16 @@ const ActivityCardContainer = ({ route, navigation }: ActivityCardContainerProps
     setFinalTimer(timer.current);
   }, []);
 
-  const navigateNext = useCallback(() => {
-    if ([LEARNER, TUTOR].includes(mode)) {
-      navigation.navigate('LearnerCourseProfile', { courseId: profileId, endedActivity: activity?._id, mode });
-    } else if (mode === TRAINER) navigation.navigate('TrainerCourseProfile', { courseId: profileId });
-    else navigation.navigate('SubProgramProfile', { subProgramId: profileId });
-  }, [activity?._id, mode, navigation, profileId]);
-
   const goBack = useCallback(
     async () => {
       if (exitConfirmationModal) setExitConfirmationModal(false);
 
       stopTimer();
-      navigateNext();
+      navigation.goBack();
       setIsActive(false);
       resetCardReducer();
     },
-    [exitConfirmationModal, navigateNext, resetCardReducer, setExitConfirmationModal, stopTimer]
+    [exitConfirmationModal, navigation, resetCardReducer, setExitConfirmationModal, stopTimer]
   );
 
   const hardwareBackPress = useCallback(() => {
@@ -119,7 +111,7 @@ const ActivityCardContainer = ({ route, navigation }: ActivityCardContainerProps
   useEffect(() => {
     const subscription = BackHandler.addEventListener('hardwareBackPress', hardwareBackPress);
 
-    return () => () => { subscription.remove(); };
+    return () => { subscription.remove(); };
   }, [hardwareBackPress]);
 
   const Tab = createMaterialTopTabNavigator<RootCardParamList>();
