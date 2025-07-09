@@ -1,10 +1,12 @@
 import { StyleSheet } from 'react-native';
 import { MARGIN } from './metrics';
 import { FIRA_SANS_BOLD } from './fonts';
+import { GREY } from './colors';
 
 const styles = StyleSheet.create({
   title: {
     ...FIRA_SANS_BOLD.LG,
+    color: GREY[900],
     marginVertical: MARGIN.LG,
   },
   screenView: {
