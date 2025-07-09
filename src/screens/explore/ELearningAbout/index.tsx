@@ -29,7 +29,7 @@ const ElearningAbout = ({ route, navigation }: ElearningAboutProps) => {
     }
   }, [loggedUserId, program]);
 
-  const goToCourse = () => navigation.navigate('LearnerCourseProfile', { courseId });
+  const goToCourse = () => navigation.popTo('LearnerCourseProfile', { courseId });
 
   const startActivity = () => {
     const firstActivity = get(program, 'subPrograms[0].steps[0].activities[0]') || null;

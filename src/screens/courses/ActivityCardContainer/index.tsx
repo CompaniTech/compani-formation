@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import get from 'lodash/get';
 import { AppState, AppStateStatus, BackHandler, Image } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { StackScreenProps } from '@react-navigation/stack';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import Activities from '../../../api/activities';
@@ -15,6 +16,7 @@ import {
   useSetCards,
   useSetExitConfirmationModal,
 } from '../../../store/cards/hooks';
+import commonStyles from '../../../styles/common';
 import { useSetStatusBarVisible } from '../../../store/main/hooks';
 import { ActivityWithCardsType } from '../../../types/ActivityTypes';
 import { RootCardParamList, RootStackParamList } from '../../../types/NavigationType';
@@ -117,12 +119,13 @@ const ActivityCardContainer = ({ route, navigation }: ActivityCardContainerProps
   const Tab = createMaterialTopTabNavigator<RootCardParamList>();
 
   return isActive
-    ? <Tab.Navigator tabBar={() => <></>} screenOptions={{ swipeEnabled: false }}>
-      <Tab.Screen key={0} name={'startCard'} options={{ title: activity?.name || tabsNames.ActivityCardContainer }}>
-        {() => <StartCard title={activity?.name || ''} goBack={goBack} isLoading={!(cards.length > 0 && activity)}
-          startTimer={startTimer} />}
-      </Tab.Screen>
-      {cards.length > 0 && activity &&
+    ? <SafeAreaView style={commonStyles.container} edges={['bottom']}>
+      <Tab.Navigator tabBar={() => <></>} screenOptions={{ swipeEnabled: false }}>
+        <Tab.Screen key={0} name={'startCard'} options={{ title: activity?.name || tabsNames.ActivityCardContainer }}>
+          {() => <StartCard title={activity?.name || ''} goBack={goBack} isLoading={!(cards.length > 0 && activity)}
+            startTimer={startTimer} />}
+        </Tab.Screen>
+        {cards.length > 0 && activity &&
         <>
           {cards.map((_, index) => (
             <Tab.Screen key={index} name={`card-${index}`} options={{ title: activity.name }}>
@@ -134,8 +137,9 @@ const ActivityCardContainer = ({ route, navigation }: ActivityCardContainerProps
               finalTimer={finalTimer} />}
           </Tab.Screen>
         </>
-      }
-    </Tab.Navigator>
+        }
+      </Tab.Navigator>
+    </SafeAreaView>
     : null;
 };
 
