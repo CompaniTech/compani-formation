@@ -1,8 +1,8 @@
 // @ts-nocheck
 
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import { Text, View, BackHandler, KeyboardAvoidingView, ScrollView, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import NiInput from '../../components/form/Input';
 import PhoneSelect from '../form/PhoneSelect';
 import NiPrimaryButton from '../../components/form/PrimaryButton';
@@ -28,11 +28,12 @@ const CreateAccountForm = ({ index, data, isLoading, setData, goBack, create, op
     return true;
   }, [goBack, index, isLoading]);
 
-  useEffect(() => {
-    const subscription = BackHandler.addEventListener('hardwareBackPress', hardwareBackPress);
-
-    return () => { subscription.remove(); };
-  }, [hardwareBackPress]);
+  useFocusEffect(
+    useCallback(() => {
+      const subscription = BackHandler.addEventListener('hardwareBackPress', hardwareBackPress);
+      return () => subscription.remove();
+    }, [hardwareBackPress])
+  );
 
   const onChangeText = (text: string, fieldToChangeIndex: number) => {
     setData(
