@@ -20,6 +20,7 @@ import commonStyles from '../../../styles/common';
 import { useSetStatusBarVisible } from '../../../store/main/hooks';
 import { ActivityWithCardsType } from '../../../types/ActivityTypes';
 import { RootCardParamList, RootStackParamList } from '../../../types/NavigationType';
+import { LEARNER, TRAINER, TUTOR } from '../../../core/data/constants';
 import CardScreen from '../CardScreen';
 import ActivityEndCard from '../cardTemplates/ActivityEndCard';
 import StartCard from '../cardTemplates/StartCard';
@@ -39,7 +40,7 @@ const ActivityCardContainer = ({ route, navigation }: ActivityCardContainerProps
   const interval = useRef<ReturnType<typeof setInterval> | null>(null);
   const timer = useRef<number>(0);
   const [finalTimer, setFinalTimer] = useState<number>(0);
-  const { mode } = route.params;
+  const { mode, profileId } = route.params;
 
   useEffect(() => { setStatusBarVisible(false); }, [setStatusBarVisible]);
 
@@ -103,6 +104,20 @@ const ActivityCardContainer = ({ route, navigation }: ActivityCardContainerProps
     [exitConfirmationModal, navigation, resetCardReducer, setExitConfirmationModal, stopTimer]
   );
 
+  const navigateNext = useCallback(() => {
+    if ([LEARNER, TUTOR].includes(mode)) {
+      navigation.popTo('LearnerCourseProfile', { courseId: profileId, endedActivity: activity?._id, mode });
+    } else if (mode === TRAINER) navigation.goBack();
+    else navigation.goBack();
+  }, [activity?._id, mode, navigation, profileId]);
+
+  const goBackAfterEndActivity = () => {
+    stopTimer();
+    navigateNext();
+    setIsActive(false);
+    resetCardReducer();
+  };
+
   const hardwareBackPress = useCallback(() => {
     if (cardIndex === null) goBack();
     else setExitConfirmationModal(true);
@@ -133,7 +148,8 @@ const ActivityCardContainer = ({ route, navigation }: ActivityCardContainerProps
             </Tab.Screen>
           ))}
           <Tab.Screen key={cards.length + 1} name={`card-${cards.length}`} options={{ title: activity.name }}>
-            {() => <ActivityEndCard goBack={goBack} activity={activity} mode={mode} stopTimer={stopTimer}
+            {() => <ActivityEndCard goBack={goBackAfterEndActivity} activity={activity} mode={mode}
+              stopTimer={stopTimer}
               finalTimer={finalTimer} />}
           </Tab.Screen>
         </>
