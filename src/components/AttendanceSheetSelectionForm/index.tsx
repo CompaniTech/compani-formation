@@ -1,7 +1,7 @@
 import { ScrollView, View, Text, BackHandler } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useIsFocused, useNavigation } from '@react-navigation/native';
-import { useCallback, useEffect } from 'react';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { useCallback } from 'react';
 import styles from './styles';
 import NiPrimaryButton from '../form/PrimaryButton';
 import NiErrorMessage from '../ErrorMessage';
@@ -25,18 +25,19 @@ const AttendanceSheetSelectionForm = ({
   children,
 }: AttendanceSheetSelectionFormProps) => {
   const navigation = useNavigation();
-  const isFocused = useIsFocused();
 
-  const hardwareBackPress = useCallback(() => {
-    if (isFocused) navigation.goBack();
-    return true;
-  }, [navigation, isFocused]);
+  useFocusEffect(
+    useCallback(() => {
+      const hardwareBackPress = () => {
+        navigation.goBack();
+        return true;
+      };
 
-  useEffect(() => {
-    const subscription = BackHandler.addEventListener('hardwareBackPress', hardwareBackPress);
+      const subscription = BackHandler.addEventListener('hardwareBackPress', hardwareBackPress);
 
-    return () => { subscription.remove(); };
-  }, [hardwareBackPress]);
+      return () => subscription.remove();
+    }, [navigation])
+  );
 
   return <SafeAreaView style={styles.safeArea} edges={['top']}>
     <View style={styles.header}>

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { BackHandler, View } from 'react-native';
 import { WebView, WebViewMessageEvent } from 'react-native-webview';
-import { useIsFocused, useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useIsFocused, useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ICON } from '../../styles/metrics';
 import { GREY } from '../../styles/colors';
@@ -61,16 +61,18 @@ const AttendanceSignatureContainer = ({
     };
   }, [handleIframeMessage]);
 
-  const hardwareBackPress = () => {
-    setExitConfirmationModal(true);
-    return true;
-  };
+  useFocusEffect(
+    useCallback(() => {
+      const onBackPress = () => {
+        setExitConfirmationModal(true);
+        return true;
+      };
 
-  useEffect(() => {
-    const subscription = BackHandler.addEventListener('hardwareBackPress', hardwareBackPress);
+      const subscription = BackHandler.addEventListener('hardwareBackPress', onBackPress);
 
-    return () => { subscription.remove(); };
-  }, []);
+      return () => subscription.remove();
+    }, [setExitConfirmationModal])
+  );
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('beforeRemove', (e) => {
