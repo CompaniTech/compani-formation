@@ -106,7 +106,8 @@ const UpdateAttendanceSheet = ({ route, navigation }: UpdateAttendanceSheetProps
   );
 
   const goBackToCourseAndRefresh = () => {
-    navigation.popTo('LearnerCourseProfile', { courseId: course!._id, endedActivity: true, mode: LEARNER });
+    if (course) navigation.popTo('LearnerCourseProfile', { courseId: course!._id, endedActivity: true, mode: LEARNER });
+    else navigation.goBack();
   };
 
   const renderEndScreen = () => (
