@@ -1,18 +1,11 @@
 // @ts-nocheck
 
 import { useContext, useState } from 'react';
-import { View, Linking } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { Linking } from 'react-native';
 import { createStackNavigator, StackScreenProps } from '@react-navigation/stack';
 import { CompositeScreenProps } from '@react-navigation/native';
-import FeatherButton from '../../components/icons/FeatherButton';
-import { ICON } from '../../styles/metrics';
 import { RootCreateAccountParamList, RootStackParamList } from '../../types/NavigationType';
-import commonStyles from '../../styles/common';
-import styles from './styles';
-import { GREY } from '../../styles/colors';
 import CreateAccountForm from '../../components/CreateAccountForm';
-import ProgressBar from '../../components/cards/ProgressBar';
 import Users from '../../api/users';
 import { formatPhoneForPayload } from '../../core/helpers/utils';
 import { AuthContextType, Context as AuthContext } from '../../context/AuthContext';
@@ -115,9 +108,6 @@ const CreateAccount = ({ route }: CreateAccountProps) => {
       },
     }],
   ]);
-  const goBack = (i, navigation) => (i > 0
-    ? navigation.goBack()
-    : navigation.getParent()?.goBack());
 
   const setForm = (data, index) => {
     setFormList(prevFormList => (prevFormList.map((fieldsGroup, i) => (i === index ? data : fieldsGroup))));
@@ -135,19 +125,9 @@ const CreateAccount = ({ route }: CreateAccountProps) => {
     }
   };
 
-  const renderScreen = (fields: CreateAccountDataType[], i: number, navigation) => (
-    <SafeAreaView style={styles.safeArea} edges={['top']}>
-      <View style={styles.header}>
-        <FeatherButton name='arrow-left' onPress={() => goBack(i, navigation)} size={ICON.MD} color={GREY[600]}
-          disabled={isLoading} />
-        <View style={commonStyles.progressBarContainer}>
-          <ProgressBar progress={((i + 1) / formList.length) * 100} />
-        </View>
-      </View>
-      <CreateAccountForm isLoading={isLoading} data={fields} setData={setForm} index={i}
-        goBack={() => goBack(i, navigation)}
-        create={create} openUrl={() => Linking.openURL('https://www.compani.fr/cgu-cgv')} />
-    </SafeAreaView>
+  const renderScreen = (fields: CreateAccountDataType[], i: number) => (
+    <CreateAccountForm isLoading={isLoading} data={fields} setData={setForm} index={i} totalProgress={formList.length}
+      create={create} openUrl={() => Linking.openURL('https://www.compani.fr/cgu-cgv')} />
   );
 
   const Stack = createStackNavigator<RootCreateAccountParamList>();
@@ -157,7 +137,7 @@ const CreateAccount = ({ route }: CreateAccountProps) => {
       {formList.map((fields, i) => (
         <Stack.Screen key={fields[0].title} name={`create-account-screen-${i}`}
           options={{ title: tabsNames.CreateAccount }}>
-          {({ navigation }) => renderScreen(fields, i, navigation)}
+          {() => renderScreen(fields, i)}
         </Stack.Screen>
       ))}
     </Stack.Navigator>
