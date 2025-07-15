@@ -1,8 +1,8 @@
 import { ScrollView, View, Text, BackHandler, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import { useCallback } from 'react';
-import { ErrorStateType } from '../../reducers/error';
+import { ActionDispatch, useCallback } from 'react';
+import { ErrorActionType, ErrorStateType, RESET_ERROR, SET_ERROR } from '../../reducers/error';
 import { DataOptionsType } from '../../store/attendanceSheets/slice';
 import NiErrorMessage from '../../components/ErrorMessage';
 import Checkbox from '../form/Checkbox';
@@ -11,28 +11,30 @@ import NiPrimaryButton from '../form/PrimaryButton';
 import FeatherButton from '../icons/FeatherButton';
 import { ICON } from '../../styles/metrics';
 import { GREY } from '../../styles/colors';
-import { IS_WEB } from '../../core/data/constants';
+import { END_SCREEN, IS_WEB } from '../../core/data/constants';
 import styles from './styles';
 
 interface AttendanceSheetSummaryProps {
-  goToNextScreen: () => void,
   stepsName: string[],
   slotsOptions: DataOptionsType[][],
   signature: string,
   isLoading: boolean,
   setConfirmation: () => void,
+  dispatchErrorConfirmation: ActionDispatch<[action: ErrorActionType]>
+  saveAttendances: () => void,
   confirmation: boolean,
   error: ErrorStateType,
   traineeName: string,
 }
 
 const AttendanceSheetSummary = ({
-  goToNextScreen,
   stepsName,
   slotsOptions,
   signature,
   isLoading,
   setConfirmation,
+  dispatchErrorConfirmation,
+  saveAttendances,
   confirmation,
   error,
   traineeName,
@@ -53,6 +55,16 @@ const AttendanceSheetSummary = ({
     }, [navigation])
   );
 
+  const saveAndGoToEndScreen = async () => {
+    if (!confirmation) {
+      dispatchErrorConfirmation({ type: SET_ERROR, payload: 'Veuillez cocher la case ci-dessous' });
+    } else {
+      dispatchErrorConfirmation({ type: RESET_ERROR });
+      await saveAttendances();
+      navigation.navigate(END_SCREEN);
+    }
+  };
+
   return <SafeAreaView style={styles.safeArea} edges={['top']}>
     <View style={styles.header}>
       <FeatherButton name='arrow-left' onPress={() => navigation.goBack()} size={ICON.MD} color={GREY[600]} />
@@ -68,7 +80,7 @@ const AttendanceSheetSummary = ({
     </View>
     <View style={styles.button}>
       <NiErrorMessage message={error.message} show={error.value} />
-      <NiPrimaryButton caption={'Suivant'} onPress={goToNextScreen} loading={isLoading} />
+      <NiPrimaryButton caption={'Suivant'} onPress={saveAndGoToEndScreen} loading={isLoading} />
     </View>
   </SafeAreaView>;
 };

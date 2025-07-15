@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { ActionDispatch, useCallback, useEffect, useRef, useState } from 'react';
 import { BackHandler, View } from 'react-native';
 import { WebView, WebViewMessageEvent } from 'react-native-webview';
 import { useFocusEffect, useIsFocused, useNavigation } from '@react-navigation/native';
@@ -9,24 +9,28 @@ import FeatherButton from '../../components/icons/FeatherButton';
 import NiPrimaryButton from '../../components/form/PrimaryButton';
 import NiSecondaryButton from '../../components/form/SecondaryButton';
 import NiErrorMessage from '../../components/ErrorMessage';
-import { IS_WEB } from '../../core/data/constants';
-import { ErrorStateType } from '../../reducers/error';
+import { ATTENDANCE_SUMMARY, IS_WEB } from '../../core/data/constants';
+import { ErrorActionType, ErrorStateType, RESET_ERROR, SET_ERROR } from '../../reducers/error';
 import ExitModal from '../ExitModal';
 import { htmlContent } from './canvas';
 import styles from './styles';
 
 interface AttendanceSignatureContainerProps {
+  signature: string,
   error: ErrorStateType,
-  goToNextScreen: () => void,
   resetError: () => void,
   setSignature: (img: string) => void,
+  setSelectedSlotsOptions?: () => void,
+  dispatchErrorSignature: ActionDispatch<[action: ErrorActionType]>
 }
 
 const AttendanceSignatureContainer = ({
+  signature,
   error,
-  goToNextScreen,
   resetError,
   setSignature,
+  setSelectedSlotsOptions = () => {},
+  dispatchErrorSignature,
 }: AttendanceSignatureContainerProps) => {
   const navigation = useNavigation();
   const iframeRef = useRef<any>(null);
@@ -104,6 +108,16 @@ const AttendanceSignatureContainer = ({
     navigation.goBack();
   };
 
+  const goToSummary = () => {
+    if (!signature) {
+      dispatchErrorSignature({ type: SET_ERROR, payload: 'Veuillez signer dans l\'encadré' });
+    } else {
+      dispatchErrorSignature({ type: RESET_ERROR });
+      setSelectedSlotsOptions();
+      navigation.navigate(ATTENDANCE_SUMMARY);
+    }
+  };
+
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
       <View style={styles.container}>
@@ -135,7 +149,7 @@ const AttendanceSignatureContainer = ({
         </View>
         <View style={styles.footer}>
           <NiErrorMessage message={error.message} show={error.value} />
-          <NiPrimaryButton caption='Suivant' onPress={goToNextScreen} />
+          <NiPrimaryButton caption='Suivant' onPress={goToSummary} />
         </View>
       </View>
     </SafeAreaView>
