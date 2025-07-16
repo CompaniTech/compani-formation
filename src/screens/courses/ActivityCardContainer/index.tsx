@@ -20,7 +20,7 @@ import commonStyles from '../../../styles/common';
 import { useSetStatusBarVisible } from '../../../store/main/hooks';
 import { ActivityWithCardsType } from '../../../types/ActivityTypes';
 import { RootCardParamList, RootStackParamList } from '../../../types/NavigationType';
-import { LEARNER, TRAINER, TUTOR } from '../../../core/data/constants';
+import { IS_IOS, LEARNER, TUTOR } from '../../../core/data/constants';
 import CardScreen from '../CardScreen';
 import ActivityEndCard from '../cardTemplates/ActivityEndCard';
 import StartCard from '../cardTemplates/StartCard';
@@ -107,8 +107,7 @@ const ActivityCardContainer = ({ route, navigation }: ActivityCardContainerProps
   const navigateNext = useCallback(() => {
     if ([LEARNER, TUTOR].includes(mode)) {
       navigation.popTo('LearnerCourseProfile', { courseId: profileId, endedActivity: activity?._id, mode });
-    } else if (mode === TRAINER) navigation.goBack();
-    else navigation.goBack();
+    } else navigation.goBack();
   }, [activity?._id, mode, navigation, profileId]);
 
   const goBackAfterEndActivity = () => {
@@ -134,7 +133,7 @@ const ActivityCardContainer = ({ route, navigation }: ActivityCardContainerProps
   const Tab = createMaterialTopTabNavigator<RootCardParamList>();
 
   return isActive
-    ? <SafeAreaView style={commonStyles.container} edges={['bottom']}>
+    ? <SafeAreaView style={commonStyles.container} edges={IS_IOS ? null : 'bottom'}>
       <Tab.Navigator tabBar={() => <></>} screenOptions={{ swipeEnabled: false }}>
         <Tab.Screen key={0} name={'startCard'} options={{ title: activity?.name || tabsNames.ActivityCardContainer }}>
           {() => <StartCard title={activity?.name || ''} goBack={goBack} isLoading={!(cards.length > 0 && activity)}
