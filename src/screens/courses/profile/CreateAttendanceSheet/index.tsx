@@ -93,7 +93,7 @@ const CreateAttendanceSheet = ({ route, navigation }: CreateAttendanceSheetProps
 
   useEffect(() => {
     if (course && isSingle) setDataOption(course.trainees![0]._id);
-  });
+  }, [course, isSingle, setDataOption]);
 
   const setSlotsOptions = useCallback((options: string[]) => {
     setSlotsToAdd(options);
@@ -135,8 +135,8 @@ const CreateAttendanceSheet = ({ route, navigation }: CreateAttendanceSheetProps
   const renderDataSelection = () => (
     <AttendanceSheetSelectionForm title={dataSelectionTitle} error={errorData} dispatchErrorData={dispatchErrorData}
       dispatchErrorSlots={dispatchErrorSlots} nextScreenName={isSingle ? SLOTS_SELECTION : UPLOAD_METHOD}
-      courseType={course?.type || ''}
-      attendanceSheetToAdd={attendanceSheetToAdd} areSlotsMissing={isSingle && !slotsToAdd.length}>
+      courseType={course!.type} attendanceSheetToAdd={attendanceSheetToAdd}
+      areSlotsMissing={isSingle && !slotsToAdd.length}>
       <RadioButtonList options={missingAttendanceSheets} setOption={setDataOption}
         checkedRadioButton={attendanceSheetToAdd} />
     </AttendanceSheetSelectionForm>
@@ -144,7 +144,7 @@ const CreateAttendanceSheet = ({ route, navigation }: CreateAttendanceSheetProps
 
   const renderSlotSelection = () => (
     <AttendanceSheetSelectionForm title={slotSelectionTitle} error={errorSlots} dispatchErrorData={dispatchErrorData}
-      dispatchErrorSlots={dispatchErrorSlots} nextScreenName={UPLOAD_METHOD} courseType={course?.type || ''}
+      dispatchErrorSlots={dispatchErrorSlots} nextScreenName={UPLOAD_METHOD} courseType={course!.type}
       attendanceSheetToAdd={attendanceSheetToAdd} areSlotsMissing={isSingle && !slotsToAdd.length}>
       <MultipleCheckboxList optionsGroups={slotsOptions} groupTitles={Object.keys(groupedSlotsToBeSigned)}
         setOptions={setSlotsOptions} checkedList={slotsToAdd}/>
@@ -152,15 +152,17 @@ const CreateAttendanceSheet = ({ route, navigation }: CreateAttendanceSheetProps
   );
 
   const renderUploadMethod = () => (
-    <UploadMethods course={course!} goToParent={navigation.goBack}
-      attendanceSheetToAdd={attendanceSheetToAdd} slotsToAdd={slotsToAdd} />
+    <UploadMethods course={course!} goToParent={navigation.goBack} attendanceSheetToAdd={attendanceSheetToAdd}
+      slotsToAdd={slotsToAdd} />
+  );
+
+  const setSlotsOptionsForSummary = () => setSelectedSlotsOptions(
+    slotsOptions.map(group => group.filter(opt => slotsToAdd.includes(opt.value))).filter(g => g.length)
   );
 
   const renderSignatureContainer = () => (
-    <AttendanceSignatureContainer signature={signature} error={errorSignature}
-      setSignature={setSignature} setSelectedSlotsOptions={() => setSelectedSlotsOptions(
-        slotsOptions.map(group => group.filter(opt => slotsToAdd.includes(opt.value))).filter(g => g.length)
-      )} dispatchErrorSignature={dispatchErrorSignature}
+    <AttendanceSignatureContainer signature={signature} error={errorSignature} setSignature={setSignature}
+      setSelectedSlotsOptions={setSlotsOptionsForSummary} dispatchErrorSignature={dispatchErrorSignature}
       resetError={() => dispatchErrorSignature({ type: RESET_ERROR })} />
   );
 
@@ -181,18 +183,12 @@ const CreateAttendanceSheet = ({ route, navigation }: CreateAttendanceSheetProps
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName={DATA_SELECTION}>
       <Stack.Screen key={0} name={DATA_SELECTION}>{renderDataSelection}</Stack.Screen>
-      {isSingle && <Stack.Screen key={1} name={SLOTS_SELECTION}>
-        {renderSlotSelection}
-      </Stack.Screen>}
+      {isSingle && <Stack.Screen key={1} name={SLOTS_SELECTION}>{renderSlotSelection}</Stack.Screen>}
       <Stack.Screen key={2} name={UPLOAD_METHOD}>{renderUploadMethod}</Stack.Screen>
       {isSingle && <>
-        <Stack.Screen key={3} name={ATTENDANCE_SIGNATURE}>
-          {renderSignatureContainer}
-        </Stack.Screen>
+        <Stack.Screen key={3} name={ATTENDANCE_SIGNATURE}>{renderSignatureContainer}</Stack.Screen>
         <Stack.Screen key={4} name={ATTENDANCE_SUMMARY}>{renderSummary}</Stack.Screen>
-        <Stack.Screen options={{ gestureEnabled: false }} key={5} name={END_SCREEN}>
-          {renderEndScreen}
-        </Stack.Screen>
+        <Stack.Screen options={{ gestureEnabled: false }} key={5} name={END_SCREEN}>{renderEndScreen}</Stack.Screen>
       </>}
     </Stack.Navigator>
   );
