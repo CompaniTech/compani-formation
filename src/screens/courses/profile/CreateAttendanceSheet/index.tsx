@@ -161,16 +161,15 @@ const CreateAttendanceSheet = ({ route, navigation }: CreateAttendanceSheetProps
   );
 
   const renderSignatureContainer = () => (
-    <AttendanceSignatureContainer signature={signature} error={errorSignature} setSignature={setSignature}
-      setSelectedSlotsOptions={setSlotsOptionsForSummary} dispatchErrorSignature={dispatchErrorSignature}
-      resetError={() => dispatchErrorSignature({ type: RESET_ERROR })} />
+    <AttendanceSignatureContainer signature={signature} resetError={() => dispatchErrorSignature({ type: RESET_ERROR })}
+      error={errorSignature} setSignature={setSignature} dispatchErrorSignature={dispatchErrorSignature} />
   );
 
   const renderSummary = () => (
     <AttendanceSheetSummary signature={signature} saveAttendances={saveAttendances}
       dispatchErrorConfirmation={dispatchErrorConfirmation} error={errorConfirmation}
       stepsName={getFilteredStepsName()} isLoading={isLoading} setConfirmation={setConfirmationCheckbox}
-      confirmation={confirmation}
+      confirmation={confirmation} setSelectedSlotsOptions={setSlotsOptionsForSummary}
       traineeName={traineeName} slotsOptions={selectedSlotsOptions} />
   );
   const renderEndScreen = () => (

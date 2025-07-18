@@ -20,7 +20,6 @@ interface AttendanceSignatureContainerProps {
   error: ErrorStateType,
   resetError: () => void,
   setSignature: (img: string) => void,
-  setSelectedSlotsOptions?: () => void,
   dispatchErrorSignature: ActionDispatch<[action: ErrorActionType]>
 }
 
@@ -29,7 +28,6 @@ const AttendanceSignatureContainer = ({
   error,
   resetError,
   setSignature,
-  setSelectedSlotsOptions = () => {},
   dispatchErrorSignature,
 }: AttendanceSignatureContainerProps) => {
   const navigation = useNavigation();
@@ -113,7 +111,6 @@ const AttendanceSignatureContainer = ({
       dispatchErrorSignature({ type: SET_ERROR, payload: 'Veuillez signer dans l\'encadré' });
     } else {
       dispatchErrorSignature({ type: RESET_ERROR });
-      setSelectedSlotsOptions();
       navigation.navigate(ATTENDANCE_SUMMARY);
     }
   };

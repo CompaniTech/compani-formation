@@ -133,7 +133,7 @@ const ActivityCardContainer = ({ route, navigation }: ActivityCardContainerProps
   const Tab = createMaterialTopTabNavigator<RootCardParamList>();
 
   return isActive
-    ? <SafeAreaView style={commonStyles.container} edges={IS_IOS ? ['top', 'right', 'bottom', 'left'] : ['bottom']}>
+    ? <SafeAreaView style={commonStyles.container} edges={IS_IOS ? ['top'] : ['bottom']}>
       <Tab.Navigator tabBar={() => <></>} screenOptions={{ swipeEnabled: false }}>
         <Tab.Screen key={0} name={'startCard'} options={{ title: activity?.name || tabsNames.ActivityCardContainer }}>
           {() => <StartCard title={activity?.name || ''} goBack={goBack} isLoading={!(cards.length > 0 && activity)}

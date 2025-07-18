@@ -1,7 +1,7 @@
 import { ScrollView, View, Text, BackHandler, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import { ActionDispatch, useCallback } from 'react';
+import { ActionDispatch, useCallback, useEffect } from 'react';
 import { ErrorActionType, ErrorStateType, RESET_ERROR, SET_ERROR } from '../../reducers/error';
 import { DataOptionsType } from '../../store/attendanceSheets/slice';
 import NiErrorMessage from '../../components/ErrorMessage';
@@ -22,6 +22,7 @@ interface AttendanceSheetSummaryProps {
   setConfirmation: () => void,
   dispatchErrorConfirmation: ActionDispatch<[action: ErrorActionType]>
   saveAttendances: () => void,
+  setSelectedSlotsOptions?: () => void,
   confirmation: boolean,
   error: ErrorStateType,
   traineeName: string,
@@ -35,12 +36,18 @@ const AttendanceSheetSummary = ({
   setConfirmation,
   dispatchErrorConfirmation,
   saveAttendances,
+  setSelectedSlotsOptions = () => {},
   confirmation,
   error,
   traineeName,
 }: AttendanceSheetSummaryProps) => {
   const navigation = useNavigation();
   const checkedList = slotsOptions.flat().map(option => option.value);
+
+  useEffect(() => {
+    setSelectedSlotsOptions();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useFocusEffect(
     useCallback(() => {
