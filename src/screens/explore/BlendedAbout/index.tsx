@@ -23,8 +23,8 @@ const BlendedAbout = ({ route, navigation }: BlendedAboutProps) => {
 
   const goToCourse = () => {
     if (course._id) {
-      if ([LEARNER, TUTOR].includes(mode)) navigation.navigate('LearnerCourseProfile', { courseId: course._id, mode });
-      else navigation.navigate('TrainerCourseProfile', { courseId: course._id });
+      if ([LEARNER, TUTOR].includes(mode)) navigation.popTo('LearnerCourseProfile', { courseId: course._id, mode });
+      else navigation.popTo('TrainerCourseProfile', { courseId: course._id });
     }
   };
 

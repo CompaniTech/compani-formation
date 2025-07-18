@@ -155,3 +155,11 @@ export const DIRECTORY = 'directory';
 export const IN_PROGRESS = 'in_progress';
 export const FORTHCOMING = 'forthcoming';
 export const COMPLETED = 'completed';
+
+// ATTENDANCE SHEETS SIGNATURE
+export const DATA_SELECTION = 'attendance-sheet-data-selection';
+export const SLOTS_SELECTION = 'slots-data-selection';
+export const UPLOAD_METHOD = 'upload-method-selection';
+export const ATTENDANCE_SIGNATURE = 'attendance-signature';
+export const ATTENDANCE_SUMMARY = 'attendance-summary';
+export const END_SCREEN = 'end-screen';

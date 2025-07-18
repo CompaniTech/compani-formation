@@ -2,7 +2,6 @@ import { Dispatch } from 'react';
 import Authentication from '../api/authentication';
 import asyncStorage from '../core/helpers/asyncStorage';
 import { createDataContext } from './createDataContext';
-import { navigate } from '../navigationRef';
 import Users from '../api/users';
 import { BEFORE_SIGNIN, SIGNIN, SIGNIN_ERROR, RESET_ERROR, SIGNOUT, RENDER } from '../core/data/constants';
 import { ActionType, BoundActionsType, CreateDataContextType } from './types';
@@ -85,7 +84,6 @@ const signOut = (dispatch: Dispatch<ActionType>) => async (removeExpoToken: bool
   await asyncStorage.removeExpoToken();
 
   dispatch({ type: SIGNOUT });
-  navigate('Authentication');
 };
 
 const refreshCompaniToken = (dispatch: Dispatch<ActionType>) => async (refreshToken: string) => {
@@ -106,7 +104,6 @@ const localSignIn = async (dispatch: Dispatch<ActionType>) => {
   const { companiToken } = await asyncStorage.getCompaniToken();
   dispatch({ type: SIGNIN, payload: companiToken });
 
-  navigate('LearnerCourses');
   dispatch({ type: RENDER });
 };
 

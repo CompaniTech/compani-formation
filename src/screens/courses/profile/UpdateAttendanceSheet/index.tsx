@@ -3,8 +3,17 @@ import { createStackNavigator, StackScreenProps } from '@react-navigation/stack'
 import { CompositeScreenProps } from '@react-navigation/native';
 import AttendanceSheets from '../../../../api/attendanceSheets';
 import { RootStackParamList, RootUpdateAttendanceSheetParamList } from '../../../../types/NavigationType';
-import { DD_MM_YYYY, HH_MM, LEARNER, LONG_FIRSTNAME_LONG_LASTNAME } from '../../../../core/data/constants';
-import { errorReducer, initialErrorState, RESET_ERROR, SET_ERROR } from '../../../../reducers/error';
+import {
+  ATTENDANCE_SIGNATURE,
+  ATTENDANCE_SUMMARY,
+  DD_MM_YYYY,
+  END_SCREEN,
+  HH_MM,
+  LEARNER,
+  LONG_FIRSTNAME_LONG_LASTNAME,
+  SLOTS_SELECTION,
+} from '../../../../core/data/constants';
+import { errorReducer, initialErrorState, RESET_ERROR } from '../../../../reducers/error';
 import AttendanceSheetSelectionForm from '../../../../components/AttendanceSheetSelectionForm';
 import { useGetCourse, useGetGroupedSlotsToBeSigned } from '../../../../store/attendanceSheets/hooks';
 import CompaniDate from '../../../../core/helpers/dates/companiDates';
@@ -23,11 +32,6 @@ interface UpdateAttendanceSheetProps extends CompositeScreenProps<
 StackScreenProps<RootStackParamList, 'UpdateAttendanceSheet'>,
 StackScreenProps<RootUpdateAttendanceSheetParamList>
 > {}
-
-const SLOTS_SELECTION = 'slots-data-selection';
-const ATTENDANCE_SIGNATURE = 'attendance-signature';
-const ATTENDANCE_SUMMARY = 'attendance-summary';
-const END_SCREEN = 'end-screen';
 
 const UpdateAttendanceSheet = ({ route, navigation }: UpdateAttendanceSheetProps) => {
   const { attendanceSheetId, trainerName } = route.params;
@@ -69,15 +73,6 @@ const UpdateAttendanceSheet = ({ route, navigation }: UpdateAttendanceSheetProps
     dispatchErrorConfirmation({ type: RESET_ERROR });
   };
 
-  const goToSummary = () => {
-    if (!signature) {
-      dispatchErrorSignature({ type: SET_ERROR, payload: 'Veuillez signer dans l\'encadré' });
-    } else {
-      dispatchErrorSignature({ type: RESET_ERROR });
-      navigation.navigate(ATTENDANCE_SUMMARY);
-    }
-  };
-
   const saveAttendances = async () => {
     try {
       setIsLoading(true);
@@ -91,35 +86,32 @@ const UpdateAttendanceSheet = ({ route, navigation }: UpdateAttendanceSheetProps
     }
   };
 
-  const saveAndGoToEndScreen = async () => {
-    if (!confirmation) {
-      dispatchErrorConfirmation({ type: SET_ERROR, payload: 'Veuillez cocher la case ci-dessous' });
-    } else {
-      dispatchErrorConfirmation({ type: RESET_ERROR });
-      await saveAttendances();
-      navigation.navigate(END_SCREEN);
-    }
-  };
-
   const renderSlotSelection = () => (
     <AttendanceSheetSelectionForm title={slotSelectionTitle} error={initialErrorState}
-      goToNextScreen={() => navigation.navigate('attendance-signature')}>
+      nextScreenName={ATTENDANCE_SIGNATURE}>
       <MultipleCheckboxList optionsGroups={slotsOptions} groupTitles={stepsName} checkedList={slotList} disabled />
     </AttendanceSheetSelectionForm>
   );
 
   const renderSignatureContainer = () => (
-    <AttendanceSignatureContainer error={errorSignature} goToNextScreen={goToSummary} setSignature={setSignature}
-      resetError={() => dispatchErrorSignature({ type: RESET_ERROR })} />
+    <AttendanceSignatureContainer signature={signature} resetError={() => dispatchErrorSignature({ type: RESET_ERROR })}
+      dispatchErrorSignature={dispatchErrorSignature} error={errorSignature} setSignature={setSignature} />
   );
 
   const renderSummary = () => (
-    <AttendanceSheetSummary signature={signature} goToNextScreen={saveAndGoToEndScreen} error={errorConfirmation}
+    <AttendanceSheetSummary signature={signature} saveAttendances={saveAttendances} error={errorConfirmation}
+      dispatchErrorConfirmation={dispatchErrorConfirmation}
       stepsName={stepsName} isLoading={isLoading} setConfirmation={setConfirmationCheckbox} confirmation={confirmation}
       traineeName={traineeName} slotsOptions={slotsOptions} />
   );
+
+  const goBackToCourseAndRefresh = () => {
+    if (course) navigation.popTo('LearnerCourseProfile', { courseId: course!._id, endedActivity: true, mode: LEARNER });
+    else navigation.goBack();
+  };
+
   const renderEndScreen = () => (
-    <AttendanceEndScreen goToNextScreen={navigation.goBack} traineeName={traineeName} failUpload={failUpload}
+    <AttendanceEndScreen goToNextScreen={goBackToCourseAndRefresh} traineeName={traineeName} failUpload={failUpload}
       mode={LEARNER} />
   );
 

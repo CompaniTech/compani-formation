@@ -17,7 +17,7 @@ export type RootStackParamList = {
   ImagePickerManager: undefined;
   LearnerCourseProfile: {
     courseId: string,
-    endedActivity?: string | null,
+    endedActivity?: string | boolean | null,
     endedQuestionnaire?: string | null,
     mode?: CourseModeType,
   };

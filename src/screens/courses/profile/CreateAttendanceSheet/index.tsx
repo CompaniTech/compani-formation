@@ -3,8 +3,18 @@ import { createStackNavigator, StackScreenProps } from '@react-navigation/stack'
 import { CompositeScreenProps } from '@react-navigation/native';
 import AttendanceSheets from '../../../../api/attendanceSheets';
 import { RootStackParamList, RootCreateAttendanceSheetParamList } from '../../../../types/NavigationType';
-import { INTER_B2B, DD_MM_YYYY, HH_MM, SINGLE } from '../../../../core/data/constants';
-import { errorReducer, initialErrorState, RESET_ERROR, SET_ERROR } from '../../../../reducers/error';
+import {
+  INTER_B2B,
+  DD_MM_YYYY,
+  HH_MM,
+  SINGLE,
+  UPLOAD_METHOD,
+  DATA_SELECTION,
+  SLOTS_SELECTION,
+  ATTENDANCE_SIGNATURE,
+  ATTENDANCE_SUMMARY, END_SCREEN,
+} from '../../../../core/data/constants';
+import { errorReducer, initialErrorState, RESET_ERROR } from '../../../../reducers/error';
 import AttendanceSheetSelectionForm from '../../../../components/AttendanceSheetSelectionForm';
 import UploadMethods from '../../../../components/UploadMethods';
 import {
@@ -27,13 +37,6 @@ interface CreateAttendanceSheetProps extends CompositeScreenProps<
 StackScreenProps<RootStackParamList, 'CreateAttendanceSheet'>,
 StackScreenProps<RootCreateAttendanceSheetParamList>
 > {}
-
-const DATA_SELECTION = 'attendance-sheet-data-selection';
-const SLOTS_SELECTION = 'slots-data-selection';
-const UPLOAD_METHOD = 'upload-method-selection';
-const ATTENDANCE_SIGNATURE = 'attendance-signature';
-const ATTENDANCE_SUMMARY = 'attendance-summary';
-const END_SCREEN = 'end-screen';
 
 const CreateAttendanceSheet = ({ route, navigation }: CreateAttendanceSheetProps) => {
   const { isSingle } = route.params;
@@ -90,7 +93,7 @@ const CreateAttendanceSheet = ({ route, navigation }: CreateAttendanceSheetProps
 
   useEffect(() => {
     if (course && isSingle) setDataOption(course.trainees![0]._id);
-  }, [isSingle, course, setDataOption]);
+  }, [course, isSingle, setDataOption]);
 
   const setSlotsOptions = useCallback((options: string[]) => {
     setSlotsToAdd(options);
@@ -100,43 +103,6 @@ const CreateAttendanceSheet = ({ route, navigation }: CreateAttendanceSheetProps
   const setConfirmationCheckbox = () => {
     setConfirmation(prevState => !prevState);
     dispatchErrorConfirmation({ type: RESET_ERROR });
-  };
-
-  const goToUploadMethod = () => {
-    if (isSingle && !slotsToAdd.length) {
-      dispatchErrorSlots({ type: SET_ERROR, payload: 'Veuillez sélectionner des créneaux' });
-    } else if (!attendanceSheetToAdd) {
-      dispatchErrorData({
-        type: SET_ERROR,
-        payload: [INTER_B2B, SINGLE].includes(course?.type || '')
-          ? 'Veuillez sélectionner un stagiaire'
-          : 'Veuillez sélectionner une date',
-      });
-    } else {
-      dispatchErrorData({ type: RESET_ERROR });
-      navigation.navigate(UPLOAD_METHOD);
-    }
-  };
-
-  const goToSlotSelection = () => {
-    if (!attendanceSheetToAdd) {
-      dispatchErrorData({ type: SET_ERROR, payload: 'Veuillez sélectionner un stagiaire' });
-    } else {
-      dispatchErrorData({ type: RESET_ERROR });
-      navigation.navigate(SLOTS_SELECTION);
-    }
-  };
-
-  const goToSummary = () => {
-    if (!signature) {
-      dispatchErrorSignature({ type: SET_ERROR, payload: 'Veuillez signer dans l\'encadré' });
-    } else {
-      dispatchErrorSignature({ type: RESET_ERROR });
-      setSelectedSlotsOptions(
-        slotsOptions.map(group => group.filter(opt => slotsToAdd.includes(opt.value))).filter(g => g.length)
-      );
-      navigation.navigate(ATTENDANCE_SUMMARY);
-    }
   };
 
   const saveAttendances = async () => {
@@ -166,26 +132,20 @@ const CreateAttendanceSheet = ({ route, navigation }: CreateAttendanceSheetProps
       .map(([stepName, _]) => stepName);
   };
 
-  const saveAndGoToEndScreen = async () => {
-    if (!confirmation) {
-      dispatchErrorConfirmation({ type: SET_ERROR, payload: 'Veuillez cocher la case ci-dessous' });
-    } else {
-      dispatchErrorConfirmation({ type: RESET_ERROR });
-      await saveAttendances();
-      navigation.navigate(END_SCREEN);
-    }
-  };
-
   const renderDataSelection = () => (
-    <AttendanceSheetSelectionForm title={dataSelectionTitle} error={errorData}
-      goToNextScreen={isSingle ? goToSlotSelection : goToUploadMethod}>
+    <AttendanceSheetSelectionForm title={dataSelectionTitle} error={errorData} dispatchErrorData={dispatchErrorData}
+      dispatchErrorSlots={dispatchErrorSlots} nextScreenName={isSingle ? SLOTS_SELECTION : UPLOAD_METHOD}
+      courseType={course!.type} attendanceSheetToAdd={attendanceSheetToAdd}
+      areSlotsMissing={isSingle && !slotsToAdd.length}>
       <RadioButtonList options={missingAttendanceSheets} setOption={setDataOption}
         checkedRadioButton={attendanceSheetToAdd} />
     </AttendanceSheetSelectionForm>
   );
 
   const renderSlotSelection = () => (
-    <AttendanceSheetSelectionForm title={slotSelectionTitle} error={errorSlots} goToNextScreen={goToUploadMethod}>
+    <AttendanceSheetSelectionForm title={slotSelectionTitle} error={errorSlots} dispatchErrorData={dispatchErrorData}
+      dispatchErrorSlots={dispatchErrorSlots} nextScreenName={UPLOAD_METHOD} courseType={course!.type}
+      attendanceSheetToAdd={attendanceSheetToAdd} areSlotsMissing={isSingle && !slotsToAdd.length}>
       <MultipleCheckboxList optionsGroups={slotsOptions} groupTitles={Object.keys(groupedSlotsToBeSigned)}
         setOptions={setSlotsOptions} checkedList={slotsToAdd}/>
     </AttendanceSheetSelectionForm>
@@ -196,19 +156,25 @@ const CreateAttendanceSheet = ({ route, navigation }: CreateAttendanceSheetProps
       slotsToAdd={slotsToAdd} />
   );
 
+  const setSlotsOptionsForSummary = () => setSelectedSlotsOptions(
+    slotsOptions.map(group => group.filter(opt => slotsToAdd.includes(opt.value))).filter(g => g.length)
+  );
+
   const renderSignatureContainer = () => (
-    <AttendanceSignatureContainer error={errorSignature} goToNextScreen={goToSummary} setSignature={setSignature}
-      resetError={() => dispatchErrorSignature({ type: RESET_ERROR })} />
+    <AttendanceSignatureContainer signature={signature} resetError={() => dispatchErrorSignature({ type: RESET_ERROR })}
+      error={errorSignature} setSignature={setSignature} dispatchErrorSignature={dispatchErrorSignature} />
   );
 
   const renderSummary = () => (
-    <AttendanceSheetSummary signature={signature} goToNextScreen={saveAndGoToEndScreen} error={errorConfirmation}
+    <AttendanceSheetSummary signature={signature} saveAttendances={saveAttendances}
+      dispatchErrorConfirmation={dispatchErrorConfirmation} error={errorConfirmation}
       stepsName={getFilteredStepsName()} isLoading={isLoading} setConfirmation={setConfirmationCheckbox}
-      confirmation={confirmation}
+      confirmation={confirmation} setSelectedSlotsOptions={setSlotsOptionsForSummary}
       traineeName={traineeName} slotsOptions={selectedSlotsOptions} />
   );
   const renderEndScreen = () => (
-    <AttendanceEndScreen goToNextScreen={navigation.goBack} traineeName={traineeName} failUpload={failUpload} />
+    <AttendanceEndScreen goToNextScreen={navigation.goBack} traineeName={traineeName}
+      failUpload={failUpload} />
   );
 
   const Stack = createStackNavigator<RootCreateAttendanceSheetParamList>();
