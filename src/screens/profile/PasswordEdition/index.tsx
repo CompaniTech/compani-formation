@@ -15,7 +15,7 @@ const PasswordEdition = ({ route, navigation }: PasswordEditionProps) => {
   const { userId } = route.params;
 
   const goBack = () => {
-    navigation.navigate('Profile');
+    navigation.goBack();
   };
 
   const savePassword = async (password: string) => {

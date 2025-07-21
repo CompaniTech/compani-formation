@@ -1,6 +1,8 @@
-import { View, Text, Image, ScrollView } from 'react-native';
+import { View, Text, Image, ScrollView, BackHandler } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
+import { useFocusEffect } from '@react-navigation/native';
+import { useCallback } from 'react';
 import { IS_WEB, TRAINER } from '../../core/data/constants';
 import NiPrimaryButton from '../form/PrimaryButton';
 import { PINK } from '../../styles/colors';
@@ -14,6 +16,19 @@ interface AttendanceEndScreenProps {
 }
 
 const AttendanceEndScreen = ({ traineeName, failUpload, goToNextScreen, mode = TRAINER }: AttendanceEndScreenProps) => {
+  useFocusEffect(
+    useCallback(() => {
+      const hardwareBackPress = () => {
+        goToNextScreen();
+        return true;
+      };
+
+      const subscription = BackHandler.addEventListener('hardwareBackPress', hardwareBackPress);
+
+      return () => subscription.remove();
+    }, [goToNextScreen])
+  );
+
   const renderFailMessage = (text: string) =>
     <ScrollView contentContainerStyle={styles.errorContainer} showsVerticalScrollIndicator={IS_WEB}>
       <Text style={styles.title}>{text}</Text>

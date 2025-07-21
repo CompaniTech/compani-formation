@@ -1,18 +1,11 @@
 // @ts-nocheck
 
 import { useContext, useState } from 'react';
-import { View, Linking } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { Linking } from 'react-native';
 import { createStackNavigator, StackScreenProps } from '@react-navigation/stack';
 import { CompositeScreenProps } from '@react-navigation/native';
-import FeatherButton from '../../components/icons/FeatherButton';
-import { ICON } from '../../styles/metrics';
 import { RootCreateAccountParamList, RootStackParamList } from '../../types/NavigationType';
-import commonStyles from '../../styles/common';
-import styles from './styles';
-import { GREY } from '../../styles/colors';
 import CreateAccountForm from '../../components/CreateAccountForm';
-import ProgressBar from '../../components/cards/ProgressBar';
 import Users from '../../api/users';
 import { formatPhoneForPayload } from '../../core/helpers/utils';
 import { AuthContextType, Context as AuthContext } from '../../context/AuthContext';
@@ -51,7 +44,7 @@ const formatCreationPayload = (formList: CreateAccountDataType[][], email) => {
   );
 };
 
-const CreateAccount = ({ route, navigation }: CreateAccountProps) => {
+const CreateAccount = ({ route }: CreateAccountProps) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { email } = route.params;
   const { signIn }: AuthContextType = useContext(AuthContext);
@@ -116,10 +109,6 @@ const CreateAccount = ({ route, navigation }: CreateAccountProps) => {
     }],
   ]);
 
-  const goBack = i => (i > 0
-    ? navigation.navigate(`create-account-screen-${i - 1}`)
-    : navigation.navigate('EmailForm', { firstConnection: true }));
-
   const setForm = (data, index) => {
     setFormList(prevFormList => (prevFormList.map((fieldsGroup, i) => (i === index ? data : fieldsGroup))));
   };
@@ -137,17 +126,8 @@ const CreateAccount = ({ route, navigation }: CreateAccountProps) => {
   };
 
   const renderScreen = (fields: CreateAccountDataType[], i: number) => (
-    <SafeAreaView style={styles.safeArea} edges={['top']}>
-      <View style={styles.header}>
-        <FeatherButton name='arrow-left' onPress={() => goBack(i)} size={ICON.MD} color={GREY[600]}
-          disabled={isLoading} />
-        <View style={commonStyles.progressBarContainer}>
-          <ProgressBar progress={((i + 1) / formList.length) * 100} />
-        </View>
-      </View>
-      <CreateAccountForm isLoading={isLoading} data={fields} setData={setForm} index={i} goBack={goBack}
-        create={create} openUrl={() => Linking.openURL('https://www.compani.fr/cgu-cgv')} />
-    </SafeAreaView>
+    <CreateAccountForm isLoading={isLoading} data={fields} setData={setForm} index={i} totalProgress={formList.length}
+      create={create} openUrl={() => Linking.openURL('https://www.compani.fr/cgu-cgv')} />
   );
 
   const Stack = createStackNavigator<RootCreateAccountParamList>();

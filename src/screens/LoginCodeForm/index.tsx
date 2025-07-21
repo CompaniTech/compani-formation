@@ -1,7 +1,16 @@
-import { useState, createRef, useReducer, useRef, useEffect } from 'react';
-import { View, Text, TextInput, TextInputKeyPressEventData, KeyboardAvoidingView, ScrollView } from 'react-native';
+import { useState, createRef, useReducer, useRef, useEffect, useCallback } from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  TextInputKeyPressEventData,
+  KeyboardAvoidingView,
+  ScrollView,
+  BackHandler,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StackScreenProps } from '@react-navigation/stack';
+import { useFocusEffect } from '@react-navigation/native';
 import Authentication from '../../api/authentication';
 import Companies from '../../api/companies';
 import { RootStackParamList } from '../../types/NavigationType';
@@ -45,6 +54,19 @@ const LoginCodeForm = ({ navigation }: LoginCodeFormProps) => {
     setExitConfirmationModal(false);
     navigation.goBack();
   };
+
+  useFocusEffect(
+    useCallback(() => {
+      const onBackPress = () => {
+        if (!isLoading) setExitConfirmationModal(true);
+        return true;
+      };
+
+      const subscription = BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+      return () => subscription.remove();
+    }, [isLoading])
+  );
 
   const onChangeText = (char: string, index: number) => {
     setCode(code.map((c, i) => (i === index ? char : c)));

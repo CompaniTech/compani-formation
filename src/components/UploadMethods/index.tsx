@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Alert, BackHandler, View } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useIsFocused, useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { GREY, PINK } from '../../styles/colors';
 import { INTER_B2B, SINGLE, CAMERA, GALLERY } from '../../core/data/constants';
 import AttendanceSheets from '../../api/attendanceSheets';
@@ -29,23 +29,24 @@ const UploadMethods = ({ attendanceSheetToAdd, slotsToAdd = [], course, goToPare
   const [type, setType] = useState<string>('');
   const [imagePickerManager, setImagePickerManager] = useState<boolean>(false);
   const [isSingle, setIsSingle] = useState<boolean>(false);
-  const isFocused = useIsFocused();
   const [, requestPermission] = ImagePicker.useCameraPermissions();
 
   useEffect(() => {
     setIsSingle(course.type === SINGLE);
   }, [course]);
 
-  const hardwareBackPress = useCallback(() => {
-    if (isFocused) navigation.goBack();
-    return true;
-  }, [navigation, isFocused]);
+  useFocusEffect(
+    useCallback(() => {
+      const hardwareBackPress = () => {
+        navigation.goBack();
+        return true;
+      };
 
-  useEffect(() => {
-    const subscription = BackHandler.addEventListener('hardwareBackPress', hardwareBackPress);
+      const subscription = BackHandler.addEventListener('hardwareBackPress', hardwareBackPress);
 
-    return () => { subscription.remove(); };
-  }, [hardwareBackPress]);
+      return () => subscription.remove();
+    }, [navigation])
+  );
 
   const alert = (component: string) => {
     Alert.alert(

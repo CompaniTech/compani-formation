@@ -127,7 +127,7 @@ const LearnerCourseProfile = ({ route, navigation }: LearnerCourseProfileProps) 
     const subscription = BackHandler.addEventListener('hardwareBackPress', hardwareBackPress);
 
     return () => { subscription.remove(); };
-  }, [hardwareBackPress, isFocused]);
+  }, [hardwareBackPress]);
 
   const getPdfName = (c: BlendedCourseType) => {
     const misc = c.misc ? `_${c.misc}` : '';
