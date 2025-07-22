@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { ActionDispatch, useCallback, useEffect, useRef, useState } from 'react';
 import { BackHandler, View } from 'react-native';
 import { WebView, WebViewMessageEvent } from 'react-native-webview';
-import { useIsFocused, useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useIsFocused, useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ICON } from '../../styles/metrics';
 import { GREY } from '../../styles/colors';
@@ -9,24 +9,26 @@ import FeatherButton from '../../components/icons/FeatherButton';
 import NiPrimaryButton from '../../components/form/PrimaryButton';
 import NiSecondaryButton from '../../components/form/SecondaryButton';
 import NiErrorMessage from '../../components/ErrorMessage';
-import { IS_WEB } from '../../core/data/constants';
-import { ErrorStateType } from '../../reducers/error';
+import { ATTENDANCE_SUMMARY, IS_WEB } from '../../core/data/constants';
+import { ErrorActionType, ErrorStateType, RESET_ERROR, SET_ERROR } from '../../reducers/error';
 import ExitModal from '../ExitModal';
 import { htmlContent } from './canvas';
 import styles from './styles';
 
 interface AttendanceSignatureContainerProps {
+  signature: string,
   error: ErrorStateType,
-  goToNextScreen: () => void,
   resetError: () => void,
   setSignature: (img: string) => void,
+  dispatchErrorSignature: ActionDispatch<[action: ErrorActionType]>
 }
 
 const AttendanceSignatureContainer = ({
+  signature,
   error,
-  goToNextScreen,
   resetError,
   setSignature,
+  dispatchErrorSignature,
 }: AttendanceSignatureContainerProps) => {
   const navigation = useNavigation();
   const iframeRef = useRef<any>(null);
@@ -61,16 +63,18 @@ const AttendanceSignatureContainer = ({
     };
   }, [handleIframeMessage]);
 
-  const hardwareBackPress = () => {
-    setExitConfirmationModal(true);
-    return true;
-  };
+  useFocusEffect(
+    useCallback(() => {
+      const onBackPress = () => {
+        setExitConfirmationModal(true);
+        return true;
+      };
 
-  useEffect(() => {
-    BackHandler.addEventListener('hardwareBackPress', hardwareBackPress);
+      const subscription = BackHandler.addEventListener('hardwareBackPress', onBackPress);
 
-    return () => { BackHandler.removeEventListener('hardwareBackPress', hardwareBackPress); };
-  }, []);
+      return () => subscription.remove();
+    }, [setExitConfirmationModal])
+  );
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('beforeRemove', (e) => {
@@ -100,6 +104,15 @@ const AttendanceSignatureContainer = ({
     setSignature('');
     resetError();
     navigation.goBack();
+  };
+
+  const goToSummary = () => {
+    if (!signature) {
+      dispatchErrorSignature({ type: SET_ERROR, payload: 'Veuillez signer dans l\'encadré' });
+    } else {
+      dispatchErrorSignature({ type: RESET_ERROR });
+      navigation.navigate(ATTENDANCE_SUMMARY);
+    }
   };
 
   return (
@@ -133,7 +146,7 @@ const AttendanceSignatureContainer = ({
         </View>
         <View style={styles.footer}>
           <NiErrorMessage message={error.message} show={error.value} />
-          <NiPrimaryButton caption='Suivant' onPress={goToNextScreen} />
+          <NiPrimaryButton caption='Suivant' onPress={goToSummary} />
         </View>
       </View>
     </SafeAreaView>

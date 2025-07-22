@@ -1,11 +1,12 @@
 // @ts-nocheck
 
 import { useState, useEffect, useCallback } from 'react';
-import { View, BackHandler, ImageSourcePropType, FlatList, ActivityIndicator } from 'react-native';
+import { View, BackHandler, ImageSourcePropType, FlatList, ActivityIndicator, RefreshControl } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useIsFocused, CompositeScreenProps } from '@react-navigation/native';
 import get from 'lodash/get';
 import has from 'lodash/has';
+import isEqual from 'lodash/isEqual';
 import { StackScreenProps } from '@react-navigation/stack';
 import { RootStackParamList, RootBottomTabParamList } from '../../../../types/NavigationType';
 import Courses from '../../../../api/courses';
@@ -39,31 +40,36 @@ const TrainerCourseProfile = ({
   const [source, setSource] =
     useState<ImageSourcePropType>(require('../../../../../assets/images/authentication_background_image.webp'));
   const [title, setTitle] = useState<string>('');
+  const [refreshing, setRefreshing] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   const isFocused = useIsFocused();
+
+  const getCourse = useCallback(async () => {
+    try {
+      const fetchedCourse = await Courses.getCourse(route.params.courseId, PEDAGOGY);
+      const programImage = get(fetchedCourse, 'subProgram.program.image.link') || '';
+
+      if (!isEqual(fetchedCourse, course)) setCourse(fetchedCourse);
+      setTitle(getTitle(fetchedCourse));
+      if (programImage) setSource({ uri: programImage });
+      setRefreshing(false);
+      setIsLoaded(true);
+    } catch (e: any) {
+      console.error(e);
+      setCourse(null);
+    }
+  }, [course, route.params.courseId]);
+
   useEffect(() => {
-    const getCourse = async () => {
-      try {
-        const fetchedCourse = await Courses.getCourse(route.params.courseId, PEDAGOGY);
-        const programImage = get(fetchedCourse, 'subProgram.program.image.link') || '';
-
-        setCourse(fetchedCourse);
-        setTitle(getTitle(fetchedCourse));
-        if (programImage) setSource({ uri: programImage });
-      } catch (e: any) {
-        console.error(e);
-        setCourse(null);
-      }
-    };
-
     if (isFocused) {
       setStatusBarVisible(true);
-      getCourse();
+      if (!isLoaded) getCourse();
     }
-  }, [isFocused, route.params.courseId, setStatusBarVisible]);
+  }, [isFocused, getCourse, setStatusBarVisible, isLoaded]);
 
   const goBack = useCallback(() => {
-    navigation.navigate('TrainerCourses');
+    navigation.goBack();
   }, [navigation]);
 
   const hardwareBackPress = useCallback(() => {
@@ -72,10 +78,10 @@ const TrainerCourseProfile = ({
   }, [goBack]);
 
   useEffect(() => {
-    BackHandler.addEventListener('hardwareBackPress', hardwareBackPress);
+    const subscription = BackHandler.addEventListener('hardwareBackPress', hardwareBackPress);
 
-    return () => { BackHandler.removeEventListener('hardwareBackPress', hardwareBackPress); };
-  }, [hardwareBackPress]);
+    return () => { subscription.remove(); };
+  }, [hardwareBackPress, isFocused]);
 
   const goTo = (screen: typeof ABOUT_SCREEN | typeof ADMIN_SCREEN) => {
     if (!course) return;
@@ -94,11 +100,18 @@ const TrainerCourseProfile = ({
     </View>
   </>;
 
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    getCourse();
+  }, [getCourse]);
+
+  const renderRefreshControl = <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />;
+
   return course && has(course, 'subProgram.program') ? (
     <SafeAreaView style={commonStyles.container} edges={['top']}>
       <FlatList data={course.subProgram.steps} keyExtractor={item => item._id} ListHeaderComponent={renderHeader}
         renderItem={({ item, index }) => renderStepList(TRAINER, route, item, index)}
-        showsVerticalScrollIndicator={false} />
+        showsVerticalScrollIndicator={false} refreshControl={renderRefreshControl} />
     </SafeAreaView>
   )
     : <View style={commonStyles.loadingContainer}>

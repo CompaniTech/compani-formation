@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback, useReducer } from 'react';
 import { Text, View, KeyboardAvoidingView, BackHandler } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StackScreenProps } from '@react-navigation/stack';
+import { useFocusEffect } from '@react-navigation/native';
 import ExitModal from '../../components/ExitModal';
 import FeatherButton from '../../components/icons/FeatherButton';
 import { ICON, IS_LARGE_SCREEN, MARGIN } from '../../styles/metrics';
@@ -27,16 +28,18 @@ const EmailForm = ({ route, navigation }: EmailFormProps) => {
   const [forgotPasswordModal, setForgotPasswordModal] = useState<boolean>(false);
   const [error, dispatchError] = useReducer(errorReducer, initialErrorState);
 
-  const hardwareBackPress = useCallback(() => {
-    if (!isLoading) setExitConfirmationModal(true);
-    return true;
-  }, [isLoading]);
+  useFocusEffect(
+    useCallback(() => {
+      const onBackPress = () => {
+        if (!isLoading) setExitConfirmationModal(true);
+        return true;
+      };
 
-  useEffect(() => {
-    BackHandler.addEventListener('hardwareBackPress', hardwareBackPress);
+      const subscription = BackHandler.addEventListener('hardwareBackPress', onBackPress);
 
-    return () => { BackHandler.removeEventListener('hardwareBackPress', hardwareBackPress); };
-  }, [hardwareBackPress]);
+      return () => subscription.remove();
+    }, [isLoading])
+  );
 
   useEffect(() => {
     if (IS_IOS) setBehavior('padding');

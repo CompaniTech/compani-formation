@@ -43,6 +43,7 @@ const styles = StyleSheet.create({
   },
   input: {
     ...FIRA_SANS_REGULAR.XXXL,
+    color: GREY[900],
     marginHorizontal: MARGIN.XXS,
     maxWidth: '25%',
     textAlign: 'center',

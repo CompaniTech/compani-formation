@@ -1,5 +1,5 @@
 import { createRef, useEffect, useReducer, useState } from 'react';
-import { Text, View, TextInput, Keyboard, TextInputKeyPressEventData } from 'react-native';
+import { Text, View, TextInput, Keyboard, TextInputKeyPressEventData, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import get from 'lodash/get';
 import BottomModal from '../BottomModal';
@@ -7,6 +7,7 @@ import NiPrimaryButton from '../form/PrimaryButton';
 import Authentication from '../../api/authentication';
 import { EMAIL, IDENTITY_VERIFICATION, MOBILE, PHONE } from '../../core/data/constants';
 import { formatPhone } from '../../core/helpers/utils';
+import { GREY } from '../../styles/colors';
 import { IS_LARGE_SCREEN } from '../../styles/metrics';
 import styles from './styles';
 import { errorReducer, initialErrorState, RESET_ERROR, SET_ERROR } from '../../reducers/error';
@@ -171,7 +172,7 @@ const ForgotPasswordModal = ({ visible, email, setForgotPasswordModal }: ForgotP
         {inputRefs.map((k, idx) => (
           <TextInput ref={(r) => { inputRefs[idx] = r; }} key={`${k}${idx}`} value={code[idx]}
             onChangeText={char => onChangeText(char, idx)} style={styles.input} placeholder={'_'}
-            onKeyPress={({ nativeEvent }) => checkKeyValue(nativeEvent.key, idx)}
+            onKeyPress={({ nativeEvent }) => checkKeyValue(nativeEvent.key, idx)} placeholderTextColor={GREY[600]}
             maxLength={1} keyboardType={'number-pad'} autoFocus={idx === 0} />))}
       </View>
       <NiPrimaryButton caption='Valider' customStyle={styles.button} onPress={() => formatCode()} loading={isLoading} />
@@ -181,10 +182,10 @@ const ForgotPasswordModal = ({ visible, email, setForgotPasswordModal }: ForgotP
 
   return (
     <BottomModal onRequestClose={onRequestClose} visible={visible}>
-      <View style={styles.modalContent}>
+      <ScrollView contentContainerStyle={styles.modalContent}>
         <Text style={styles.title}>Confirmez votre identité</Text>
         {!codeRecipient ? beforeCodeSent() : afterCodeSent()}
-      </View>
+      </ScrollView>
     </BottomModal>
   );
 };

@@ -1,73 +1,34 @@
 // @ts-nocheck
 
-import { useState, useRef } from 'react';
-import * as ScreenOrientation from 'expo-screen-orientation';
-import { Platform, View } from 'react-native';
-import {
-  Video,
-  VideoFullscreenUpdate,
-  ResizeMode,
-  VideoFullscreenUpdateEvent,
-  AVPlaybackStatus,
-} from 'expo-av';
-import styles from './styles';
+import { useState } from 'react';
+import { View } from 'react-native';
+import { useVideoPlayer, VideoView } from 'expo-video';
+import { IS_IOS, IS_WEB } from '../../../core/data/constants';
 import { ICON } from '../../../styles/metrics';
 import FeatherButton from '../../../components/icons/FeatherButton';
 import { GREY } from '../../../styles/colors';
-import Spinner from '../../Spinner';
-import { IS_IOS } from '../../../core/data/constants';
+import styles from './styles';
 
 interface NiVideoProps {
   mediaSource: { uri: string } | undefined,
 }
 
 const NiVideo = ({ mediaSource }: NiVideoProps) => {
-  const isIosVersionWithPlayButton = IS_IOS && Platform.Version === '14.1';
-  const [playVisible, setPlayVisible] = useState<boolean>(isIosVersionWithPlayButton);
-  const [nativeControlsVisible, setNativeControlsVisible] = useState<boolean>(false);
-  const videoRef = useRef<Video>(null);
-  const [isMediaLoading, setIsMediaLoading] = useState(false);
+  const player = useVideoPlayer(mediaSource);
+  const [playVisible, setPlayVisible] = useState<boolean>(IS_IOS);
 
-  const displayFullscreen = () => {
-    videoRef.current?.playAsync();
+  const firstPlayOnIOS = () => {
+    player.play();
+    setPlayVisible(false);
   };
-
-  const onPlaybackStatusUpdate = (playbackStatus: AVPlaybackStatus) => {
-    if (isIosVersionWithPlayButton) {
-      if (playbackStatus.isPlaying) setPlayVisible(false);
-      else setPlayVisible(true);
-    }
-    setNativeControlsVisible(true);
-  };
-
-  // eslint-disable-next-line consistent-return
-  const onFullscreenUpdate = async ({ fullscreenUpdate }: VideoFullscreenUpdateEvent) => {
-    if (Platform.OS === 'android') {
-      switch (fullscreenUpdate) {
-        case VideoFullscreenUpdate.PLAYER_DID_PRESENT:
-          return ScreenOrientation.unlockAsync();
-        case VideoFullscreenUpdate.PLAYER_WILL_DISMISS:
-          return ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT);
-        default:
-      }
-    }
-  };
-
-  const style = styles(isMediaLoading);
 
   return (
-    <>
-      {isMediaLoading && <Spinner />}
-      <View>
-        {isIosVersionWithPlayButton && playVisible &&
-        <FeatherButton name='play-circle' size={ICON.XXL} onPress={displayFullscreen} color={GREY[100]}
-          style={style.play} />}
-        <Video ref={videoRef} useNativeControls={nativeControlsVisible} resizeMode={ResizeMode.CONTAIN}
-          source={mediaSource} onPlaybackStatusUpdate={onPlaybackStatusUpdate} onFullscreenUpdate={onFullscreenUpdate}
-          videoStyle={style.media} onLoadStart={() => setIsMediaLoading(true)}
-          onLoad={() => setIsMediaLoading(false)} />
-      </View>
-    </>
+    <View>
+      {IS_IOS && playVisible &&
+        <FeatherButton name='play-circle' size={ICON.XXL} onPress={firstPlayOnIOS} color={GREY[100]}
+          style={styles.play} />}
+      <VideoView style={styles.media} player={player} allowsFullscreen={IS_IOS || IS_WEB} crossOrigin="anonymous" />
+    </View>
   );
 };
 

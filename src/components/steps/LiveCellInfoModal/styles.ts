@@ -27,6 +27,7 @@ export default StyleSheet.create({
   },
   title: {
     ...FIRA_SANS_BOLD.MD,
+    color: GREY[900],
     flex: 1,
   },
   closeButton: {

@@ -1,6 +1,7 @@
 import { StyleSheet } from 'react-native';
 import { MARGIN } from '../../../styles/metrics';
 import { FIRA_SANS_REGULAR } from '../../../styles/fonts';
+import { GREY } from '../../../styles/colors';
 
 const styles = StyleSheet.create({
   datesAndArrowContainer: {
@@ -10,6 +11,7 @@ const styles = StyleSheet.create({
   },
   hours: {
     ...FIRA_SANS_REGULAR.MD,
+    color: GREY[900],
   },
   arrow: {
     marginHorizontal: MARGIN.XS,

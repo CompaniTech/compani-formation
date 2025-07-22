@@ -81,9 +81,9 @@ const QuestionnaireCardContainer = ({ route, navigation }: QuestionnaireCardCont
   };
 
   useEffect(() => {
-    BackHandler.addEventListener('hardwareBackPress', hardwareBackPress);
+    const subscription = BackHandler.addEventListener('hardwareBackPress', hardwareBackPress);
 
-    return () => { BackHandler.removeEventListener('hardwareBackPress', hardwareBackPress); };
+    return () => { subscription.remove(); };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cardIndex]);
 

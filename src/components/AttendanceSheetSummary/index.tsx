@@ -1,8 +1,8 @@
 import { ScrollView, View, Text, BackHandler, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useIsFocused, useNavigation } from '@react-navigation/native';
-import { useCallback, useEffect } from 'react';
-import { ErrorStateType } from '../../reducers/error';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { ActionDispatch, useCallback, useEffect } from 'react';
+import { ErrorActionType, ErrorStateType, RESET_ERROR, SET_ERROR } from '../../reducers/error';
 import { DataOptionsType } from '../../store/attendanceSheets/slice';
 import NiErrorMessage from '../../components/ErrorMessage';
 import Checkbox from '../form/Checkbox';
@@ -11,46 +11,66 @@ import NiPrimaryButton from '../form/PrimaryButton';
 import FeatherButton from '../icons/FeatherButton';
 import { ICON } from '../../styles/metrics';
 import { GREY } from '../../styles/colors';
-import { IS_WEB } from '../../core/data/constants';
+import { END_SCREEN, IS_WEB } from '../../core/data/constants';
 import styles from './styles';
 
 interface AttendanceSheetSummaryProps {
-  goToNextScreen: () => void,
   stepsName: string[],
   slotsOptions: DataOptionsType[][],
   signature: string,
   isLoading: boolean,
   setConfirmation: () => void,
+  dispatchErrorConfirmation: ActionDispatch<[action: ErrorActionType]>
+  saveAttendances: () => void,
+  setSelectedSlotsOptions?: () => void,
   confirmation: boolean,
   error: ErrorStateType,
   traineeName: string,
 }
 
 const AttendanceSheetSummary = ({
-  goToNextScreen,
   stepsName,
   slotsOptions,
   signature,
   isLoading,
   setConfirmation,
+  dispatchErrorConfirmation,
+  saveAttendances,
+  setSelectedSlotsOptions = () => {},
   confirmation,
   error,
   traineeName,
 }: AttendanceSheetSummaryProps) => {
   const navigation = useNavigation();
   const checkedList = slotsOptions.flat().map(option => option.value);
-  const isFocused = useIsFocused();
-
-  const hardwareBackPress = useCallback(() => {
-    if (isFocused) navigation.goBack();
-    return true;
-  }, [isFocused, navigation]);
 
   useEffect(() => {
-    BackHandler.addEventListener('hardwareBackPress', hardwareBackPress);
+    setSelectedSlotsOptions();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-    return () => { BackHandler.removeEventListener('hardwareBackPress', hardwareBackPress); };
-  }, [hardwareBackPress]);
+  useFocusEffect(
+    useCallback(() => {
+      const hardwareBackPress = () => {
+        navigation.goBack();
+        return true;
+      };
+
+      const subscription = BackHandler.addEventListener('hardwareBackPress', hardwareBackPress);
+
+      return () => subscription.remove();
+    }, [navigation])
+  );
+
+  const saveAndGoToEndScreen = async () => {
+    if (!confirmation) {
+      dispatchErrorConfirmation({ type: SET_ERROR, payload: 'Veuillez cocher la case ci-dessous' });
+    } else {
+      dispatchErrorConfirmation({ type: RESET_ERROR });
+      await saveAttendances();
+      navigation.navigate(END_SCREEN);
+    }
+  };
 
   return <SafeAreaView style={styles.safeArea} edges={['top']}>
     <View style={styles.header}>
@@ -67,7 +87,7 @@ const AttendanceSheetSummary = ({
     </View>
     <View style={styles.button}>
       <NiErrorMessage message={error.message} show={error.value} />
-      <NiPrimaryButton caption={'Suivant'} onPress={goToNextScreen} loading={isLoading} />
+      <NiPrimaryButton caption={'Suivant'} onPress={saveAndGoToEndScreen} loading={isLoading} />
     </View>
   </SafeAreaView>;
 };

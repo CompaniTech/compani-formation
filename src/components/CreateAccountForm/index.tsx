@@ -1,38 +1,57 @@
 // @ts-nocheck
 
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import { Text, View, BackHandler, KeyboardAvoidingView, ScrollView, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import NiInput from '../../components/form/Input';
 import PhoneSelect from '../form/PhoneSelect';
 import NiPrimaryButton from '../../components/form/PrimaryButton';
 import styles from './styles';
 import accountCreationStyles from '../../styles/accountCreation';
+import commonStyles from '../../styles/common';
 import { COUNTRY_CODE_REGEX, IS_IOS, IS_WEB, PHONE_REGEX } from '../../core/data/constants';
-import { IS_LARGE_SCREEN, MARGIN } from '../../styles/metrics';
+import { ICON, IS_LARGE_SCREEN, MARGIN } from '../../styles/metrics';
+import FeatherButton from '../icons/FeatherButton';
+import { GREY } from '../../styles/colors';
+import ProgressBar from '../cards/ProgressBar';
 
 interface CreateAccountFormProps {
   index: number
   data: any,
   isLoading: boolean,
+  totalProgress: number,
   setData: (data: any, i: number) => void,
-  goBack: (index: number) => void,
   create: () => void,
   openUrl: () => void,
 }
-const CreateAccountForm = ({ index, data, isLoading, setData, goBack, create, openUrl }: CreateAccountFormProps) => {
+const CreateAccountForm = ({
+  index,
+  data,
+  totalProgress,
+  isLoading,
+  setData,
+  create,
+  openUrl,
+}: CreateAccountFormProps) => {
   const navigation = useNavigation();
+
+  const goBack = useCallback(
+    i => (i > 0 ? navigation.goBack() : navigation.getParent()?.goBack()),
+    [navigation]
+  );
 
   const hardwareBackPress = useCallback(() => {
     if (!isLoading) goBack(index);
     return true;
   }, [goBack, index, isLoading]);
 
-  useEffect(() => {
-    BackHandler.addEventListener('hardwareBackPress', hardwareBackPress);
-
-    return () => { BackHandler.removeEventListener('hardwareBackPress', hardwareBackPress); };
-  }, [hardwareBackPress]);
+  useFocusEffect(
+    useCallback(() => {
+      const subscription = BackHandler.addEventListener('hardwareBackPress', hardwareBackPress);
+      return () => subscription.remove();
+    }, [hardwareBackPress])
+  );
 
   const onChangeText = (text: string, fieldToChangeIndex: number) => {
     setData(
@@ -93,28 +112,37 @@ const CreateAccountForm = ({ index, data, isLoading, setData, goBack, create, op
   };
 
   const render = (
-    <ScrollView contentContainerStyle={accountCreationStyles.container} showsVerticalScrollIndicator={IS_WEB}
-      keyboardShouldPersistTaps='always'>
-      <Text style={accountCreationStyles.title}>{data[0].title}</Text>
-      {data.map((d, i) => <View style={accountCreationStyles.input} key={`container${i}`}>
-        {d.type === 'contact'
-          ? <PhoneSelect contact={d.value} setContact={setContact}
-            validationMessage={!d.isValid && d.isValidationAttempted ? d.errorMessage : ''}/>
-          : <NiInput key={`content${i}`} caption={d.caption} value={d.value} type={d.type} optional={!d.required}
-            onChangeText={text => onChangeText(text, i)} disabled={isLoading} required={d.required}
-            validationMessage={!d.isValid && d.isValidationAttempted ? d.errorMessage : ''} />
-        }
-      </View>)}
-      <View style={accountCreationStyles.footer}>
-        {data.map((d, i) => <TouchableOpacity onPress={openUrl} key={`footer${i}`}>
-          {!!d.openUrl && <Text style={styles.modalText}>
-            <Text>{d.openUrl.text}</Text>
-            <Text style={styles.modalLink}>{d.openUrl.link}</Text>
-          </Text>}
-        </TouchableOpacity>)}
-        <NiPrimaryButton caption="Valider" onPress={validData} loading={isLoading} />
+    <SafeAreaView style={styles.safeArea} edges={['top']}>
+      <View style={styles.header}>
+        <FeatherButton name='arrow-left' onPress={() => goBack(index)} size={ICON.MD} color={GREY[600]}
+          disabled={isLoading} />
+        <View style={commonStyles.progressBarContainer}>
+          <ProgressBar progress={((index + 1) / totalProgress) * 100} />
+        </View>
       </View>
-    </ScrollView>
+      <ScrollView contentContainerStyle={accountCreationStyles.container} showsVerticalScrollIndicator={IS_WEB}
+        keyboardShouldPersistTaps='always'>
+        <Text style={accountCreationStyles.title}>{data[0].title}</Text>
+        {data.map((d, i) => <View style={accountCreationStyles.input} key={`container${i}`}>
+          {d.type === 'contact'
+            ? <PhoneSelect contact={d.value} setContact={setContact}
+              validationMessage={!d.isValid && d.isValidationAttempted ? d.errorMessage : ''}/>
+            : <NiInput key={`content${i}`} caption={d.caption} value={d.value} type={d.type} optional={!d.required}
+              onChangeText={text => onChangeText(text, i)} disabled={isLoading} required={d.required}
+              validationMessage={!d.isValid && d.isValidationAttempted ? d.errorMessage : ''} />
+          }
+        </View>)}
+        <View style={accountCreationStyles.footer}>
+          {data.map((d, i) => <TouchableOpacity onPress={openUrl} key={`footer${i}`}>
+            {!!d.openUrl && <Text style={styles.modalText}>
+              <Text>{d.openUrl.text}</Text>
+              <Text style={styles.modalLink}>{d.openUrl.link}</Text>
+            </Text>}
+          </TouchableOpacity>)}
+          <NiPrimaryButton caption="Valider" onPress={validData} loading={isLoading} />
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 
   return (

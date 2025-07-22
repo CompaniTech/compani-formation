@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
     marginHorizontal: MARGIN.XL,
   },
   identityBackground: {
-    height: 264,
+    minHeight: 264,
     alignItems: 'center',
     width: '100%',
   },
@@ -46,9 +46,11 @@ const styles = StyleSheet.create({
   },
   name: {
     ...FIRA_SANS_BOLD.LG,
+    color: GREY[900],
   },
   company: {
     ...FIRA_SANS_MEDIUM.MD,
+    color: GREY[900],
     textAlign: 'center',
     marginBottom: MARGIN.LG,
   },
@@ -63,9 +65,11 @@ const styles = StyleSheet.create({
   },
   linkRequestText: {
     ...FIRA_SANS_ITALIC.MD,
+    color: GREY[900],
   },
   companyName: {
     ...FIRA_SANS_BOLD_ITALIC.MD,
+    color: GREY[900],
   },
   coursesContainer: {
     flexDirection: 'row',
@@ -76,6 +80,7 @@ const styles = StyleSheet.create({
   },
   courses: {
     ...NUNITO_SEMI.XS,
+    color: GREY[900],
     textAlign: 'center',
     width: 88,
   },
@@ -85,6 +90,7 @@ const styles = StyleSheet.create({
   },
   contact: {
     ...FIRA_SANS_BOLD.LG,
+    color: GREY[900],
     marginBottom: MARGIN.MD,
   },
   subTitle: {
@@ -97,6 +103,7 @@ const styles = StyleSheet.create({
   },
   infos: {
     ...FIRA_SANS_MEDIUM.MD,
+    color: GREY[900],
     marginBottom: MARGIN.MD,
   },
   logOutButton: {

@@ -45,7 +45,7 @@ const styles = (card: FlashCardType) => StyleSheet.create({
   },
   question: {
     ...card.text.length > 200 && (IS_SMALL_SCREEN || FONT_SCALE > 1) ? FIRA_SANS_BOLD.MD : FIRA_SANS_BOLD.LG,
-    color: GREY[800],
+    color: GREY[900],
     textAlign: 'center',
     alignSelf: 'center',
   },

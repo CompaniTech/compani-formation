@@ -6,10 +6,12 @@ import { INPUT_HEIGHT, MARGIN, PADDING, TEXT_LINE_HEIGHT } from './metrics';
 export default StyleSheet.create({
   title: {
     ...FIRA_SANS_BLACK.XL,
+    color: GREY[800],
     marginBottom: MARGIN.MD,
   },
   text: {
     ...FIRA_SANS_REGULAR.MD,
+    color: GREY[900],
     marginBottom: MARGIN.XL,
     lineHeight: TEXT_LINE_HEIGHT,
   },
@@ -18,7 +20,7 @@ export default StyleSheet.create({
   },
   question: {
     ...FIRA_SANS_MEDIUM.LG,
-    color: GREY[800],
+    color: GREY[900],
     marginBottom: MARGIN.XL,
     marginHorizontal: MARGIN.LG,
   },

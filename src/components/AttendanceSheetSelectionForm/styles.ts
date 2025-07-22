@@ -20,6 +20,7 @@ const styles = StyleSheet.create({
   },
   title: {
     ...FIRA_SANS_BOLD.LG,
+    color: GREY[900],
     marginVertical: MARGIN.LG,
   },
   button: {

@@ -16,6 +16,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: PADDING.LG,
     paddingVertical: PADDING.MD,
     ...FIRA_SANS_ITALIC.SM,
+    color: GREY[900],
   },
   cellContainer: {
     flexDirection: 'row',

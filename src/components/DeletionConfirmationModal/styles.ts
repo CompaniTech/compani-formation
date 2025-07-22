@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { ORANGE, PINK } from '../../styles/colors';
+import { GREY, ORANGE, PINK } from '../../styles/colors';
 import { BORDER_RADIUS, IS_SMALL_SCREEN, MARGIN, PADDING } from '../../styles/metrics';
 import { FIRA_SANS_BOLD, FIRA_SANS_REGULAR } from '../../styles/fonts';
 
@@ -12,6 +12,7 @@ const styles = StyleSheet.create({
   },
   title: {
     ...FIRA_SANS_BOLD.LG,
+    color: GREY[900],
     marginBottom: MARGIN.MD,
   },
   warningMessage: {
@@ -29,6 +30,7 @@ const styles = StyleSheet.create({
   },
   body: {
     ...FIRA_SANS_REGULAR.MD,
+    color: GREY[900],
   },
   buttonContainer: {
     justifyContent: 'space-between',

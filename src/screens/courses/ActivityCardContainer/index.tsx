@@ -3,10 +3,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import get from 'lodash/get';
 import { AppState, AppStateStatus, BackHandler, Image } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { StackScreenProps } from '@react-navigation/stack';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import Activities from '../../../api/activities';
-import { LEARNER, TRAINER, TUTOR } from '../../../core/data/constants';
 import { tabsNames } from '../../../core/data/tabs';
 import {
   useGetCardIndex,
@@ -16,9 +16,11 @@ import {
   useSetCards,
   useSetExitConfirmationModal,
 } from '../../../store/cards/hooks';
+import commonStyles from '../../../styles/common';
 import { useSetStatusBarVisible } from '../../../store/main/hooks';
 import { ActivityWithCardsType } from '../../../types/ActivityTypes';
 import { RootCardParamList, RootStackParamList } from '../../../types/NavigationType';
+import { IS_IOS, LEARNER, TUTOR } from '../../../core/data/constants';
 import CardScreen from '../CardScreen';
 import ActivityEndCard from '../cardTemplates/ActivityEndCard';
 import StartCard from '../cardTemplates/StartCard';
@@ -38,7 +40,7 @@ const ActivityCardContainer = ({ route, navigation }: ActivityCardContainerProps
   const interval = useRef<ReturnType<typeof setInterval> | null>(null);
   const timer = useRef<number>(0);
   const [finalTimer, setFinalTimer] = useState<number>(0);
-  const { profileId, mode } = route.params;
+  const { mode, profileId } = route.params;
 
   useEffect(() => { setStatusBarVisible(false); }, [setStatusBarVisible]);
 
@@ -90,24 +92,30 @@ const ActivityCardContainer = ({ route, navigation }: ActivityCardContainerProps
     setFinalTimer(timer.current);
   }, []);
 
-  const navigateNext = useCallback(() => {
-    if ([LEARNER, TUTOR].includes(mode)) {
-      navigation.navigate('LearnerCourseProfile', { courseId: profileId, endedActivity: activity?._id, mode });
-    } else if (mode === TRAINER) navigation.navigate('TrainerCourseProfile', { courseId: profileId });
-    else navigation.navigate('SubProgramProfile', { subProgramId: profileId });
-  }, [activity?._id, mode, navigation, profileId]);
-
   const goBack = useCallback(
     async () => {
       if (exitConfirmationModal) setExitConfirmationModal(false);
 
       stopTimer();
-      navigateNext();
+      navigation.goBack();
       setIsActive(false);
       resetCardReducer();
     },
-    [exitConfirmationModal, navigateNext, resetCardReducer, setExitConfirmationModal, stopTimer]
+    [exitConfirmationModal, navigation, resetCardReducer, setExitConfirmationModal, stopTimer]
   );
+
+  const navigateNext = useCallback(() => {
+    if ([LEARNER, TUTOR].includes(mode)) {
+      navigation.popTo('LearnerCourseProfile', { courseId: profileId, endedActivity: activity?._id, mode });
+    } else navigation.goBack();
+  }, [activity?._id, mode, navigation, profileId]);
+
+  const goBackAfterEndActivity = () => {
+    stopTimer();
+    navigateNext();
+    setIsActive(false);
+    resetCardReducer();
+  };
 
   const hardwareBackPress = useCallback(() => {
     if (cardIndex === null) goBack();
@@ -117,20 +125,21 @@ const ActivityCardContainer = ({ route, navigation }: ActivityCardContainerProps
   }, [cardIndex, goBack, setExitConfirmationModal]);
 
   useEffect(() => {
-    BackHandler.addEventListener('hardwareBackPress', hardwareBackPress);
+    const subscription = BackHandler.addEventListener('hardwareBackPress', hardwareBackPress);
 
-    return () => { BackHandler.removeEventListener('hardwareBackPress', hardwareBackPress); };
+    return () => { subscription.remove(); };
   }, [hardwareBackPress]);
 
   const Tab = createMaterialTopTabNavigator<RootCardParamList>();
 
   return isActive
-    ? <Tab.Navigator tabBar={() => <></>} screenOptions={{ swipeEnabled: false }}>
-      <Tab.Screen key={0} name={'startCard'} options={{ title: activity?.name || tabsNames.ActivityCardContainer }}>
-        {() => <StartCard title={activity?.name || ''} goBack={goBack} isLoading={!(cards.length > 0 && activity)}
-          startTimer={startTimer} />}
-      </Tab.Screen>
-      {cards.length > 0 && activity &&
+    ? <SafeAreaView style={commonStyles.container} edges={IS_IOS ? [] : ['bottom']}>
+      <Tab.Navigator tabBar={() => <></>} screenOptions={{ swipeEnabled: false }}>
+        <Tab.Screen key={0} name={'startCard'} options={{ title: activity?.name || tabsNames.ActivityCardContainer }}>
+          {() => <StartCard title={activity?.name || ''} goBack={goBack} isLoading={!(cards.length > 0 && activity)}
+            startTimer={startTimer} />}
+        </Tab.Screen>
+        {cards.length > 0 && activity &&
         <>
           {cards.map((_, index) => (
             <Tab.Screen key={index} name={`card-${index}`} options={{ title: activity.name }}>
@@ -138,12 +147,14 @@ const ActivityCardContainer = ({ route, navigation }: ActivityCardContainerProps
             </Tab.Screen>
           ))}
           <Tab.Screen key={cards.length + 1} name={`card-${cards.length}`} options={{ title: activity.name }}>
-            {() => <ActivityEndCard goBack={goBack} activity={activity} mode={mode} stopTimer={stopTimer}
+            {() => <ActivityEndCard goBack={goBackAfterEndActivity} activity={activity} mode={mode}
+              stopTimer={stopTimer}
               finalTimer={finalTimer} />}
           </Tab.Screen>
         </>
-      }
-    </Tab.Navigator>
+        }
+      </Tab.Navigator>
+    </SafeAreaView>
     : null;
 };
 

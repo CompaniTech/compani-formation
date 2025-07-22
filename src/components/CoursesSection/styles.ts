@@ -1,6 +1,7 @@
 import { StyleSheet } from 'react-native';
 import { BORDER_RADIUS, MAIN_MARGIN_LEFT, MARGIN, PADDING } from '../../styles/metrics';
 import { FIRA_SANS_BOLD } from '../../styles/fonts';
+import { GREY } from '../../styles/colors';
 
 const styles = StyleSheet.create({
   container: {
@@ -21,6 +22,7 @@ const styles = StyleSheet.create({
   },
   title: {
     ...FIRA_SANS_BOLD.LG,
+    color: GREY[900],
     marginLeft: MAIN_MARGIN_LEFT,
   },
 });
