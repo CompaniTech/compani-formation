@@ -23,7 +23,10 @@ const AttendanceSheetCell = ({ attendanceSheet }: AttendanceSheetCellProps) => {
   const setGroupedSlotsToBeSigned = useSetGroupedSlotsToBeSigned();
 
   const goToSignature = () => {
-    const groupedSlots = groupBy(attendanceSheet.slots, 'step');
+    const grouped = groupBy(attendanceSheet.slots, slot => slot.slotId.step);
+    const groupedSlots = Object.fromEntries(
+      Object.entries(grouped).map(([step, slots]) => [step, slots.map(slot => slot.slotId)])
+    );
     const groupedSlotsToBeSigned = course?.subProgram.steps.reduce<Record<string, SlotType[]>>((acc, step) => {
       if (groupedSlots[step._id]) acc[step.name] = groupedSlots[step._id];
       return acc;
@@ -43,7 +46,8 @@ const AttendanceSheetCell = ({ attendanceSheet }: AttendanceSheetCellProps) => {
       </TouchableOpacity>
       <Text style={styles.AttendanceSheetName} lineBreakMode={'tail'} numberOfLines={2}>
       À signer {[
-          ...new Set(attendanceSheet.slots!.map(slot => CompaniDate(slot.startDate).format(DD_MM_YYYY)))].join(', ')
+          ...new Set(attendanceSheet.slots!.map(slot => CompaniDate(slot.slotId.startDate).format(DD_MM_YYYY))),
+        ].join(', ')
         }
       </Text>
     </View>
