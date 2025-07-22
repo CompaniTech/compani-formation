@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { TouchableOpacity, TextInput, FlatList, Text } from 'react-native';
 import get from 'lodash/get';
 import { sortStrings } from '../../core/helpers/utils';
-import { TRANSPARENT_GRADIENT, WHITE } from '../../styles/colors';
+import { GREY, TRANSPARENT_GRADIENT, WHITE } from '../../styles/colors';
 import { CompanyType } from '../../types/CompanyType';
 import { INPUT_HEIGHT } from '../../styles/metrics';
 import BottomModal from '../BottomModal';
@@ -45,7 +45,7 @@ const CompanySearchModal = ({ onRequestClose, visible, companyOptions }: Company
   return (
     <BottomModal onRequestClose={resetModal} visible={visible}>
       <TextInput placeholder="Choisir une structure" value={answer} onChangeText={setAnswer}
-        style={!answer ? [styles.input, styles.placeholder] : styles.input} />
+        style={!answer ? [styles.input, styles.placeholder] : styles.input} placeholderTextColor={GREY[600]} />
       <FlatList keyExtractor={item => `${item._id}`} data={getDisplayedCompanies()}
         renderItem={({ item }) => renderCompany(item)} />
       <FooterGradient colors={[TRANSPARENT_GRADIENT, WHITE]} bottomPosition={0} height={INPUT_HEIGHT}/>
