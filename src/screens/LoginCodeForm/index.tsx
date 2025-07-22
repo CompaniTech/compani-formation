@@ -159,7 +159,7 @@ const LoginCodeForm = ({ navigation }: LoginCodeFormProps) => {
               {inputRefs.map((k, idx) => (
                 <TextInput ref={(r) => { inputRefs[idx] = r; }} key={`${k}${idx}`} value={code[idx]}
                   onChangeText={char => onChangeText(char, idx)} style={styles.number} placeholder={'_'}
-                  onKeyPress={({ nativeEvent }) => checkKeyValue(nativeEvent.key, idx)}
+                  onKeyPress={({ nativeEvent }) => checkKeyValue(nativeEvent.key, idx)} placeholderTextColor={GREY[600]}
                   maxLength={1} keyboardType={'number-pad'} autoFocus={idx === 0} editable={!isLoading} />))}
             </View>
           </View>
