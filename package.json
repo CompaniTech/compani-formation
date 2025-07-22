@@ -65,7 +65,7 @@
     "eslint-config-airbnb-base": "~15.0.0",
     "eslint-plugin-import": "~2.31.0",
     "eslint-plugin-jest": "~29.0.1",
-    "expo": "53.0.20",
+    "expo": "~53.0.20",
     "expo-application": "~6.1.5",
     "expo-asset": "~11.1.7",
     "expo-audio": "~0.4.8",
