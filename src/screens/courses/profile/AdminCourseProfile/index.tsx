@@ -96,7 +96,7 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
   const groupedSlotsToBeSigned = useMemo(() => {
     if (!isSingle || !course?.slots.length) return {};
     const signedSlots = (savedAttendanceSheets as SingleAttendanceSheetType[])
-      .map(as => get(as, 'slots', []).map(s => s._id))
+      .map(as => get(as, 'slots', []).map(s => s.slotId._id))
       .flat();
 
     const groupedSlots = groupBy(course.slots.filter(slot => !signedSlots.includes(slot._id)), 'step');
@@ -288,7 +288,7 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
 
   const renderSingleSavedAttendanceSheets = (sheet: SingleAttendanceSheetType) => {
     const label = sheet.slots
-      ? [...new Set(sheet.slots.map(slot => CompaniDate(slot.startDate).format(DD_MM_YYYY)))].join(', ')
+      ? [...new Set(sheet.slots.map(slot => CompaniDate(slot.slotId.startDate).format(DD_MM_YYYY)))].join(', ')
       : formatIdentity(sheet.trainee.identity, SHORT_FIRSTNAME_LONG_LASTNAME);
 
     return (
