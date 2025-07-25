@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   textContainer: {
-    flex: 1,
+    flexGrow: 1,
   },
   iconButtonContainer: {
     alignItems: 'center',

@@ -160,9 +160,13 @@ const FillTheGapCard = ({ isLoading, setIsRightSwipeEnabled }: FillTheGap) => {
       isSelected: !selectedAnswers[idx],
     };
 
-    return <DraxView style={style.gapContainer} key={`gap${idx}`}
-      onReceiveDragDrop={event => setAnswersAndPropositions(event, idx)}
-      renderContent={() => renderContent(proposition as FillTheGapAnswers, idx)} />;
+    return IS_WEB
+      ? <View style={style.gapContainer} key={`gap${idx}`}>
+        {renderContent(proposition as FillTheGapAnswers, idx)}
+      </View>
+      : <DraxView style={style.gapContainer} key={`gap${idx}`}
+        onReceiveDragDrop={event => setAnswersAndPropositions(event, idx)}
+        renderContent={() => renderContent(proposition as FillTheGapAnswers, idx)} />;
   };
 
   const onPressFooterButton = () => {
@@ -191,11 +195,18 @@ const FillTheGapCard = ({ isLoading, setIsRightSwipeEnabled }: FillTheGap) => {
     <SafeAreaView style={style.safeArea} edges={['top']}>
       <CardHeader />
       <ScrollView contentContainerStyle={style.container} showsVerticalScrollIndicator={false}>
-        <DraxProvider>
-          <FillTheGapQuestion text={card.gappedText} isValidated={isValidated} renderGap={renderGap} />
-          <FillTheGapPropositionList isValidated={isValidated} propositions={propositions}
-            setProposition={setAnswersAndPropositions} renderContent={renderContent} />
-        </DraxProvider>
+        {IS_WEB
+          ? <View>
+            <FillTheGapQuestion text={card.gappedText} isValidated={isValidated} renderGap={renderGap} />
+            <FillTheGapPropositionList isValidated={isValidated} propositions={propositions}
+              setProposition={setAnswersAndPropositions} renderContent={renderContent} />
+          </View>
+          : <DraxProvider>
+            <FillTheGapQuestion text={card.gappedText} isValidated={isValidated} renderGap={renderGap} />
+            <FillTheGapPropositionList isValidated={isValidated} propositions={propositions}
+              setProposition={setAnswersAndPropositions} renderContent={renderContent} />
+          </DraxProvider>
+        }
         <View style={style.footerContainer}>
           <QuizCardFooter isValidated={isValidated} isValid={isAnsweredCorrectly} cardIndex={index}
             buttonDisabled={!areGapsFilled} footerColors={footerColors} explanation={card.explanation}
