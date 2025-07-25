@@ -22,6 +22,10 @@ const styles = (backgroundColor: string) => StyleSheet.create({
     height: INPUT_HEIGHT,
     width: GAP_WIDTH,
   },
+  contentContainer: {
+    flex: 1,
+    justifyContent: 'flex-end',
+  },
   footerContainer: {
     backgroundColor,
   },
