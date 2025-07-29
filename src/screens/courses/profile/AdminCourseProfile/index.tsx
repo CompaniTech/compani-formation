@@ -94,10 +94,11 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
   const [noAttendancesMessage, setNoAttendancesMessage] = useState<string>('');
 
   const groupedSlotsToBeSigned = useMemo(() => {
-    if (!isSingle || !course?.slots.length) return {};
-    const signedSlots = (savedAttendanceSheets as SingleAttendanceSheetType[])
+    if (!(isSingle || course?.type === INTER_B2B) || !course?.slots.length) return {};
+    const signedSlots = isSingle ? (savedAttendanceSheets as SingleAttendanceSheetType[])
       .map(as => get(as, 'slots', []).map(s => s.slotId._id))
-      .flat();
+      .flat()
+      : [];
 
     const groupedSlots = groupBy(course.slots.filter(slot => !signedSlots.includes(slot._id)), 'step');
 
@@ -136,7 +137,7 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
       return [];
     }
 
-    const interCourseSavedSheets = savedAttendanceSheets as InterAttendanceSheetType[];
+    const interCourseSavedSheets = savedAttendanceSheets.filter(as => as.file) as InterAttendanceSheetType[];
     const savedTrainees = interCourseSavedSheets.map(sheet => sheet.trainee?._id);
 
     return [...new Set(
@@ -338,12 +339,13 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
               }
             </View>
           </View>}
-          {!!savedAttendanceSheets.length && <>
+          {!!completedAttendanceSheets.length && <>
             {
               isSingle
                 ? (completedAttendanceSheets as SingleAttendanceSheetType[])
                   .map(sheet => renderSingleSavedAttendanceSheets(sheet))
-                : <FlatList data={savedAttendanceSheets} keyExtractor={item => item._id} style={styles.listContainer}
+                : <FlatList data={completedAttendanceSheets} keyExtractor={item => item._id}
+                  style={styles.listContainer}
                   showsHorizontalScrollIndicator={false} renderItem={({ item }) => renderSavedAttendanceSheets(item)}
                   horizontal/>
             }

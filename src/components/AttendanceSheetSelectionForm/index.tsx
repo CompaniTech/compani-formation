@@ -9,14 +9,22 @@ import { ErrorActionType, ErrorStateType, RESET_ERROR, SET_ERROR } from '../../r
 import FeatherButton from '../icons/FeatherButton';
 import { ICON } from '../../styles/metrics';
 import { GREY } from '../../styles/colors';
-import { INTER_B2B, IS_WEB, SINGLE, SLOTS_SELECTION, UPLOAD_METHOD } from '../../core/data/constants';
+import {
+  ATTENDANCE_SIGNATURE,
+  INTER_B2B, IS_WEB,
+  SINGLE,
+  SLOTS_SELECTION,
+  UPLOAD_METHOD,
+} from '../../core/data/constants';
+
+export type NextScreenType = typeof SLOTS_SELECTION | typeof UPLOAD_METHOD | typeof ATTENDANCE_SIGNATURE;
 
 interface AttendanceSheetSelectionFormProps {
   title: string,
-  attendanceSheetToAdd?: string
+  attendanceSheetToAdd?: string[]
   courseType?: string,
   areSlotsMissing?: boolean,
-  nextScreenName: string,
+  nextScreenName: NextScreenType,
   dispatchErrorData?: ActionDispatch<[action: ErrorActionType]>,
   dispatchErrorSlots?:ActionDispatch<[action: ErrorActionType]>,
   error: ErrorStateType,
@@ -25,7 +33,7 @@ interface AttendanceSheetSelectionFormProps {
 
 const AttendanceSheetSelectionForm = ({
   title,
-  attendanceSheetToAdd = '',
+  attendanceSheetToAdd = [],
   courseType = '',
   areSlotsMissing = false,
   nextScreenName,
@@ -36,19 +44,17 @@ const AttendanceSheetSelectionForm = ({
 }: AttendanceSheetSelectionFormProps) => {
   const navigation = useNavigation();
 
-  const goToSlotSelection = () => {
-    if (!attendanceSheetToAdd) {
-      dispatchErrorData({ type: SET_ERROR, payload: 'Veuillez sélectionner un stagiaire' });
+  const goToNextScreen = () => {
+    if (areSlotsMissing) {
+      dispatchErrorSlots({ type: SET_ERROR, payload: 'Veuillez sélectionner des créneaux' });
     } else {
       dispatchErrorData({ type: RESET_ERROR });
-      navigation.navigate(SLOTS_SELECTION);
+      navigation.navigate(nextScreenName);
     }
   };
 
   const goToUploadMethod = () => {
-    if (areSlotsMissing) {
-      dispatchErrorSlots({ type: SET_ERROR, payload: 'Veuillez sélectionner des créneaux' });
-    } else if (!attendanceSheetToAdd) {
+    if (!attendanceSheetToAdd.length) {
       dispatchErrorData({
         type: SET_ERROR,
         payload: [INTER_B2B, SINGLE].includes(courseType)
@@ -74,8 +80,8 @@ const AttendanceSheetSelectionForm = ({
     }, [navigation])
   );
 
-  const goToNextScreen = () => {
-    if (nextScreenName === SLOTS_SELECTION) goToSlotSelection();
+  const manageRedirection = () => {
+    if ([SLOTS_SELECTION, ATTENDANCE_SIGNATURE].includes(nextScreenName)) goToNextScreen();
     else if (nextScreenName === UPLOAD_METHOD) goToUploadMethod();
     else navigation.navigate('attendance-signature');
   };
@@ -90,7 +96,7 @@ const AttendanceSheetSelectionForm = ({
     </ScrollView>
     <View style={styles.button}>
       <NiErrorMessage message={error.message} show={error.value}/>
-      <NiPrimaryButton caption={'Suivant'} onPress={goToNextScreen}/>
+      <NiPrimaryButton caption={'Suivant'} onPress={manageRedirection}/>
     </View>
   </SafeAreaView>;
 };
