@@ -4,7 +4,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { GREY, PINK } from '../../styles/colors';
-import { INTER_B2B, SINGLE, CAMERA, GALLERY } from '../../core/data/constants';
+import { INTER_B2B, SINGLE, CAMERA, GALLERY, SLOTS_SELECTION, ATTENDANCE_SIGNATURE } from '../../core/data/constants';
 import AttendanceSheets from '../../api/attendanceSheets';
 import styles from './styles';
 import NiPrimaryButton from '../../components/form/PrimaryButton';
@@ -16,7 +16,7 @@ import FeatherButton from '../icons/FeatherButton';
 import { ICON } from '../../styles/metrics';
 
 interface UploadMethodsProps {
-  attendanceSheetToAdd: string,
+  attendanceSheetToAdd: string[],
   slotsToAdd: string[],
   course: CourseType,
   goToParent: () => void,
@@ -30,10 +30,12 @@ const UploadMethods = ({ attendanceSheetToAdd, slotsToAdd = [], course, goToPare
   const [imagePickerManager, setImagePickerManager] = useState<boolean>(false);
   const [isSingle, setIsSingle] = useState<boolean>(false);
   const [, requestPermission] = ImagePicker.useCameraPermissions();
+  const [severalAttendanceSheetsToAdd, setSeveralAttendanceSheetsToAdd] = useState<boolean>(false);
 
   useEffect(() => {
     setIsSingle(course.type === SINGLE);
-  }, [course]);
+    setSeveralAttendanceSheetsToAdd(attendanceSheetToAdd.length > 1);
+  }, [course, attendanceSheetToAdd]);
 
   useFocusEffect(
     useCallback(() => {
@@ -86,15 +88,15 @@ const UploadMethods = ({ attendanceSheetToAdd, slotsToAdd = [], course, goToPare
   const savePicture = async (picture: ImagePicker.ImagePickerAsset) => {
     try {
       if (course) {
-        const file = await formatImage(picture, `emargement-${attendanceSheetToAdd}`);
+        const file = await formatImage(picture, `emargement-${attendanceSheetToAdd[0]}`);
         const data = formatPayload({
           file,
           course: course._id,
           trainer: loggedUserId,
           ...(
             [INTER_B2B, SINGLE].includes(course.type)
-              ? { trainee: attendanceSheetToAdd }
-              : { date: attendanceSheetToAdd }
+              ? { trainees: attendanceSheetToAdd }
+              : { date: attendanceSheetToAdd[0] }
           ),
           ...(isSingle && { slots: slotsToAdd }),
         });
@@ -114,11 +116,13 @@ const UploadMethods = ({ attendanceSheetToAdd, slotsToAdd = [], course, goToPare
       </View>
       <View style={styles.container}>
         <NiPrimaryButton caption='Prendre une photo' customStyle={styles.button} onPress={requestPermissionsForCamera}
-          disabled={isLoading} bgColor={GREY[100]} color={PINK[500]} />
-        <NiPrimaryButton caption='Ajouter une photo' customStyle={styles.button} disabled={isLoading} color={PINK[500]}
+          disabled={isLoading || severalAttendanceSheetsToAdd} bgColor={GREY[100]} color={PINK[500]} />
+        <NiPrimaryButton caption='Ajouter une photo' customStyle={styles.button}
+          disabled={isLoading || severalAttendanceSheetsToAdd} color={PINK[500]}
           onPress={requestPermissionsForImagePicker} bgColor={GREY[100]} />
-        {isSingle && <NiPrimaryButton caption='Ajouter une signature' customStyle={styles.button} disabled={isLoading}
-          color={PINK[500]} onPress={() => navigation.navigate('attendance-signature')} bgColor={GREY[100]} />}
+        {<NiPrimaryButton caption='Ajouter une signature' customStyle={styles.button} disabled={isLoading}
+          color={PINK[500]} onPress={() => navigation.navigate(isSingle ? ATTENDANCE_SIGNATURE : SLOTS_SELECTION)}
+          bgColor={GREY[100]} />}
       </View>
       {imagePickerManager && <ImagePickerManager type={type} onRequestClose={() => setImagePickerManager(false)}
         savePicture={savePicture} />}
