@@ -11,20 +11,23 @@ import { ICON } from '../../styles/metrics';
 import { GREY } from '../../styles/colors';
 import {
   ATTENDANCE_SIGNATURE,
+  DATA_SELECTION,
   INTER_B2B, IS_WEB,
   SINGLE,
   SLOTS_SELECTION,
   UPLOAD_METHOD,
 } from '../../core/data/constants';
 
-export type NextScreenType = typeof SLOTS_SELECTION | typeof UPLOAD_METHOD | typeof ATTENDANCE_SIGNATURE;
+export type ScreenType = typeof DATA_SELECTION | typeof SLOTS_SELECTION | typeof UPLOAD_METHOD |
+  typeof ATTENDANCE_SIGNATURE;
 
 interface AttendanceSheetSelectionFormProps {
   title: string,
   attendanceSheetToAdd?: string[]
   courseType?: string,
   areSlotsMissing?: boolean,
-  nextScreenName: NextScreenType,
+  currentScreenName?: ScreenType,
+  nextScreenName: ScreenType,
   dispatchErrorData?: ActionDispatch<[action: ErrorActionType]>,
   dispatchErrorSlots?:ActionDispatch<[action: ErrorActionType]>,
   error: ErrorStateType,
@@ -36,6 +39,7 @@ const AttendanceSheetSelectionForm = ({
   attendanceSheetToAdd = [],
   courseType = '',
   areSlotsMissing = false,
+  currentScreenName,
   nextScreenName,
   dispatchErrorData = () => {},
   dispatchErrorSlots = () => {},
@@ -45,26 +49,8 @@ const AttendanceSheetSelectionForm = ({
   const navigation = useNavigation();
 
   const goToNextScreen = () => {
-    if (areSlotsMissing) {
-      dispatchErrorSlots({ type: SET_ERROR, payload: 'Veuillez sélectionner des créneaux' });
-    } else {
-      dispatchErrorData({ type: RESET_ERROR });
-      navigation.navigate(nextScreenName);
-    }
-  };
-
-  const goToUploadMethod = () => {
-    if (!attendanceSheetToAdd.length) {
-      dispatchErrorData({
-        type: SET_ERROR,
-        payload: [INTER_B2B, SINGLE].includes(courseType)
-          ? 'Veuillez sélectionner un stagiaire'
-          : 'Veuillez sélectionner une date',
-      });
-    } else {
-      dispatchErrorData({ type: RESET_ERROR });
-      navigation.navigate(UPLOAD_METHOD);
-    }
+    dispatchErrorData({ type: RESET_ERROR });
+    navigation.navigate(nextScreenName);
   };
 
   useFocusEffect(
@@ -81,9 +67,19 @@ const AttendanceSheetSelectionForm = ({
   );
 
   const manageRedirection = () => {
-    if ([SLOTS_SELECTION, ATTENDANCE_SIGNATURE].includes(nextScreenName)) goToNextScreen();
-    else if (nextScreenName === UPLOAD_METHOD) goToUploadMethod();
-    else navigation.navigate('attendance-signature');
+    if (currentScreenName === SLOTS_SELECTION) {
+      if (areSlotsMissing) dispatchErrorSlots({ type: SET_ERROR, payload: 'Veuillez sélectionner des créneaux' });
+      else goToNextScreen();
+    } else if (currentScreenName === DATA_SELECTION) {
+      if (!attendanceSheetToAdd.length) {
+        dispatchErrorData({
+          type: SET_ERROR,
+          payload: [INTER_B2B, SINGLE].includes(courseType)
+            ? 'Veuillez sélectionner un stagiaire'
+            : 'Veuillez sélectionner une date',
+        });
+      } else goToNextScreen();
+    } else navigation.navigate('attendance-signature');
   };
 
   return <SafeAreaView style={styles.safeArea} edges={['top']}>

@@ -1,6 +1,5 @@
 import { TouchableOpacity, Text, ActivityIndicator } from 'react-native';
 import { Feather } from '@expo/vector-icons';
-import { GREY } from '../../../styles/colors';
 import commonStyle from '../../../styles/common';
 import { ICON } from '../../../styles/metrics';
 import { FontType } from '../../../types/FontType';
@@ -41,9 +40,7 @@ const Button = ({
       testID={caption}>
       {!loading && <>
         {icon && <Feather name={icon} color={color} size={ICON.MD} style={style.icon} />}
-        <Text style={{ ...style.textButton, color: disabled ? GREY[300] : color }} numberOfLines={numberOfLines}>
-          {caption}
-        </Text>
+        <Text style={{ ...style.textButton, color }} numberOfLines={numberOfLines}>{caption}</Text>
       </>}
       {loading && <ActivityIndicator style={commonStyle.disabled} color={color} size="small" />}
     </TouchableOpacity>
