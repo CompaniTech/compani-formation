@@ -5,7 +5,7 @@ import Checkbox from '../Checkbox';
 
 interface MultipleCheckboxListProps {
   optionsGroups: DataOptionsType[][],
-  groupTitles: string[],
+  groupTitles?: string[],
   checkedList: string[],
   disabled?: boolean,
   setOptions?: (options: string[]) => void,
@@ -13,7 +13,7 @@ interface MultipleCheckboxListProps {
 
 const MultipleCheckboxList = ({
   optionsGroups,
-  groupTitles,
+  groupTitles = [],
   checkedList,
   disabled = false,
   setOptions = () => {},
