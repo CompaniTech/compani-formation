@@ -116,10 +116,11 @@ const UploadMethods = ({ attendanceSheetToAdd, slotsToAdd = [], course, goToPare
       </View>
       <View style={styles.container}>
         <NiPrimaryButton caption='Prendre une photo' customStyle={styles.button} onPress={requestPermissionsForCamera}
-          disabled={isLoading || severalAttendanceSheetsToAdd} bgColor={GREY[100]} color={PINK[500]} />
-        <NiPrimaryButton caption='Ajouter une photo' customStyle={styles.button}
-          disabled={isLoading || severalAttendanceSheetsToAdd} color={PINK[500]}
-          onPress={requestPermissionsForImagePicker} bgColor={GREY[100]} />
+          disabled={isLoading || severalAttendanceSheetsToAdd} bgColor={GREY[100]}
+          color={severalAttendanceSheetsToAdd ? GREY[300] : PINK[500]} />
+        <NiPrimaryButton caption='Ajouter une photo' customStyle={styles.button} bgColor={GREY[100]}
+          disabled={isLoading || severalAttendanceSheetsToAdd} onPress={requestPermissionsForImagePicker}
+          color={severalAttendanceSheetsToAdd ? GREY[300] : PINK[500]} />
         {<NiPrimaryButton caption='Ajouter une signature' customStyle={styles.button} disabled={isLoading}
           color={PINK[500]} onPress={() => navigation.navigate(isSingle ? ATTENDANCE_SIGNATURE : SLOTS_SELECTION)}
           bgColor={GREY[100]} />}

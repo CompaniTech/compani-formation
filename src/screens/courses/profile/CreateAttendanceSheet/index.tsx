@@ -69,28 +69,31 @@ const CreateAttendanceSheet = ({ route, navigation }: CreateAttendanceSheetProps
   [groupedSlotsToBeSigned]);
 
   useEffect(() => {
-    setDataSelectionTitle(
-      [INTER_B2B, SINGLE].includes(course?.type || '')
-        ? 'Pour quel stagiaire souhaitez-vous charger une feuille d\'émargement ?'
-        : 'Pour quelle date souhaitez-vous charger une feuille d\'émargement ?'
-    );
+    let title = 'Pour quelle date souhaitez-vous charger une feuille d\'émargement ?';
+    if (course?.type === SINGLE) {
+      title = 'Pour quel stagiaire souhaitez-vous charger une feuille d\'émargement ?';
+    }
+    if (course?.type === INTER_B2B) {
+      title = 'Pour quels stagiaires souhaitez-vous charger une feuille d\'émargement ?';
+    }
+    setDataSelectionTitle(title);
   }, [course]);
 
   const setDataOption = useCallback((options: string[]) => {
-    setAttendanceSheetToAdd(options);
-    if ([INTER_B2B, SINGLE].includes(course?.type || '')) {
-      const name = missingAttendanceSheets
-        .filter(as => options.includes(as.value)).map(item => item.label || '').join(', ');
-      setTraineeName(name);
-      if (isSingle) {
+    if (course?.type !== SINGLE || options.length) {
+      setAttendanceSheetToAdd(options);
+      if ([INTER_B2B, SINGLE].includes(course?.type || '')) {
+        const name = missingAttendanceSheets
+          .filter(as => options.includes(as.value)).map(item => item.label || '').join(', ');
+        setTraineeName(name);
         const title =
-          'Pour quels créneaux souhaitez-vous charger une feuille d\'émargement ou envoyer une demande de signature'
-          + ` à ${name} ?`;
+            'Pour quels créneaux souhaitez-vous charger une feuille d\'émargement ou envoyer une demande de signature'
+            + ` à ${name} ?`;
         setSlotSelectionTitle(title);
       }
+      if (options.length) dispatchErrorData({ type: RESET_ERROR });
     }
-    if (options.length) dispatchErrorData({ type: RESET_ERROR });
-  }, [course, isSingle, missingAttendanceSheets]);
+  }, [course, missingAttendanceSheets]);
 
   useEffect(() => {
     if (course && isSingle) setDataOption(course.trainees!.map(t => t._id));
@@ -136,11 +139,11 @@ const CreateAttendanceSheet = ({ route, navigation }: CreateAttendanceSheetProps
   const renderDataSelection = () => (
     <AttendanceSheetSelectionForm title={dataSelectionTitle} error={errorData} dispatchErrorData={dispatchErrorData}
       dispatchErrorSlots={dispatchErrorSlots} nextScreenName={isSingle ? SLOTS_SELECTION : UPLOAD_METHOD}
-      courseType={course!.type} attendanceSheetToAdd={attendanceSheetToAdd}>
+      courseType={course!.type} attendanceSheetToAdd={attendanceSheetToAdd} currentScreenName={DATA_SELECTION}>
       {course?.type === INTER_B2B
-        ? <MultipleCheckboxList optionsGroups={[missingAttendanceSheets]} groupTitles={[]} setOptions={setDataOption}
+        ? <MultipleCheckboxList optionsGroups={[missingAttendanceSheets]} setOptions={setDataOption}
           checkedList={attendanceSheetToAdd}/>
-        : <RadioButtonList options={missingAttendanceSheets} setOption={value => setDataOption([value])}
+        : <RadioButtonList options={missingAttendanceSheets} setOption={value => setDataOption(value ? [value] : [])}
           checkedRadioButton={attendanceSheetToAdd[0]} />}
     </AttendanceSheetSelectionForm>
   );
@@ -148,7 +151,7 @@ const CreateAttendanceSheet = ({ route, navigation }: CreateAttendanceSheetProps
   const renderSlotSelection = () => (
     <AttendanceSheetSelectionForm title={slotSelectionTitle} error={errorSlots} dispatchErrorData={dispatchErrorData}
       dispatchErrorSlots={dispatchErrorSlots} nextScreenName={isSingle ? UPLOAD_METHOD : ATTENDANCE_SIGNATURE}
-      courseType={course!.type} attendanceSheetToAdd={attendanceSheetToAdd}
+      courseType={course!.type} attendanceSheetToAdd={attendanceSheetToAdd} currentScreenName={SLOTS_SELECTION}
       areSlotsMissing={!slotsToAdd.length}>
       <MultipleCheckboxList optionsGroups={slotsOptions} groupTitles={Object.keys(groupedSlotsToBeSigned)}
         setOptions={setSlotsOptions} checkedList={slotsToAdd}/>
