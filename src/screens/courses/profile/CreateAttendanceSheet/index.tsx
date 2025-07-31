@@ -70,14 +70,14 @@ const CreateAttendanceSheet = ({ route, navigation }: CreateAttendanceSheetProps
 
   useEffect(() => {
     let title = 'Pour quelle date souhaitez-vous charger une feuille d\'émargement ?';
-    if (course?.type === SINGLE) {
+    if (isSingle) {
       title = 'Pour quel stagiaire souhaitez-vous charger une feuille d\'émargement ?';
     }
     if (course?.type === INTER_B2B) {
       title = 'Pour quels stagiaires souhaitez-vous charger une feuille d\'émargement ?';
     }
     setDataSelectionTitle(title);
-  }, [course]);
+  }, [course, isSingle]);
 
   const setDataOption = useCallback((options: string[]) => {
     if (course?.type !== SINGLE || options.length) {
@@ -91,7 +91,7 @@ const CreateAttendanceSheet = ({ route, navigation }: CreateAttendanceSheetProps
             + ` à ${name} ?`;
         setSlotSelectionTitle(title);
       }
-      if (options.length) dispatchErrorData({ type: RESET_ERROR });
+      dispatchErrorData({ type: RESET_ERROR });
     }
   }, [course, missingAttendanceSheets]);
 
