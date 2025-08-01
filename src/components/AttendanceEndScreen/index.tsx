@@ -41,7 +41,9 @@ const AttendanceEndScreen = ({ traineeName, failUpload, goToNextScreen, mode = T
       {mode === TRAINER
         ? <>
           {failUpload
-            ? renderFailMessage(`Echec de l'envoi de la demande à ${traineeName}`)
+            ? renderFailMessage(
+              'Echec de l\'envoi de la demande. Assurez-vous de ne pas émarger des créneaux déjà émargés'
+            )
             : <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={IS_WEB}>
               <View>
                 <Text style={styles.title}>Une demande d&apos;émargement a été envoyée à {traineeName}</Text>

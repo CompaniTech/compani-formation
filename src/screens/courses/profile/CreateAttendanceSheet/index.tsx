@@ -46,7 +46,7 @@ const CreateAttendanceSheet = ({ route, navigation }: CreateAttendanceSheetProps
   const loggedUserId = useGetLoggedUserId();
   const [dataSelectionTitle, setDataSelectionTitle] = useState<string>('');
   const [slotSelectionTitle, setSlotSelectionTitle] = useState<string>('');
-  const [attendanceSheetToAdd, setAttendanceSheetToAdd] = useState<string>('');
+  const [attendanceSheetToAdd, setAttendanceSheetToAdd] = useState<string[]>([]);
   const [slotsToAdd, setSlotsToAdd] = useState<string[]>([]);
   const [signature, setSignature] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -69,30 +69,34 @@ const CreateAttendanceSheet = ({ route, navigation }: CreateAttendanceSheetProps
   [groupedSlotsToBeSigned]);
 
   useEffect(() => {
-    setDataSelectionTitle(
-      [INTER_B2B, SINGLE].includes(course?.type || '')
-        ? 'Pour quel stagiaire souhaitez-vous charger une feuille d\'émargement ?'
-        : 'Pour quelle date souhaitez-vous charger une feuille d\'émargement ?'
-    );
-  }, [course]);
+    let title = 'Pour quelle date souhaitez-vous charger une feuille d\'émargement ?';
+    if (isSingle) {
+      title = 'Pour quel stagiaire souhaitez-vous charger une feuille d\'émargement ?';
+    }
+    if (course?.type === INTER_B2B) {
+      title = 'Pour quels stagiaires souhaitez-vous charger une feuille d\'émargement ?';
+    }
+    setDataSelectionTitle(title);
+  }, [course, isSingle]);
 
-  const setDataOption = useCallback((option: string) => {
-    setAttendanceSheetToAdd(option);
-    if ([INTER_B2B, SINGLE].includes(course?.type || '')) {
-      const name = missingAttendanceSheets.find(as => as.value === option)?.label || '';
-      setTraineeName(name);
-      if (isSingle) {
+  const setDataOption = useCallback((options: string[]) => {
+    if (course?.type !== SINGLE || options.length) {
+      setAttendanceSheetToAdd(options);
+      if ([INTER_B2B, SINGLE].includes(course?.type || '')) {
+        const name = missingAttendanceSheets
+          .filter(as => options.includes(as.value)).map(item => item.label || '').join(', ');
+        setTraineeName(name);
         const title =
-          'Pour quels créneaux souhaitez-vous charger une feuille d\'émargement ou envoyer une demande de signature'
-          + ` à ${name} ?`;
+            'Pour quels créneaux souhaitez-vous charger une feuille d\'émargement ou envoyer une demande de signature'
+            + ` à ${name} ?`;
         setSlotSelectionTitle(title);
       }
+      dispatchErrorData({ type: RESET_ERROR });
     }
-    if (option) dispatchErrorData({ type: RESET_ERROR });
-  }, [course, isSingle, missingAttendanceSheets]);
+  }, [course, missingAttendanceSheets]);
 
   useEffect(() => {
-    if (course && isSingle) setDataOption(course.trainees![0]._id);
+    if (course && isSingle) setDataOption(course.trainees!.map(t => t._id));
   }, [course, isSingle, setDataOption]);
 
   const setSlotsOptions = useCallback((options: string[]) => {
@@ -112,7 +116,7 @@ const CreateAttendanceSheet = ({ route, navigation }: CreateAttendanceSheetProps
       const data = formatPayload({
         signature: file,
         course: course?._id,
-        trainee: attendanceSheetToAdd,
+        trainees: attendanceSheetToAdd,
         slots: slotsToAdd,
         trainer: loggedUserId,
       });
@@ -135,17 +139,20 @@ const CreateAttendanceSheet = ({ route, navigation }: CreateAttendanceSheetProps
   const renderDataSelection = () => (
     <AttendanceSheetSelectionForm title={dataSelectionTitle} error={errorData} dispatchErrorData={dispatchErrorData}
       dispatchErrorSlots={dispatchErrorSlots} nextScreenName={isSingle ? SLOTS_SELECTION : UPLOAD_METHOD}
-      courseType={course!.type} attendanceSheetToAdd={attendanceSheetToAdd}
-      areSlotsMissing={isSingle && !slotsToAdd.length}>
-      <RadioButtonList options={missingAttendanceSheets} setOption={setDataOption}
-        checkedRadioButton={attendanceSheetToAdd} />
+      courseType={course!.type} attendanceSheetToAdd={attendanceSheetToAdd} currentScreenName={DATA_SELECTION}>
+      {course?.type === INTER_B2B
+        ? <MultipleCheckboxList optionsGroups={[missingAttendanceSheets]} setOptions={setDataOption}
+          checkedList={attendanceSheetToAdd}/>
+        : <RadioButtonList options={missingAttendanceSheets} setOption={value => setDataOption(value ? [value] : [])}
+          checkedRadioButton={attendanceSheetToAdd[0]} />}
     </AttendanceSheetSelectionForm>
   );
 
   const renderSlotSelection = () => (
     <AttendanceSheetSelectionForm title={slotSelectionTitle} error={errorSlots} dispatchErrorData={dispatchErrorData}
-      dispatchErrorSlots={dispatchErrorSlots} nextScreenName={UPLOAD_METHOD} courseType={course!.type}
-      attendanceSheetToAdd={attendanceSheetToAdd} areSlotsMissing={isSingle && !slotsToAdd.length}>
+      dispatchErrorSlots={dispatchErrorSlots} nextScreenName={isSingle ? UPLOAD_METHOD : ATTENDANCE_SIGNATURE}
+      courseType={course!.type} attendanceSheetToAdd={attendanceSheetToAdd} currentScreenName={SLOTS_SELECTION}
+      areSlotsMissing={!slotsToAdd.length}>
       <MultipleCheckboxList optionsGroups={slotsOptions} groupTitles={Object.keys(groupedSlotsToBeSigned)}
         setOptions={setSlotsOptions} checkedList={slotsToAdd}/>
     </AttendanceSheetSelectionForm>
@@ -182,9 +189,9 @@ const CreateAttendanceSheet = ({ route, navigation }: CreateAttendanceSheetProps
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName={DATA_SELECTION}>
       <Stack.Screen key={0} name={DATA_SELECTION}>{renderDataSelection}</Stack.Screen>
-      {isSingle && <Stack.Screen key={1} name={SLOTS_SELECTION}>{renderSlotSelection}</Stack.Screen>}
       <Stack.Screen key={2} name={UPLOAD_METHOD}>{renderUploadMethod}</Stack.Screen>
-      {isSingle && <>
+      {(isSingle || course?.type === INTER_B2B) && <>
+        <Stack.Screen key={1} name={SLOTS_SELECTION}>{renderSlotSelection}</Stack.Screen>
         <Stack.Screen key={3} name={ATTENDANCE_SIGNATURE}>{renderSignatureContainer}</Stack.Screen>
         <Stack.Screen key={4} name={ATTENDANCE_SUMMARY}>{renderSummary}</Stack.Screen>
         <Stack.Screen options={{ gestureEnabled: false }} key={5} name={END_SCREEN}>{renderEndScreen}</Stack.Screen>
