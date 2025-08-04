@@ -79,7 +79,7 @@ const AttendanceSheetSelectionForm = ({
             : 'Veuillez sélectionner une date',
         });
       } else goToNextScreen();
-    } else navigation.navigate('attendance-signature');
+    } else goToNextScreen();
   };
 
   return <SafeAreaView style={styles.safeArea} edges={['top']}>

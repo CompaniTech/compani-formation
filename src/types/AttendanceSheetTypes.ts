@@ -1,8 +1,8 @@
 import { SlotType, TraineeType, TrainerType } from './CourseTypes';
 
-type SignaturesType = {
+export type SignaturesType = {
   trainerSignature: { trainerId: string, signature: string },
-  traineesSignature: { trainerId: string, signature: string }[]
+  traineesSignature: { traineeId: string, signature: string }[]
 }
 
 type BaseAttendanceSheetType = {
