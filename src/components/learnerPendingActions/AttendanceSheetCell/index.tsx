@@ -1,15 +1,17 @@
 import { Text, View, TouchableOpacity } from 'react-native';
+import { useEffect, useState } from 'react';
 import { Feather } from '@expo/vector-icons';
 import groupBy from 'lodash/groupBy';
 import { useNavigation } from '@react-navigation/native';
 import CompaniDate from '../../../core/helpers/dates/companiDates';
 import { formatIdentity } from '../../../core/helpers/utils';
-import { AttendanceSheetType } from '../../../types/AttendanceSheetTypes';
+import { AttendanceSheetType, SignaturesType } from '../../../types/AttendanceSheetTypes';
 import Shadow from '../../design/Shadow';
 import { DD_MM_YYYY, LONG_FIRSTNAME_LONG_LASTNAME } from '../../../core/data/constants';
 import { ICON } from '../../../styles/metrics';
 import { GREY } from '../../../styles/colors';
 import styles from './styles';
+import { useGetLoggedUserId } from '../../../store/main/hooks';
 import { useGetCourse, useSetGroupedSlotsToBeSigned } from '../../../store/attendanceSheets/hooks';
 import { SlotType } from '../../../types/CourseTypes';
 
@@ -19,11 +21,20 @@ interface AttendanceSheetCellProps {
 
 const AttendanceSheetCell = ({ attendanceSheet }: AttendanceSheetCellProps) => {
   const navigation = useNavigation();
+  const loggedUserId = useGetLoggedUserId();
   const course = useGetCourse();
   const setGroupedSlotsToBeSigned = useSetGroupedSlotsToBeSigned();
+  const [unsignedSlots, setUnsignedSlots] = useState<({ slotId: SlotType } & SignaturesType)[]>([]);
+
+  useEffect(() => {
+    setUnsignedSlots(
+      (attendanceSheet.slots || [])
+        .filter(s => !(s.traineesSignature || []).find(signature => signature?.traineeId === loggedUserId))
+    );
+  }, [attendanceSheet.slots, loggedUserId]);
 
   const goToSignature = () => {
-    const grouped = groupBy(attendanceSheet.slots, slot => slot.slotId.step);
+    const grouped = groupBy(unsignedSlots, slot => slot.slotId.step);
     const groupedSlots = Object.fromEntries(
       Object.entries(grouped).map(([step, slots]) => [step, slots.map(slot => slot.slotId)])
     );
@@ -46,7 +57,7 @@ const AttendanceSheetCell = ({ attendanceSheet }: AttendanceSheetCellProps) => {
       </TouchableOpacity>
       <Text style={styles.AttendanceSheetName} lineBreakMode={'tail'} numberOfLines={2}>
       À signer {[
-          ...new Set(attendanceSheet.slots!.map(slot => CompaniDate(slot.slotId.startDate).format(DD_MM_YYYY))),
+          ...new Set(unsignedSlots!.map(slot => CompaniDate(slot.slotId.startDate).format(DD_MM_YYYY))),
         ].join(', ')
         }
       </Text>
