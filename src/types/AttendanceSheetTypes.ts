@@ -10,7 +10,7 @@ type BaseAttendanceSheetType = {
   course: string,
   file: { publicId: string, link: string },
   trainer: TrainerType,
-  slots?: ({ slotId: SlotType } & SignaturesType)[]
+  slots?: (SlotType & SignaturesType)[]
 }
 
 export type IntraOrIntraHoldingAttendanceSheetType = BaseAttendanceSheetType & { date: Date }
@@ -18,7 +18,7 @@ export type IntraOrIntraHoldingAttendanceSheetType = BaseAttendanceSheetType & {
 export type InterAttendanceSheetType = BaseAttendanceSheetType & { trainee: TraineeType }
 
 export type SingleAttendanceSheetType = BaseAttendanceSheetType &
-  { trainee: TraineeType, slots: ({ slotId: SlotType } & SignaturesType)[]}
+  { trainee: TraineeType, slots: (SlotType & SignaturesType)[]}
 
 export type AttendanceSheetType = IntraOrIntraHoldingAttendanceSheetType | InterAttendanceSheetType
 | SingleAttendanceSheetType
