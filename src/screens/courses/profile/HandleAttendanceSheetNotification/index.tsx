@@ -20,10 +20,7 @@ const HandleAttendanceSheetNotification = ({ route, navigation }: HandleAttendan
       try {
         const course = await Courses.getCourse(courseId, 'pedagogy') as BlendedCourseType;
         const attendanceSheet = course.attendanceSheets?.find(as => as._id === attendanceSheetId);
-        const grouped = groupBy(attendanceSheet?.slots, slot => slot.slotId.step);
-        const groupedSlots = Object.fromEntries(
-          Object.entries(grouped).map(([step, slots]) => [step, slots.map(slot => slot.slotId)])
-        );
+        const groupedSlots = groupBy(attendanceSheet?.slots, slot => slot.step);
         const groupedSlotsToBeSigned = course.subProgram.steps.reduce<Record<string, SlotType[]>>((acc, step) => {
           if (groupedSlots[step._id]) acc[step.name] = groupedSlots[step._id];
           return acc;
