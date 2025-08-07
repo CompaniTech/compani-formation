@@ -100,7 +100,10 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
       .flat()
       : [];
 
-    const groupedSlots = groupBy(course.slots.filter(slot => !signedSlots.includes(slot._id)), 'step');
+    const groupedSlots = groupBy(
+      course.slots.filter(slot => !signedSlots.includes(slot._id) && CompaniDate().isAfter(slot.startDate)),
+      'step'
+    );
 
     return course?.subProgram.steps.reduce<Record<string, SlotType[]>>((acc, step) => {
       if (groupedSlots[step._id]) acc[step.name] = groupedSlots[step._id];
