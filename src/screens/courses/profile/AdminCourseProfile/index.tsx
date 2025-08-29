@@ -94,8 +94,8 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
   const [noAttendancesMessage, setNoAttendancesMessage] = useState<string>('');
 
   const groupedSlotsToBeSigned = useMemo(() => {
-    if (!(isSingle || course?.type === INTER_B2B) || !course?.slots.length) return {};
-    const signedSlots = isSingle ? (savedAttendanceSheets as SingleAttendanceSheetType[])
+    if (!course?.slots.length) return {};
+    const signedSlots = course.type !== INTER_B2B ? (savedAttendanceSheets as SingleAttendanceSheetType[])
       .map(as => get(as, 'slots', []).map(s => s._id))
       .flat()
       : [];
@@ -109,7 +109,7 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
       if (groupedSlots[step._id]) acc[step.name] = groupedSlots[step._id];
       return acc;
     }, {});
-  }, [course, isSingle, savedAttendanceSheets]);
+  }, [course, savedAttendanceSheets]);
 
   const missingAttendanceSheets = useMemo(() => {
     if (!course?.slots?.length || !firstSlot) return [];

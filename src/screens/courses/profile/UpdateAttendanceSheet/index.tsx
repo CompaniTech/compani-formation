@@ -101,8 +101,8 @@ const UpdateAttendanceSheet = ({ route, navigation }: UpdateAttendanceSheetProps
   const renderSummary = () => (
     <AttendanceSheetSummary signature={signature} saveAttendances={saveAttendances} error={errorConfirmation}
       dispatchErrorConfirmation={dispatchErrorConfirmation}
-      stepsName={stepsName} isLoading={isLoading} setConfirmation={setConfirmationCheckbox} confirmation={confirmation}
-      traineeName={traineeName} slotsOptions={slotsOptions} />
+      titlesName={stepsName} isLoading={isLoading} setConfirmation={setConfirmationCheckbox} confirmation={confirmation}
+      target={traineeName} options={slotsOptions} />
   );
 
   const goBackToCourseAndRefresh = () => {
