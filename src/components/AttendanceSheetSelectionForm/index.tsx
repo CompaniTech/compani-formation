@@ -1,57 +1,62 @@
 import { ScrollView, View, Text, BackHandler } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import { ActionDispatch, useCallback } from 'react';
+import { ActionDispatch, useCallback, useEffect } from 'react';
 import styles from './styles';
 import NiPrimaryButton from '../form/PrimaryButton';
 import NiErrorMessage from '../ErrorMessage';
-import { ErrorActionType, ErrorStateType, RESET_ERROR, SET_ERROR } from '../../reducers/error';
+import { ErrorActionType, ErrorStateType, SET_ERROR } from '../../reducers/error';
 import FeatherButton from '../icons/FeatherButton';
 import { ICON } from '../../styles/metrics';
 import { GREY } from '../../styles/colors';
 import {
   ATTENDANCE_SIGNATURE,
   DATA_SELECTION,
-  INTER_B2B, IS_WEB,
+  INTER_B2B,
+  INTRA,
+  IS_WEB,
   SINGLE,
   SLOTS_SELECTION,
+  TRAINEES_ATTENDANCES,
   UPLOAD_METHOD,
 } from '../../core/data/constants';
 
 export type ScreenType = typeof DATA_SELECTION | typeof SLOTS_SELECTION | typeof UPLOAD_METHOD |
-  typeof ATTENDANCE_SIGNATURE;
+  typeof ATTENDANCE_SIGNATURE | typeof TRAINEES_ATTENDANCES;
 
 interface AttendanceSheetSelectionFormProps {
   title: string,
-  attendanceSheetToAdd?: string[]
   courseType?: string,
-  areSlotsMissing?: boolean,
+  areDataMissing?: boolean,
   currentScreenName?: ScreenType,
   nextScreenName: ScreenType,
   dispatchErrorData?: ActionDispatch<[action: ErrorActionType]>,
   dispatchErrorSlots?:ActionDispatch<[action: ErrorActionType]>,
+  dispatchErrorTrainees?:ActionDispatch<[action: ErrorActionType]>,
+  setTraineesAttendanceOptions?: () => void,
   error: ErrorStateType,
   children: any,
 }
 
 const AttendanceSheetSelectionForm = ({
   title,
-  attendanceSheetToAdd = [],
   courseType = '',
-  areSlotsMissing = false,
+  areDataMissing = false,
   currentScreenName,
   nextScreenName,
   dispatchErrorData = () => {},
   dispatchErrorSlots = () => {},
+  dispatchErrorTrainees = () => {},
+  setTraineesAttendanceOptions = () => {},
   error,
   children,
 }: AttendanceSheetSelectionFormProps) => {
   const navigation = useNavigation();
 
-  const goToNextScreen = () => {
-    dispatchErrorData({ type: RESET_ERROR });
-    navigation.navigate(nextScreenName);
-  };
+  useEffect(() => {
+    if (courseType === INTRA) setTraineesAttendanceOptions();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useFocusEffect(
     useCallback(() => {
@@ -68,18 +73,21 @@ const AttendanceSheetSelectionForm = ({
 
   const manageRedirection = () => {
     if (currentScreenName === SLOTS_SELECTION) {
-      if (areSlotsMissing) dispatchErrorSlots({ type: SET_ERROR, payload: 'Veuillez sélectionner des créneaux' });
-      else goToNextScreen();
+      if (areDataMissing) dispatchErrorSlots({ type: SET_ERROR, payload: 'Veuillez sélectionner des créneaux' });
+      else navigation.navigate(nextScreenName);
     } else if (currentScreenName === DATA_SELECTION) {
-      if (!attendanceSheetToAdd.length) {
+      if (areDataMissing) {
         dispatchErrorData({
           type: SET_ERROR,
           payload: [INTER_B2B, SINGLE].includes(courseType)
             ? 'Veuillez sélectionner un stagiaire'
             : 'Veuillez sélectionner une date',
         });
-      } else goToNextScreen();
-    } else goToNextScreen();
+      } else navigation.navigate(nextScreenName);
+    } else if (currentScreenName === TRAINEES_ATTENDANCES) {
+      if (areDataMissing) dispatchErrorTrainees({ type: SET_ERROR, payload: 'Veuillez sélectionner des stagiaires' });
+      else navigation.navigate(nextScreenName);
+    } else navigation.navigate(nextScreenName);
   };
 
   return <SafeAreaView style={styles.safeArea} edges={['top']}>

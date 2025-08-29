@@ -4,7 +4,15 @@ import * as ImagePicker from 'expo-image-picker';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { GREY, PINK } from '../../styles/colors';
-import { INTER_B2B, SINGLE, CAMERA, GALLERY, SLOTS_SELECTION, ATTENDANCE_SIGNATURE } from '../../core/data/constants';
+import {
+  INTER_B2B,
+  SINGLE,
+  CAMERA,
+  GALLERY,
+  SLOTS_SELECTION,
+  ATTENDANCE_SIGNATURE,
+  TRAINEES_ATTENDANCES,
+} from '../../core/data/constants';
 import AttendanceSheets from '../../api/attendanceSheets';
 import styles from './styles';
 import NiPrimaryButton from '../../components/form/PrimaryButton';
@@ -22,7 +30,12 @@ interface UploadMethodsProps {
   goToParent: () => void,
 }
 
-const UploadMethods = ({ attendanceSheetToAdd, slotsToAdd = [], course, goToParent }: UploadMethodsProps) => {
+const UploadMethods = ({
+  attendanceSheetToAdd,
+  slotsToAdd = [],
+  course,
+  goToParent,
+}: UploadMethodsProps) => {
   const navigation = useNavigation();
   const loggedUserId = useGetLoggedUserId();
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -109,6 +122,13 @@ const UploadMethods = ({ attendanceSheetToAdd, slotsToAdd = [], course, goToPare
     }
   };
 
+  const getSlotSelectionNextScreen = () => {
+    if (isSingle) return ATTENDANCE_SIGNATURE;
+    if (course?.type === INTER_B2B) return SLOTS_SELECTION;
+
+    return TRAINEES_ATTENDANCES;
+  };
+
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
       <View style={styles.header}>
@@ -122,7 +142,7 @@ const UploadMethods = ({ attendanceSheetToAdd, slotsToAdd = [], course, goToPare
           disabled={isLoading || severalAttendanceSheetsToAdd} onPress={requestPermissionsForImagePicker}
           color={severalAttendanceSheetsToAdd ? GREY[300] : PINK[500]} />
         {<NiPrimaryButton caption='Ajouter une signature' customStyle={styles.button} disabled={isLoading}
-          color={PINK[500]} onPress={() => navigation.navigate(isSingle ? ATTENDANCE_SIGNATURE : SLOTS_SELECTION)}
+          color={PINK[500]} onPress={() => navigation.navigate(getSlotSelectionNextScreen())}
           bgColor={GREY[100]} />}
       </View>
       {imagePickerManager && <ImagePickerManager type={type} onRequestClose={() => setImagePickerManager(false)}
