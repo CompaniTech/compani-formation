@@ -15,37 +15,37 @@ import { END_SCREEN, IS_WEB } from '../../core/data/constants';
 import styles from './styles';
 
 interface AttendanceSheetSummaryProps {
-  stepsName: string[],
-  slotsOptions: DataOptionsType[][],
+  titlesName: string[],
+  options: DataOptionsType[][],
   signature: string,
   isLoading: boolean,
   setConfirmation: () => void,
   dispatchErrorConfirmation: ActionDispatch<[action: ErrorActionType]>
   saveAttendances: () => void,
-  setSelectedSlotsOptions?: () => void,
+  setSelectedOptions?: () => void,
   confirmation: boolean,
   error: ErrorStateType,
-  traineeName: string,
+  target: string,
 }
 
 const AttendanceSheetSummary = ({
-  stepsName,
-  slotsOptions,
+  titlesName,
+  options,
   signature,
   isLoading,
   setConfirmation,
   dispatchErrorConfirmation,
   saveAttendances,
-  setSelectedSlotsOptions = () => {},
+  setSelectedOptions = () => {},
   confirmation,
   error,
-  traineeName,
+  target,
 }: AttendanceSheetSummaryProps) => {
   const navigation = useNavigation();
-  const checkedList = slotsOptions.flat().map(option => option.value);
+  const checkedList = options.flat().map(option => option.value);
 
   useEffect(() => {
-    setSelectedSlotsOptions();
+    setSelectedOptions();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -77,8 +77,8 @@ const AttendanceSheetSummary = ({
       <FeatherButton name='arrow-left' onPress={() => navigation.goBack()} size={ICON.MD} color={GREY[600]} />
     </View>
     <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={IS_WEB}>
-      <Text style={styles.title}>Emargements pour {traineeName}</Text>
-      <MultipleCheckboxList optionsGroups={slotsOptions} disabled groupTitles={stepsName} checkedList={checkedList} />
+      <Text style={styles.title}>Emargements pour {target}</Text>
+      <MultipleCheckboxList optionsGroups={options} disabled groupTitles={titlesName} checkedList={checkedList} />
       <Image source={{ uri: signature }} style={styles.image} />
     </ScrollView>
     <View style={styles.checkboxContainer}>
