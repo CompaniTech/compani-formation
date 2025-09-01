@@ -29,7 +29,8 @@ const AttendanceSheetCell = ({ attendanceSheet }: AttendanceSheetCellProps) => {
   useEffect(() => {
     setUnsignedSlots(
       (attendanceSheet.slots || [])
-        .filter(s => !(s.traineesSignature || []).find(signature => signature?.traineeId === loggedUserId))
+        .filter(s => !(s.traineesSignature || [])
+          .find(signature => signature?.traineeId === loggedUserId && signature.signature))
     );
   }, [attendanceSheet.slots, loggedUserId]);
 
