@@ -40,7 +40,7 @@ import { getCourseProgress } from '../../../../core/helpers/utils';
 import CourseProfileHeader from '../../../../components/CourseProfileHeader';
 import { FIRA_SANS_MEDIUM } from '../../../../styles/fonts';
 import { renderStepList, getTitle } from '../helper';
-import { BLENDED, INTER_B2B, IS_IOS, IS_WEB, LEARNER, PEDAGOGY, SINGLE, TUTOR } from '../../../../core/data/constants';
+import { BLENDED, IS_IOS, IS_WEB, LEARNER, PEDAGOGY, SINGLE, TUTOR } from '../../../../core/data/constants';
 
 interface LearnerCourseProfileProps extends CompositeScreenProps<
 StackScreenProps<RootStackParamList, 'LearnerCourseProfile'>,
@@ -63,10 +63,10 @@ const LearnerCourseProfile = ({ route, navigation }: LearnerCourseProfileProps) 
   const [isLoaded, setIsLoaded] = useState(false);
 
   const attendanceSheetsToSign = useMemo(() =>
-    ([SINGLE, INTER_B2B].includes(course?.type || '') && mode === LEARNER
+    (mode === LEARNER
       ? (course as BlendedCourseType)?.attendanceSheets?.filter(as =>
         !as.file && (as.slots || []).some(s => get(s, 'trainerSignature.signature') && !(s.traineesSignature || [])
-          .find(signature => signature?.traineeId === userId))) || []
+          .find(signature => signature?.traineeId === userId && !!signature.signature))) || []
       : []),
   [course, mode, userId]);
 
@@ -200,8 +200,8 @@ const LearnerCourseProfile = ({ route, navigation }: LearnerCourseProfileProps) 
         bgColor={WHITE} font={FIRA_SANS_MEDIUM.LG} />
     </View>
     {!!(questionnaires.length || attendanceSheetsToSign.length) &&
-          <PendingActionsContainer questionnaires={questionnaires} profileId={course._id}
-            attendanceSheets={attendanceSheetsToSign} />
+      <PendingActionsContainer questionnaires={questionnaires} profileId={course._id}
+        attendanceSheets={attendanceSheetsToSign} />
     }
     {[LEARNER, TUTOR].includes(mode) && <View style={styles.progressBarContainer}>
       <Text style={styles.progressBarText}>ÉTAPES</Text>
