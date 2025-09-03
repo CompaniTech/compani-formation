@@ -65,7 +65,7 @@ const LearnerCourseProfile = ({ route, navigation }: LearnerCourseProfileProps) 
   const attendanceSheetsToSign = useMemo(() =>
     ([SINGLE, INTER_B2B].includes(course?.type || '') && mode === LEARNER
       ? (course as BlendedCourseType)?.attendanceSheets?.filter(as =>
-        !as.file && (as.slots || []).some(s => s.trainerSignature.signature && !(s.traineesSignature || [])
+        !as.file && (as.slots || []).some(s => get(s, 'trainerSignature.signature') && !(s.traineesSignature || [])
           .find(signature => signature?.traineeId === userId))) || []
       : []),
   [course, mode, userId]);
