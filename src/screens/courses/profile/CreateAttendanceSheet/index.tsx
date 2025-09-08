@@ -149,7 +149,9 @@ const CreateAttendanceSheet = ({ route, navigation }: CreateAttendanceSheetProps
         });
       } else {
         const slots = dateSlots
-          .map((s, index) => (JSON.stringify({ slotId: s._id, trainees: traineesBySlotToAdd[index] })));
+          .map((s, index) => ({ slotId: s._id, trainees: traineesBySlotToAdd[index] }))
+          .filter(s => s.trainees.length)
+          .map(s => (JSON.stringify(s)));
         data = formatPayload({
           signature: file,
           course: course?._id,
@@ -220,7 +222,6 @@ const CreateAttendanceSheet = ({ route, navigation }: CreateAttendanceSheetProps
         .map((group, index) => group
           .filter(opt => traineesBySlotToAdd[index].includes(opt.value))).filter(g => g.length)
     );
-    setTraineesAttendanceTitles(traineesAttendanceTitles.filter((t, index) => traineesBySlotToAdd[index].length));
   };
 
   const renderSignatureContainer = () => (
@@ -236,12 +237,14 @@ const CreateAttendanceSheet = ({ route, navigation }: CreateAttendanceSheetProps
       target={traineeName} options={selectedSlotsOptions} />
     : <AttendanceSheetSummary signature={signature} saveAttendances={saveAttendances}
       dispatchErrorConfirmation={dispatchErrorConfirmation} error={errorConfirmation}
-      titlesName={traineesAttendanceTitles} isLoading={isLoading} setConfirmation={setConfirmationCheckbox}
+      titlesName={traineesAttendanceTitles.filter((_, index) => traineesBySlotToAdd[index].length)}
+      isLoading={isLoading} setConfirmation={setConfirmationCheckbox}
       confirmation={confirmation} setSelectedOptions={setTraineesOptionsForSummary}
-      target={CompaniDate(attendanceSheetToAdd[0]).format(DD_MM_YYYY)} options={selectedTraineesOptions} />
+      target={`le ${CompaniDate(attendanceSheetToAdd[0]).format(DD_MM_YYYY)}`} options={selectedTraineesOptions} />
   );
   const renderEndScreen = () => (
-    <AttendanceEndScreen goToNextScreen={navigation.goBack} traineeName={traineeName}
+    <AttendanceEndScreen goToNextScreen={navigation.goBack}
+      traineeName={`${isSingle || course?.type === INTER_B2B ? 'à' : 'pour le'} ${traineeName}`}
       failUpload={failUpload} />
   );
 
