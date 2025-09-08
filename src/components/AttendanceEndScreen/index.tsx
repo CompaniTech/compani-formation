@@ -46,9 +46,9 @@ const AttendanceEndScreen = ({ traineeName, failUpload, goToNextScreen, mode = T
             )
             : <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={IS_WEB}>
               <View>
-                <Text style={styles.title}>Une demande d&apos;émargement a été envoyée à {traineeName}</Text>
+                <Text style={styles.title}>Une demande d&apos;émargement a été envoyée {traineeName}</Text>
                 <Text style={styles.text}>
-                Elle est disponible sur la page de la formation sur son application mobile
+                Elle est disponible sur la page de la formation sur l&apos;application mobile de l&apos;apprenant
                 </Text>
               </View>
               <Image source={require('../../../assets/images/aux_fierte.webp')} style={styles.image} />

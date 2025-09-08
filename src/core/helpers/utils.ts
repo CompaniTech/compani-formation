@@ -101,3 +101,9 @@ export const formatQuantity = (itemLabel: string, quantity: number, pluralMark =
 
   return displayQuantity ? `${quantity} ${label}` : label;
 };
+
+export const getArrayDepth = (value: Array<any>): 0 | 1 | 2 => {
+  if (!Array.isArray(value)) return 0;
+  if (Array.isArray(value[0])) return 2;
+  return 1;
+};
