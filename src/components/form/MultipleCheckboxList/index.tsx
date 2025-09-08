@@ -1,5 +1,6 @@
 import { View, Text } from 'react-native';
 import { DataOptionsType } from '../../../store/attendanceSheets/slice';
+import { getArrayDepth } from '../../../core/helpers/utils';
 import styles from './styles';
 import Checkbox from '../Checkbox';
 
@@ -18,11 +19,6 @@ const MultipleCheckboxList = <T extends string[] | string[][]> ({
   disabled = false,
   setOptions = () => {},
 }: MultipleCheckboxListProps<T>) => {
-  const getArrayDepth = (value: Array<any>): 0 | 1 | 2 => {
-    if (!Array.isArray(value)) return 0;
-    if (Array.isArray(value[0])) return 2;
-    return 1;
-  };
   const onPressCheckbox = (value: string, index: number) => {
     if (getArrayDepth(checkedList) === 1) {
       const newList = [...(checkedList as string[])];
@@ -34,7 +30,7 @@ const MultipleCheckboxList = <T extends string[] | string[][]> ({
         setOptions([...newList, value] as T);
       }
     } else {
-      const newList = [...checkedList].map(list => [...(list || [])]);
+      const newList = checkedList.map(list => [...list]);
       const indexToRemove = newList[index].indexOf(value);
       if (indexToRemove !== -1) {
         newList[index].splice(indexToRemove, 1);
