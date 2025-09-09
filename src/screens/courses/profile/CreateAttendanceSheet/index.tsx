@@ -53,11 +53,11 @@ const CreateAttendanceSheet = ({ route, navigation }: CreateAttendanceSheetProps
   const [traineesAttendanceTitles, setTraineesAttendanceTitles] = useState<string[]>([]);
   const [attendanceSheetToAdd, setAttendanceSheetToAdd] = useState<string[]>([]);
   const [slotsToAdd, setSlotsToAdd] = useState<string[]>([]);
-  const [traineesBySlotToAdd, setTraineesBySlotToAdd] = useState<string[][]>([]);
+  const [traineesBySlotToAdd, setTraineesBySlotToAdd] = useState<Record<string, string[]>>({});
   const [signature, setSignature] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [confirmation, setConfirmation] = useState<boolean>(false);
-  const [traineeName, setTraineeName] = useState<string>('');
+  const [target, setTarget] = useState<string>('');
   const [failUpload, setFailUpload] = useState<boolean>(false);
   const [selectedSlotsOptions, setSelectedSlotsOptions] = useState<DataOptionsType[][]>([]);
   const [traineesOptions, setTraineesOptions] = useState<DataOptionsType[][]>([]);
@@ -94,7 +94,7 @@ const CreateAttendanceSheet = ({ route, navigation }: CreateAttendanceSheetProps
       setAttendanceSheetToAdd(options);
       const name = missingAttendanceSheets
         .filter(as => options.includes(as.value)).map(item => item.label || '').join(', ');
-      setTraineeName(name);
+      setTarget(name);
       const title =
             'Pour quels créneaux souhaitez-vous charger une feuille d\'émargement ou envoyer une demande de signature'
             + ` à ${name} ?`;
@@ -112,13 +112,15 @@ const CreateAttendanceSheet = ({ route, navigation }: CreateAttendanceSheetProps
     const titles = slots.map(s =>
       `${CompaniDate(s.startDate).format(`${DD_MM_YYYY} ${HH_MM}`)} - ${CompaniDate(s.endDate).format(HH_MM)}`);
     setTraineesAttendanceTitles(titles);
-    setTraineesBySlotToAdd(new Array(slots.length).fill(trainees.map(t => t.value)));
+    setTraineesBySlotToAdd(Object.fromEntries(slots.map(slot => [slot._id, trainees.map(t => t.value)])));
   };
 
-  const setTraineesBySlotOptions = useCallback((options: string[][]) => {
-    setTraineesBySlotToAdd(options);
+  const setTraineesBySlotOptions = (options: string[][]) => {
+    setTraineesBySlotToAdd(
+      Object.fromEntries(Object.entries(traineesBySlotToAdd).map(([slot, _], index) => [slot, options[index]]))
+    );
     if (options.flat().length) dispatchErrorTrainees({ type: RESET_ERROR });
-  }, []);
+  };
 
   useEffect(() => {
     if (course && isSingle) setDataOption(course.trainees!.map(t => t._id));
@@ -149,7 +151,7 @@ const CreateAttendanceSheet = ({ route, navigation }: CreateAttendanceSheetProps
         });
       } else {
         const slots = dateSlots
-          .map((s, index) => ({ slotId: s._id, trainees: traineesBySlotToAdd[index] }))
+          .map(s => ({ slotId: s._id, trainees: traineesBySlotToAdd[s._id] }))
           .filter(s => s.trainees.length)
           .map(s => (JSON.stringify(s)));
         data = formatPayload({
@@ -200,10 +202,10 @@ const CreateAttendanceSheet = ({ route, navigation }: CreateAttendanceSheetProps
   const renderTraineesAttendanceSelection = () => (
     <AttendanceSheetSelectionForm title={'Quels apprenants ont été présents aux créneaux ?'} error={errorTrainees}
       nextScreenName={ATTENDANCE_SIGNATURE} dispatchErrorTrainees={dispatchErrorTrainees} courseType={course?.type}
-      currentScreenName={TRAINEES_ATTENDANCES} areDataMissing={!traineesBySlotToAdd.flat().length}
+      currentScreenName={TRAINEES_ATTENDANCES} areDataMissing={!Object.values(traineesBySlotToAdd).flat().length}
       setTraineesAttendanceOptions={setTraineesAttendanceOptions}>
       <MultipleCheckboxList optionsGroups={traineesOptions} groupTitles={traineesAttendanceTitles}
-        setOptions={setTraineesBySlotOptions} checkedList={traineesBySlotToAdd} />
+        setOptions={setTraineesBySlotOptions} checkedList={Object.values(traineesBySlotToAdd)} />
     </AttendanceSheetSelectionForm>
   );
 
@@ -217,10 +219,10 @@ const CreateAttendanceSheet = ({ route, navigation }: CreateAttendanceSheetProps
   );
 
   const setTraineesOptionsForSummary = () => {
+    const options = traineesOptions[0];
+    const optionMap = new Map(options.map(o => [o.value, o]));
     setSelectedTraineesOptions(
-      traineesOptions
-        .map((group, index) => group
-          .filter(opt => traineesBySlotToAdd[index].includes(opt.value))).filter(g => g.length)
+      Object.values(traineesBySlotToAdd).map(values => values.map(v => optionMap.get(v)!))
     );
   };
 
@@ -234,17 +236,17 @@ const CreateAttendanceSheet = ({ route, navigation }: CreateAttendanceSheetProps
       dispatchErrorConfirmation={dispatchErrorConfirmation} error={errorConfirmation}
       titlesName={getFilteredStepsName()} isLoading={isLoading} setConfirmation={setConfirmationCheckbox}
       confirmation={confirmation} setSelectedOptions={setSlotsOptionsForSummary}
-      target={traineeName} options={selectedSlotsOptions} />
+      target={target} options={selectedSlotsOptions} />
     : <AttendanceSheetSummary signature={signature} saveAttendances={saveAttendances}
       dispatchErrorConfirmation={dispatchErrorConfirmation} error={errorConfirmation}
-      titlesName={traineesAttendanceTitles.filter((_, index) => traineesBySlotToAdd[index].length)}
+      titlesName={traineesAttendanceTitles.filter((_, index) => Object.values(traineesBySlotToAdd)[index].length)}
       isLoading={isLoading} setConfirmation={setConfirmationCheckbox}
       confirmation={confirmation} setSelectedOptions={setTraineesOptionsForSummary}
       target={`le ${CompaniDate(attendanceSheetToAdd[0]).format(DD_MM_YYYY)}`} options={selectedTraineesOptions} />
   );
   const renderEndScreen = () => (
     <AttendanceEndScreen goToNextScreen={navigation.goBack}
-      traineeName={`${isSingle || course?.type === INTER_B2B ? 'à' : 'pour le'} ${traineeName}`}
+      target={`${isSingle || course?.type === INTER_B2B ? 'à' : 'pour le'} ${target}`}
       failUpload={failUpload} />
   );
 
