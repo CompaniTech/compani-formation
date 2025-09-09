@@ -9,13 +9,13 @@ import { PINK } from '../../styles/colors';
 import styles from './styles';
 
 interface AttendanceEndScreenProps {
-  traineeName: string,
+  target: string,
   failUpload: boolean,
   goToNextScreen: () => void,
   mode?: string
 }
 
-const AttendanceEndScreen = ({ traineeName, failUpload, goToNextScreen, mode = TRAINER }: AttendanceEndScreenProps) => {
+const AttendanceEndScreen = ({ target, failUpload, goToNextScreen, mode = TRAINER }: AttendanceEndScreenProps) => {
   useFocusEffect(
     useCallback(() => {
       const hardwareBackPress = () => {
@@ -46,7 +46,7 @@ const AttendanceEndScreen = ({ traineeName, failUpload, goToNextScreen, mode = T
             )
             : <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={IS_WEB}>
               <View>
-                <Text style={styles.title}>Une demande d&apos;émargement a été envoyée {traineeName}</Text>
+                <Text style={styles.title}>Une demande d&apos;émargement a été envoyée {target}</Text>
                 <Text style={styles.text}>
                 Elle est disponible sur la page de la formation sur l&apos;application mobile de l&apos;apprenant
                 </Text>

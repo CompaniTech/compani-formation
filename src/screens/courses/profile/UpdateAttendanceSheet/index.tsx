@@ -111,7 +111,7 @@ const UpdateAttendanceSheet = ({ route, navigation }: UpdateAttendanceSheetProps
   };
 
   const renderEndScreen = () => (
-    <AttendanceEndScreen goToNextScreen={goBackToCourseAndRefresh} traineeName={traineeName} failUpload={failUpload}
+    <AttendanceEndScreen goToNextScreen={goBackToCourseAndRefresh} target={traineeName} failUpload={failUpload}
       mode={LEARNER} />
   );
 
