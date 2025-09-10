@@ -1,9 +1,10 @@
 // @ts-nocheck
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { BackHandler } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { StackScreenProps } from '@react-navigation/stack';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import Questionnaires from '../../../api/questionnaires';
 import { tabsNames } from '../../../core/data/tabs';
 import { capitalizeFirstLetter, sortStrings } from '../../../core/helpers/utils';
@@ -19,6 +20,8 @@ import {
   useSetCards,
   useSetExitConfirmationModal,
 } from '../../../store/cards/hooks';
+import commonStyles from '../../../styles/common';
+import { IS_IOS, LEARNER } from '../../../core/data/constants';
 import CardScreen from '../CardScreen';
 import QuestionnaireEndCard from '../cardTemplates/QuestionnaireEndCard';
 import StartCard from '../cardTemplates/StartCard';
@@ -67,8 +70,18 @@ const QuestionnaireCardContainer = ({ route, navigation }: QuestionnaireCardCont
   const goBack = async () => {
     if (exitConfirmationModal) setExitConfirmationModal(false);
 
-    navigation.navigate('LearnerCourseProfile', { courseId: profileId });
+    navigation.goBack();
+    setIsActive(false);
+    resetCardReducer();
+  };
 
+  const navigateNext = useCallback(() => {
+    navigation
+      .popTo('LearnerCourseProfile', { courseId: profileId, endedActivity: questionnaires[0]._id, mode: LEARNER });
+  }, [questionnaires, navigation, profileId]);
+
+  const goBackAfterEndQuestionnaire = () => {
+    navigateNext();
     setIsActive(false);
     resetCardReducer();
   };
@@ -90,24 +103,27 @@ const QuestionnaireCardContainer = ({ route, navigation }: QuestionnaireCardCont
   const Tab = createMaterialTopTabNavigator<RootCardParamList>();
 
   return isActive
-    ? <Tab.Navigator tabBar={() => <></>} screenOptions={{ swipeEnabled: false }}>
-      <Tab.Screen key={0} name={'startCard'} options={{ title: title || tabsNames.QuestionnaireCardContainer }}>
-        {() => <StartCard title={title} goBack={goBack}
-          isLoading={!cards.length || !questionnaires.length} />}
-      </Tab.Screen>
-      {!!cards.length && !!questionnaires.length &&
-        <>
-          {cards.map((_, index) => (
-            <Tab.Screen key={index} name={`card-${index}`} options={{ title }}>
-              {() => <CardScreen index={index} goBack={goBack} />}
+    ? <SafeAreaView style={commonStyles.container} edges={IS_IOS ? [] : ['bottom']}>
+      <Tab.Navigator tabBar={() => <></>} screenOptions={{ swipeEnabled: false }}>
+        <Tab.Screen key={0} name={'startCard'} options={{ title: title || tabsNames.QuestionnaireCardContainer }}>
+          {() => <StartCard title={title} goBack={goBack}
+            isLoading={!cards.length || !questionnaires.length} />}
+        </Tab.Screen>
+        {!!cards.length && !!questionnaires.length &&
+          <>
+            {cards.map((_, index) => (
+              <Tab.Screen key={index} name={`card-${index}`} options={{ title }}>
+                {() => <CardScreen index={index} goBack={goBack} />}
+              </Tab.Screen>
+            ))}
+            <Tab.Screen key={cards.length + 1} name={`card-${cards.length}`} options={{ title }}>
+              {() => <QuestionnaireEndCard goBack={goBackAfterEndQuestionnaire} questionnaires={questionnaires}
+                courseId={profileId} />}
             </Tab.Screen>
-          ))}
-          <Tab.Screen key={cards.length + 1} name={`card-${cards.length}`} options={{ title }}>
-            {() => <QuestionnaireEndCard goBack={goBack} questionnaires={questionnaires} courseId={profileId} />}
-          </Tab.Screen>
-        </>
-      }
-    </Tab.Navigator>
+          </>
+        }
+      </Tab.Navigator>
+    </SafeAreaView>
     : null;
 };
 
