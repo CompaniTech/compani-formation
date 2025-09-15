@@ -40,7 +40,7 @@ import { getCourseProgress } from '../../../../core/helpers/utils';
 import CourseProfileHeader from '../../../../components/CourseProfileHeader';
 import { FIRA_SANS_MEDIUM } from '../../../../styles/fonts';
 import { renderStepList, getTitle } from '../helper';
-import { BLENDED, IS_IOS, IS_WEB, LEARNER, PEDAGOGY, SINGLE, TUTOR } from '../../../../core/data/constants';
+import { BLENDED, INTER_B2B, IS_IOS, IS_WEB, LEARNER, PEDAGOGY, SINGLE, TUTOR } from '../../../../core/data/constants';
 
 interface LearnerCourseProfileProps extends CompositeScreenProps<
 StackScreenProps<RootStackParamList, 'LearnerCourseProfile'>,
@@ -62,11 +62,16 @@ const LearnerCourseProfile = ({ route, navigation }: LearnerCourseProfileProps) 
   const [refreshing, setRefreshing] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  const attendanceSheetsToSign = useMemo(() =>
-    (mode === LEARNER
+  const attendanceSheetsToSign = useMemo(() => (
+    mode === LEARNER
       ? (course as BlendedCourseType)?.attendanceSheets?.filter(as =>
-        !as.file && (as.slots || []).some(s => get(s, 'trainerSignature.signature') && !(s.traineesSignature || [])
-          .find(signature => signature?.traineeId === userId && !!signature.signature))) || []
+        !as.file && (as.slots || []).some((s) => {
+          const trainerSignature = get(s, 'trainerSignature.signature');
+          const traineeSignatureMissing = [SINGLE, INTER_B2B].includes(course!.type)
+            ? !(s.traineesSignature || []).find(signature => signature?.traineeId === userId && !!signature.signature)
+            : (s.traineesSignature || []).find(signature => signature?.traineeId === userId && !signature.signature);
+          return trainerSignature && traineeSignatureMissing;
+        })) || []
       : []),
   [course, mode, userId]);
 
