@@ -7,7 +7,7 @@ import CompaniDate from '../../../core/helpers/dates/companiDates';
 import { formatIdentity } from '../../../core/helpers/utils';
 import { AttendanceSheetType, SignaturesType } from '../../../types/AttendanceSheetTypes';
 import Shadow from '../../design/Shadow';
-import { DD_MM_YYYY, LONG_FIRSTNAME_LONG_LASTNAME } from '../../../core/data/constants';
+import { DD_MM_YYYY, INTER_B2B, LONG_FIRSTNAME_LONG_LASTNAME, SINGLE } from '../../../core/data/constants';
 import { ICON } from '../../../styles/metrics';
 import { GREY } from '../../../styles/colors';
 import styles from './styles';
@@ -29,10 +29,16 @@ const AttendanceSheetCell = ({ attendanceSheet }: AttendanceSheetCellProps) => {
   useEffect(() => {
     setUnsignedSlots(
       (attendanceSheet.slots || [])
-        .filter(s => !(s.traineesSignature || [])
-          .find(signature => signature?.traineeId === loggedUserId && signature.signature))
+        .filter((s) => {
+          const traineeSignatureMissing = [SINGLE, INTER_B2B].includes(course!.type)
+            ? !(s.traineesSignature || [])
+              .find(signature => signature?.traineeId === loggedUserId && !!signature.signature)
+            : (s.traineesSignature || [])
+              .find(signature => signature?.traineeId === loggedUserId && !signature.signature);
+          return traineeSignatureMissing;
+        })
     );
-  }, [attendanceSheet.slots, loggedUserId]);
+  }, [attendanceSheet.slots, course, loggedUserId]);
 
   const goToSignature = () => {
     const grouped = groupBy(unsignedSlots, slot => slot.step);
