@@ -110,6 +110,7 @@ export type OrderTheSequenceType = {
   question: string,
   orderedAnswers: OrderedAnswerType[],
   explanation: string,
+  isChronological: boolean,
 }
 
 export type GapAnswerType = {

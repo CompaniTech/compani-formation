@@ -126,7 +126,11 @@ const OrderTheSequenceCard = ({ isLoading, setIsRightSwipeEnabled }: OrderTheSeq
 
   const renderInformativeText = () => (
     <Text style={cardsStyle.informativeText}>
-      Classez les réponses dans le bon ordre : de la meilleure à la moins bonne
+      {
+        card.isChronological
+          ? 'Classez les réponses dans l\'ordre chronologique'
+          : 'Classez les réponses dans le bon ordre : de la meilleure à la moins bonne'
+      }
     </Text>
   );
 
