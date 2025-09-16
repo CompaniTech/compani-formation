@@ -51,6 +51,7 @@ import PersonCell from '../../../../components/PersonCell';
 import ContactInfoContainer from '../../../../components/ContactInfoContainer';
 import {
   AttendanceSheetType,
+  BaseAttendanceSheetType,
   InterAttendanceSheetType,
   IntraOrIntraHoldingAttendanceSheetType,
   isIntraOrIntraHolding,
@@ -95,10 +96,25 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
 
   const groupedSlotsToBeSigned = useMemo(() => {
     if (!course?.slots.length) return {};
-    const signedSlots = course.type !== INTER_B2B ? (savedAttendanceSheets as SingleAttendanceSheetType[])
+    const attendanceSheets = (savedAttendanceSheets as BaseAttendanceSheetType[]).filter(as => !as.file);
+    let signedSlots = attendanceSheets
       .map(as => get(as, 'slots', []).map(s => s._id))
-      .flat()
-      : [];
+      .flat();
+
+    if (course.type === INTER_B2B) {
+      const someTraineesDontHaveAs = (course.trainees || [])
+        .some(t => !(savedAttendanceSheets as unknown as InterAttendanceSheetType[])
+          .find((as: InterAttendanceSheetType) => as.trainee._id === t._id));
+      if (someTraineesDontHaveAs) signedSlots = [];
+      else {
+        const slotsSignedByAll: string[] = [];
+        signedSlots.forEach((slot) => {
+          const someASDontHaveSlot = attendanceSheets.some(as => !get(as, 'slots', []).find(s => slot === s._id));
+          if (!someASDontHaveSlot) slotsSignedByAll.push(slot);
+        });
+        signedSlots = [...new Set(slotsSignedByAll)];
+      }
+    }
 
     const groupedSlots = groupBy(
       course.slots.filter(slot => !signedSlots.includes(slot._id) && CompaniDate().isAfter(slot.startDate)),
@@ -143,10 +159,12 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
     const interCourseSavedSheets = savedAttendanceSheets.filter(as => as.file) as InterAttendanceSheetType[];
     const savedTrainees = interCourseSavedSheets.map(sheet => sheet.trainee?._id);
 
-    return [...new Set(
-      course?.trainees?.filter(trainee => (!savedTrainees.includes(trainee._id)))
-        .map(t => ({ value: t._id, label: formatIdentity(t.identity, LONG_FIRSTNAME_LONG_LASTNAME) }))
-    )];
+    return Object.values(groupedSlotsToBeSigned).flat().length
+      ? [...new Set(
+        course?.trainees?.filter(trainee => (!savedTrainees.includes(trainee._id)))
+          .map(t => ({ value: t._id, label: formatIdentity(t.identity, LONG_FIRSTNAME_LONG_LASTNAME) }))
+      )]
+      : [];
   }, [course, firstSlot, isSingle, savedAttendanceSheets, groupedSlotsToBeSigned]);
 
   const [imagePreview, setImagePreview] =
@@ -323,17 +341,15 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
           </View>
           {!!missingAttendanceSheets.length && !course.archivedAt && <View style={styles.uploadContainer}>
             <Text style={styles.header}>
-              { isSingle
-                ? 'Pour charger une feuille d\'émargement ou envoyer une demande de signature veuillez cliquer sur le '
+              {
+                'Pour charger une feuille d\'émargement ou envoyer une demande de signature veuillez cliquer sur le '
               + 'bouton ci-dessous.'
-                : 'Chargez vos feuilles d\'émargements quand elles sont complètes.'
               }
             </Text>
             <View style={styles.sectionContainer}>
-              <SecondaryButton caption={isSingle ? 'Emarger des créneaux' : 'Charger une feuille d\'émargement'}
-                onPress={goToAttendanceSheetUpload} customStyle={styles.uploadButton}
-                bgColor={course?.companies?.length ? YELLOW[300] : YELLOW[200]} disabled={!course?.companies?.length}
-                color={course?.companies?.length ? BLACK : GREY[600]} />
+              <SecondaryButton caption={'Emarger des créneaux'} onPress={goToAttendanceSheetUpload}
+                customStyle={styles.uploadButton} bgColor={course?.companies?.length ? YELLOW[300] : YELLOW[200]}
+                disabled={!course?.companies?.length} color={course?.companies?.length ? BLACK : GREY[600]} />
               {!course.companies?.length &&
                 <Text style={styles.italicText}>
                   Au moins une structure doit être rattachée à la formation pour pouvoir ajouter une feuille

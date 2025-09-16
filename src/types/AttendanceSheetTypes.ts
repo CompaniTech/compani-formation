@@ -5,7 +5,7 @@ export type SignaturesType = {
   traineesSignature: { traineeId: string, signature: string }[]
 }
 
-type BaseAttendanceSheetType = {
+export type BaseAttendanceSheetType = {
   _id: string,
   course: string,
   file: { publicId: string, link: string },
