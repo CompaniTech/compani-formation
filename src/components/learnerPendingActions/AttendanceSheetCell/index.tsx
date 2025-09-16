@@ -41,10 +41,7 @@ const AttendanceSheetCell = ({ attendanceSheet }: AttendanceSheetCellProps) => {
   }, [attendanceSheet.slots, course, loggedUserId]);
 
   const goToSignature = () => {
-    const grouped = groupBy(unsignedSlots, slot => slot.step);
-    const groupedSlots = Object.fromEntries(
-      Object.entries(grouped).map(([step, slots]) => [step, slots.map(slot => slot)])
-    );
+    const groupedSlots = groupBy(unsignedSlots, slot => slot.step);
     const groupedSlotsToBeSigned = course?.subProgram.steps.reduce<Record<string, SlotType[]>>((acc, step) => {
       if (groupedSlots[step._id]) acc[step.name] = groupedSlots[step._id];
       return acc;
