@@ -5,8 +5,9 @@ import { useSetGroupedSlotsToBeSigned } from '../../../../store/attendanceSheets
 import Courses from '../../../../api/courses';
 import { RootStackParamList } from '../../../../types/NavigationType';
 import { BlendedCourseType, SlotType } from '../../../../types/CourseTypes';
-import { LONG_FIRSTNAME_LONG_LASTNAME } from '../../../../core/data/constants';
+import { INTER_B2B, LONG_FIRSTNAME_LONG_LASTNAME, SINGLE } from '../../../../core/data/constants';
 import { formatIdentity } from '../../../../core/helpers/utils';
+import { useGetLoggedUserId } from '../../../../store/main/hooks';
 
 interface HandleAttendanceSheetNotificationProps extends StackScreenProps<
 RootStackParamList, 'HandleAttendanceSheetNotification'>{}
@@ -14,14 +15,26 @@ RootStackParamList, 'HandleAttendanceSheetNotification'>{}
 const HandleAttendanceSheetNotification = ({ route, navigation }: HandleAttendanceSheetNotificationProps) => {
   const { attendanceSheetId, courseId } = route.params;
   const setGroupedSlotsToBeSigned = useSetGroupedSlotsToBeSigned();
+  const loggedUserId = useGetLoggedUserId();
 
   useEffect(() => {
     const storeDataAndRedirect = async () => {
       try {
         const course = await Courses.getCourse(courseId, 'pedagogy') as BlendedCourseType;
         const attendanceSheet = course.attendanceSheets?.find(as => as._id === attendanceSheetId);
-        const groupedSlots = groupBy(attendanceSheet?.slots, slot => slot.step);
-        const groupedSlotsToBeSigned = course.subProgram.steps.reduce<Record<string, SlotType[]>>((acc, step) => {
+        const unsignedSlots = (attendanceSheet!.slots || [])
+          .filter((s) => {
+            const traineeSignatureMissing = [SINGLE, INTER_B2B].includes(course!.type)
+              ? !(s.traineesSignature || [])
+                .find(signature => signature?.traineeId === loggedUserId && !!signature.signature)
+              : (s.traineesSignature || [])
+                .find(signature => signature?.traineeId === loggedUserId && !signature.signature);
+            return traineeSignatureMissing;
+          });
+        const grouped = groupBy(unsignedSlots, slot => slot.step);
+        const groupedSlots = Object.fromEntries(
+          Object.entries(grouped).map(([step, slots]) => [step, slots.map(slot => slot)])
+        ); const groupedSlotsToBeSigned = course.subProgram.steps.reduce<Record<string, SlotType[]>>((acc, step) => {
           if (groupedSlots[step._id]) acc[step.name] = groupedSlots[step._id];
           return acc;
         }, {});
@@ -36,7 +49,7 @@ const HandleAttendanceSheetNotification = ({ route, navigation }: HandleAttendan
     };
 
     storeDataAndRedirect();
-  }, [attendanceSheetId, courseId, navigation, setGroupedSlotsToBeSigned]);
+  }, [attendanceSheetId, courseId, loggedUserId, navigation, setGroupedSlotsToBeSigned]);
 
   return null;
 };
