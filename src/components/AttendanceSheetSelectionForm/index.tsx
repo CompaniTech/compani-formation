@@ -14,6 +14,7 @@ import {
   DATA_SELECTION,
   INTER_B2B,
   INTRA,
+  INTRA_HOLDING,
   IS_WEB,
   SINGLE,
   SLOTS_SELECTION,
@@ -54,7 +55,7 @@ const AttendanceSheetSelectionForm = ({
   const navigation = useNavigation();
 
   useEffect(() => {
-    if (courseType === INTRA) setTraineesAttendanceOptions();
+    if ([INTRA, INTRA_HOLDING].includes(courseType)) setTraineesAttendanceOptions();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
