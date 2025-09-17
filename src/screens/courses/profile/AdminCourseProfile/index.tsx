@@ -51,7 +51,6 @@ import PersonCell from '../../../../components/PersonCell';
 import ContactInfoContainer from '../../../../components/ContactInfoContainer';
 import {
   AttendanceSheetType,
-  BaseAttendanceSheetType,
   InterAttendanceSheetType,
   IntraOrIntraHoldingAttendanceSheetType,
   isIntraOrIntraHolding,
@@ -96,20 +95,19 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
 
   const groupedSlotsToBeSigned = useMemo(() => {
     if (!course?.slots.length) return {};
-    const attendanceSheets = (savedAttendanceSheets as BaseAttendanceSheetType[]).filter(as => !as.file);
-    let signedSlots = attendanceSheets
+    let signedSlots = savedAttendanceSheets
       .map(as => get(as, 'slots', []).map(s => s._id))
       .flat();
 
     if (course.type === INTER_B2B) {
       const someTraineesDontHaveAs = (course.trainees || [])
-        .some(t => !(savedAttendanceSheets as unknown as InterAttendanceSheetType[])
-          .find((as: InterAttendanceSheetType) => as.trainee._id === t._id));
+        .some(t => !(savedAttendanceSheets as InterAttendanceSheetType[]).find(as => as.trainee._id === t._id));
       if (someTraineesDontHaveAs) signedSlots = [];
       else {
         const slotsSignedByAll: string[] = [];
         signedSlots.forEach((slot) => {
-          const someASDontHaveSlot = attendanceSheets.some(as => !get(as, 'slots', []).find(s => slot === s._id));
+          const someASDontHaveSlot = savedAttendanceSheets
+            .some(as => !as.file && !get(as, 'slots', []).find(s => slot === s._id));
           if (!someASDontHaveSlot) slotsSignedByAll.push(slot);
         });
         signedSlots = [...new Set(slotsSignedByAll)];
