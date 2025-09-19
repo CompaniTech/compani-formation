@@ -16,7 +16,7 @@ import Companies from '../../api/companies';
 import { RootStackParamList } from '../../types/NavigationType';
 import FeatherButton from '../../components/icons/FeatherButton';
 import NiPrimaryButton from '../../components/form/PrimaryButton';
-import ExitModal from '../../components/ExitModal';
+import ConfirmationModal from '../../components/ConfirmationModal';
 import NiInput from '../../components/form/Input';
 import NiErrorMessage from '../../components/ErrorMessage';
 import NiSecondaryButton from '../../components/form/SecondaryButton';
@@ -145,7 +145,7 @@ const LoginCodeForm = ({ navigation }: LoginCodeFormProps) => {
         <View style={styles.goBack}>
           <FeatherButton name='x-circle' onPress={() => setExitConfirmationModal(true)} size={ICON.MD}
             color={GREY[600]} disabled={isLoading} />
-          <ExitModal onPressConfirmButton={goBack} visible={exitConfirmationModal}
+          <ConfirmationModal onPressConfirmButton={goBack} visible={exitConfirmationModal}
             onPressCancelButton={() => setExitConfirmationModal(false)}
             title="Êtes-vous sûr(e) de cela ?" contentText={'Vous reviendrez à la page d\'accueil.'} />
         </View>
