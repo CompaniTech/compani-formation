@@ -1,1 +1,6 @@
-export interface CompanyType { _id: string, name: string, holding?: { name: string } }
+export interface CompanyType {
+  _id: string,
+  name: string,
+  noDiacriticName?: string,
+  holding?: { name: string, noDiacriticName?: string }
+ }

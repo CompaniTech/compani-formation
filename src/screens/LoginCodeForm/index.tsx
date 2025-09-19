@@ -13,6 +13,7 @@ import { StackScreenProps } from '@react-navigation/stack';
 import { useFocusEffect } from '@react-navigation/native';
 import Authentication from '../../api/authentication';
 import Companies from '../../api/companies';
+import { removeDiacritics } from '../../core/helpers/utils';
 import { RootStackParamList } from '../../types/NavigationType';
 import FeatherButton from '../../components/icons/FeatherButton';
 import NiPrimaryButton from '../../components/form/PrimaryButton';
@@ -133,7 +134,13 @@ const LoginCodeForm = ({ navigation }: LoginCodeFormProps) => {
   useEffect(() => {
     async function getCompanies() {
       const fetchCompanies = await Companies.listNotLogged({ action: DIRECTORY });
-      setCompanyOptions(fetchCompanies);
+      setCompanyOptions(
+        fetchCompanies.map(c => ({
+          ...c,
+          noDiacriticName: removeDiacritics(c.name),
+          ...c.holding && { holding: { ...c.holding, noDiacriticName: removeDiacritics(c.holding.name) } },
+        }))
+      );
     }
     getCompanies();
   }, []);

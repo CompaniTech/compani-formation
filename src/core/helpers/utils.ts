@@ -11,6 +11,7 @@ import {
 import { UserType } from '../../types/UserType';
 import { ELearningStepType } from '../../types/StepTypes';
 import { CourseType } from '../../types/CourseTypes';
+import { diacriticsMap } from './diacritics';
 
 export const capitalize = (s: string): string => {
   if (typeof s !== 'string') return '';
@@ -107,3 +108,5 @@ export const getArrayDepth = (value: Array<any>): 0 | 1 | 2 => {
   if (Array.isArray(value[0])) return 2;
   return 1;
 };
+
+export const removeDiacritics = (str: string) => str.replace(/[^\u0020-\u007E]/g, (a: string) => diacriticsMap[a] || a);
