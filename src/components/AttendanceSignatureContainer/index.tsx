@@ -11,7 +11,7 @@ import NiSecondaryButton from '../../components/form/SecondaryButton';
 import NiErrorMessage from '../../components/ErrorMessage';
 import { ATTENDANCE_SUMMARY, IS_WEB } from '../../core/data/constants';
 import { ErrorActionType, ErrorStateType, RESET_ERROR, SET_ERROR } from '../../reducers/error';
-import ExitModal from '../ExitModal';
+import ConfirmationModal from '../ConfirmationModal';
 import { htmlContent } from './canvas';
 import styles from './styles';
 
@@ -120,7 +120,7 @@ const AttendanceSignatureContainer = ({
       <View style={styles.container}>
         <FeatherButton name='x-circle' onPress={() => setExitConfirmationModal(true)} size={ICON.LG}
           color={GREY[600]} />
-        <ExitModal onPressConfirmButton={toggleModal} visible={exitConfirmationModal}
+        <ConfirmationModal onPressConfirmButton={toggleModal} visible={exitConfirmationModal}
           title="Êtes-vous sûr(e) de cela ?" onPressCancelButton={() => setExitConfirmationModal(false)}
           contentText="Votre signature ne sera pas enregistrée" />
         {

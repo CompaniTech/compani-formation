@@ -25,7 +25,7 @@ import { RootStackParamList, RootBottomTabParamList } from '../../../types/Navig
 import Users from '../../../api/users';
 import { useGetLoggedUser, useSetLoggedUser } from '../../../store/main/hooks';
 import { EMAIL_REGEX, IS_IOS, IS_WEB, PHONE_REGEX, CAMERA, GALLERY } from '../../../core/data/constants';
-import ExitModal from '../../../components/ExitModal';
+import ConfirmationModal from '../../../components/ConfirmationModal';
 import NiErrorMessage from '../../../components/ErrorMessage';
 import { formatPhoneForPayload } from '../../../core/helpers/utils';
 import PictureModal from '../../../components/PictureModal';
@@ -197,7 +197,7 @@ const ProfileEdition = ({ navigation }: ProfileEditionProps) => {
         <View style={styles.goBack}>
           <FeatherButton name='x-circle' onPress={() => setExitConfirmationModal(true)} size={ICON.MD}
             color={GREY[600]} />
-          <ExitModal onPressConfirmButton={goBack} visible={exitConfirmationModal}
+          <ConfirmationModal onPressConfirmButton={goBack} visible={exitConfirmationModal}
             onPressCancelButton={() => setExitConfirmationModal(false)}
             title="Êtes-vous sûr(e) de cela ?" contentText="Vos modifications ne seront pas enregistrées." />
         </View>

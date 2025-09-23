@@ -76,6 +76,7 @@ interface imagePreviewProps {
   id: string,
   link: string,
   type: string,
+  hasSlots: boolean,
 }
 
 type QRCodeType = { img: string, courseTimeline: string };
@@ -166,7 +167,7 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
   }, [course, firstSlot, isSingle, savedAttendanceSheets, groupedSlotsToBeSigned]);
 
   const [imagePreview, setImagePreview] =
-    useState<imagePreviewProps>({ visible: false, id: '', link: '', type: '' });
+    useState<imagePreviewProps>({ visible: false, id: '', link: '', type: '', hasSlots: false });
   const [questionnaireQRCodes, setQuestionnaireQRCodes] = useState<QRCodeType[]>([]);
   const [questionnairesType, setQuestionnairesType] = useState<string[]>([]);
 
@@ -270,26 +271,26 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
 
   const renderTrainee = (person: TraineeType) => <PersonCell person={person} />;
 
-  const deleteAttendanceSheets = async () => {
+  const deleteAttendanceSheets = async (shouldDeleteAttendances: boolean) => {
     try {
-      await AttendanceSheets.delete(imagePreview.id);
+      await AttendanceSheets.delete(imagePreview.id, { shouldDeleteAttendances });
       await refreshAttendanceSheets(course?._id!);
     } catch (error) {
       console.error(error);
     }
   };
 
-  const openImagePreview = async (id: string, link: string) => {
+  const openImagePreview = async (id: string, link: string, hasSlots: boolean) => {
     await new Promise(() => {
       Image.getSize(
         link || '',
-        (image) => { setImagePreview({ visible: true, id, link: link || '', type: image ? IMAGE : PDF }); },
-        () => setImagePreview({ visible: true, id, link, type: PDF })
+        (image) => { setImagePreview({ visible: true, id, link: link || '', type: image ? IMAGE : PDF, hasSlots }); },
+        () => setImagePreview({ visible: true, id, link, type: PDF, hasSlots })
       );
     });
   };
 
-  const resetImagePreview = () => setImagePreview({ visible: false, id: '', link: '', type: '' });
+  const resetImagePreview = () => setImagePreview({ visible: false, id: '', link: '', type: '', hasSlots: false });
 
   const renderSavedAttendanceSheets = (sheet: AttendanceSheetType) => {
     const label = isIntraOrIntraHolding(sheet)
@@ -298,7 +299,7 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
 
     return (
       <View key={sheet._id} style={styles.savedSheetContent}>
-        <TouchableOpacity onPress={() => openImagePreview(sheet._id, sheet.file.link)}>
+        <TouchableOpacity onPress={() => openImagePreview(sheet._id, sheet.file.link, !!sheet.slots)}>
           <Feather name='file-text' size={ICON.XXL} color={GREY[900]} />
           <View style={styles.editButton}><Feather name='edit-2' size={ICON.SM} color={PINK[500]} /></View>
         </TouchableOpacity>
@@ -313,7 +314,7 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
 
     return (
       <SecondaryButton key={sheet._id} customStyle={styles.attendanceSheetButton} caption={label} numberOfLines={1}
-        onPress={() => openImagePreview(sheet._id, sheet.file.link)} />
+        onPress={() => openImagePreview(sheet._id, sheet.file.link, !!sheet.slots)} />
     );
   };
 
@@ -390,7 +391,7 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
         </View>}
         <View style={styles.footer} />
       </ScrollView>
-      {imagePreview.visible && <ImagePreview source={pick(imagePreview, ['link', 'type'])}
+      {imagePreview.visible && <ImagePreview source={pick(imagePreview, ['link', 'type', 'hasSlots'])}
         onRequestClose={resetImagePreview} deleteFile={deleteAttendanceSheets} showButton={!course.archivedAt}/>}
     </SafeAreaView>
   )

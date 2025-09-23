@@ -10,7 +10,7 @@ export default StyleSheet.create({
     height: INPUT_HEIGHT,
     margin: MARGIN.MD,
     borderRadius: BORDER_RADIUS.SM,
-    padding: PADDING.LG,
+    paddingHorizontal: PADDING.LG,
     color: GREY[900],
     textAlignVertical: 'top',
   },

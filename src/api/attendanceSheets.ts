@@ -25,8 +25,8 @@ export default {
     const headers = new AxiosHeaders({ 'Content-Type': 'multipart/form-data' });
     await axiosLogged.put(`${baseURL}/attendancesheets/${attendanceSheetId}/signature`, data, { headers });
   },
-  delete: async (attendanceSheetId: string): Promise<void> => {
+  delete: async (attendanceSheetId: string, params: { shouldDeleteAttendances: boolean }): Promise<void> => {
     const baseURL = await Environment.getBaseUrl();
-    await axiosLogged.delete(`${baseURL}/attendancesheets/${attendanceSheetId}`);
+    await axiosLogged.delete(`${baseURL}/attendancesheets/${attendanceSheetId}`, { params });
   },
 };

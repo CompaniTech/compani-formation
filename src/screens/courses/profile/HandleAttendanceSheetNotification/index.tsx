@@ -36,7 +36,10 @@ const HandleAttendanceSheetNotification = ({ route, navigation }: HandleAttendan
           if (groupedSlots[step._id]) acc[step.name] = groupedSlots[step._id];
           return acc;
         }, {});
-
+        if (!Object.values(groupedSlotsToBeSigned).flat().length) {
+          navigation.goBack();
+          return;
+        }
         setGroupedSlotsToBeSigned(groupedSlotsToBeSigned);
 
         const trainerName = formatIdentity(attendanceSheet!.trainer.identity, LONG_FIRSTNAME_LONG_LASTNAME);

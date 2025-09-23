@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { TouchableOpacity, TextInput, FlatList, Text } from 'react-native';
 import get from 'lodash/get';
-import { sortStrings } from '../../core/helpers/utils';
+import escapeRegExp from 'lodash/escapeRegExp';
+import { removeDiacritics, sortStrings } from '../../core/helpers/utils';
 import { GREY, TRANSPARENT_GRADIENT, WHITE } from '../../styles/colors';
 import { CompanyType } from '../../types/CompanyType';
 import { INPUT_HEIGHT } from '../../styles/metrics';
@@ -32,10 +33,14 @@ const CompanySearchModal = ({ onRequestClose, visible, companyOptions }: Company
     </TouchableOpacity>
   );
 
-  const getDisplayedCompanies = () => companyOptions
-    .filter(company => company.name.match(new RegExp(answer, 'i')) ||
-      get(company, 'holding.name', '').match(new RegExp(answer, 'i')))
-    .sort((a, b) => sortStrings(a.name, b.name));
+  const getDisplayedCompanies = () => {
+    const formattedString = escapeRegExp(removeDiacritics(answer));
+
+    return companyOptions
+      .filter(company => company.noDiacriticName!.match(new RegExp(formattedString, 'i')) ||
+      get(company, 'holding.name', '').match(new RegExp(formattedString, 'i')))
+      .sort((a, b) => sortStrings(a.name, b.name));
+  };
 
   const resetModal = () => {
     setAnswer('');
