@@ -3,7 +3,7 @@ import { Text, View, KeyboardAvoidingView, BackHandler } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StackScreenProps } from '@react-navigation/stack';
 import { useFocusEffect } from '@react-navigation/native';
-import ExitModal from '../../components/ExitModal';
+import ConfirmationModal from '../../components/ConfirmationModal';
 import FeatherButton from '../../components/icons/FeatherButton';
 import { ICON, IS_LARGE_SCREEN, MARGIN } from '../../styles/metrics';
 import { RootStackParamList } from '../../types/NavigationType';
@@ -86,7 +86,7 @@ const EmailForm = ({ route, navigation }: EmailFormProps) => {
         <View style={styles.goBack}>
           <FeatherButton name='x-circle' onPress={() => setExitConfirmationModal(true)} size={ICON.MD} color={GREY[600]}
             disabled={isLoading} />
-          <ExitModal onPressConfirmButton={goBack} visible={exitConfirmationModal}
+          <ConfirmationModal onPressConfirmButton={goBack} visible={exitConfirmationModal}
             onPressCancelButton={() => setExitConfirmationModal(false)}
             title="Êtes-vous sûr(e) de cela ?" contentText={'Vous reviendrez à la page d\'accueil.'} />
         </View>

@@ -160,6 +160,7 @@ export const COMPLETED = 'completed';
 export const DATA_SELECTION = 'attendance-sheet-data-selection';
 export const SLOTS_SELECTION = 'slots-data-selection';
 export const UPLOAD_METHOD = 'upload-method-selection';
+export const TRAINEES_ATTENDANCES = 'trainees-attendances';
 export const ATTENDANCE_SIGNATURE = 'attendance-signature';
 export const ATTENDANCE_SUMMARY = 'attendance-summary';
 export const END_SCREEN = 'end-screen';
