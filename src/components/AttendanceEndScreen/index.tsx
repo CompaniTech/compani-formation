@@ -42,7 +42,8 @@ const AttendanceEndScreen = ({ target, failUpload, goToNextScreen, mode = TRAINE
         ? <>
           {failUpload
             ? renderFailMessage(
-              'Echec de l\'envoi de la demande. Assurez-vous de ne pas émarger des créneaux déjà émargés'
+              'Echec de l\'envoi de la demande. Assurez-vous de ne pas émarger des créneaux déjà émargés ou liés à un '
+              + 'certificat de réalisation'
             )
             : <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={IS_WEB}>
               <View>
