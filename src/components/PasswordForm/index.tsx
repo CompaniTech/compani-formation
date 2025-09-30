@@ -13,7 +13,7 @@ import { GREY } from '../../styles/colors';
 import { ICON, IS_LARGE_SCREEN, MARGIN } from '../../styles/metrics';
 import styles from './styles';
 import NiInput from '../form/Input';
-import ExitModal from '../ExitModal';
+import ConfirmationModal from '../ConfirmationModal';
 import NiErrorMessage from '../ErrorMessage';
 import { errorReducer, initialErrorState, RESET_ERROR, SET_ERROR } from '../../reducers/error';
 import { IS_IOS, IS_WEB } from '../../core/data/constants';
@@ -103,7 +103,7 @@ const PasswordForm = ({ onPress, goBack, email = '' }: PasswordFormProps) => {
       <View style={styles.goBack}>
         <FeatherButton name='x-circle' onPress={() => setExitConfirmationModal(true)} size={ICON.MD}
           color={GREY[600]} disabled={isLoading} />
-        <ExitModal onPressConfirmButton={toggleModal} visible={exitConfirmationModal}
+        <ConfirmationModal onPressConfirmButton={toggleModal} visible={exitConfirmationModal}
           title="Êtes-vous sûr(e) de cela ?" onPressCancelButton={() => setExitConfirmationModal(false)}
           contentText="Vos modifications ne seront pas enregistrées" />
       </View>

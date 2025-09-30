@@ -40,7 +40,7 @@ import { getCourseProgress } from '../../../../core/helpers/utils';
 import CourseProfileHeader from '../../../../components/CourseProfileHeader';
 import { FIRA_SANS_MEDIUM } from '../../../../styles/fonts';
 import { renderStepList, getTitle } from '../helper';
-import { BLENDED, IS_IOS, IS_WEB, LEARNER, PEDAGOGY, SINGLE, TUTOR } from '../../../../core/data/constants';
+import { BLENDED, INTER_B2B, IS_IOS, IS_WEB, LEARNER, PEDAGOGY, SINGLE, TUTOR } from '../../../../core/data/constants';
 
 interface LearnerCourseProfileProps extends CompositeScreenProps<
 StackScreenProps<RootStackParamList, 'LearnerCourseProfile'>,
@@ -62,12 +62,18 @@ const LearnerCourseProfile = ({ route, navigation }: LearnerCourseProfileProps) 
   const [refreshing, setRefreshing] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  const attendanceSheetsToSign = useMemo(() =>
-    (course?.type === SINGLE && mode === LEARNER
+  const attendanceSheetsToSign = useMemo(() => (
+    mode === LEARNER
       ? (course as BlendedCourseType)?.attendanceSheets?.filter(as =>
-        has(as, 'signatures.trainer') && !has(as, 'signatures.trainee')) || []
+        !as.file && (as.slots || []).some((s) => {
+          const trainerSignature = get(s, 'trainerSignature.signature');
+          const traineeSignatureMissing = [SINGLE, INTER_B2B].includes(course!.type)
+            ? !(s.traineesSignature || []).find(signature => signature?.traineeId === userId && !!signature.signature)
+            : (s.traineesSignature || []).find(signature => signature?.traineeId === userId && !signature.signature);
+          return trainerSignature && traineeSignatureMissing;
+        })) || []
       : []),
-  [course, mode]);
+  [course, mode, userId]);
 
   const title = useMemo(() => getTitle(course), [course]);
 
@@ -85,6 +91,7 @@ const LearnerCourseProfile = ({ route, navigation }: LearnerCourseProfileProps) 
           const formattedCourse = {
             _id: fetchedCourse._id,
             subProgram: { steps: fetchedCourse.subProgram.steps.map(s => ({ _id: s._id, name: s.name })) },
+            type: fetchedCourse.type,
           };
           setCourseToStore(formattedCourse as BlendedCourseType);
         }
@@ -199,8 +206,8 @@ const LearnerCourseProfile = ({ route, navigation }: LearnerCourseProfileProps) 
         bgColor={WHITE} font={FIRA_SANS_MEDIUM.LG} />
     </View>
     {!!(questionnaires.length || attendanceSheetsToSign.length) &&
-          <PendingActionsContainer questionnaires={questionnaires} profileId={course._id}
-            attendanceSheets={attendanceSheetsToSign} />
+      <PendingActionsContainer questionnaires={questionnaires} profileId={course._id}
+        attendanceSheets={attendanceSheetsToSign} />
     }
     {[LEARNER, TUTOR].includes(mode) && <View style={styles.progressBarContainer}>
       <Text style={styles.progressBarText}>ÉTAPES</Text>

@@ -76,6 +76,7 @@ interface imagePreviewProps {
   id: string,
   link: string,
   type: string,
+  hasSlots: boolean,
 }
 
 type QRCodeType = { img: string, courseTimeline: string };
@@ -94,18 +95,36 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
   const [noAttendancesMessage, setNoAttendancesMessage] = useState<string>('');
 
   const groupedSlotsToBeSigned = useMemo(() => {
-    if (!isSingle || !course?.slots.length) return {};
-    const signedSlots = (savedAttendanceSheets as SingleAttendanceSheetType[])
+    if (!course?.slots.length) return {};
+    let signedSlots = savedAttendanceSheets
       .map(as => get(as, 'slots', []).map(s => s._id))
       .flat();
 
-    const groupedSlots = groupBy(course.slots.filter(slot => !signedSlots.includes(slot._id)), 'step');
+    if (course.type === INTER_B2B) {
+      const someTraineesDontHaveAs = (course.trainees || [])
+        .some(t => !(savedAttendanceSheets as InterAttendanceSheetType[]).find(as => as.trainee._id === t._id));
+      if (someTraineesDontHaveAs) signedSlots = [];
+      else {
+        const slotsSignedByAll: string[] = [];
+        signedSlots.forEach((slot) => {
+          const someASDontHaveSlot = savedAttendanceSheets
+            .some(as => !as.file && !get(as, 'slots', []).find(s => slot === s._id));
+          if (!someASDontHaveSlot) slotsSignedByAll.push(slot);
+        });
+        signedSlots = [...new Set(slotsSignedByAll)];
+      }
+    }
+
+    const groupedSlots = groupBy(
+      course.slots.filter(slot => !signedSlots.includes(slot._id) && CompaniDate().isAfter(slot.startDate)),
+      'step'
+    );
 
     return course?.subProgram.steps.reduce<Record<string, SlotType[]>>((acc, step) => {
       if (groupedSlots[step._id]) acc[step.name] = groupedSlots[step._id];
       return acc;
     }, {});
-  }, [course, isSingle, savedAttendanceSheets]);
+  }, [course, savedAttendanceSheets]);
 
   const missingAttendanceSheets = useMemo(() => {
     if (!course?.slots?.length || !firstSlot) return [];
@@ -136,17 +155,19 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
       return [];
     }
 
-    const interCourseSavedSheets = savedAttendanceSheets as InterAttendanceSheetType[];
+    const interCourseSavedSheets = savedAttendanceSheets.filter(as => as.file) as InterAttendanceSheetType[];
     const savedTrainees = interCourseSavedSheets.map(sheet => sheet.trainee?._id);
 
-    return [...new Set(
-      course?.trainees?.filter(trainee => (!savedTrainees.includes(trainee._id)))
-        .map(t => ({ value: t._id, label: formatIdentity(t.identity, LONG_FIRSTNAME_LONG_LASTNAME) }))
-    )];
+    return Object.values(groupedSlotsToBeSigned).flat().length
+      ? [...new Set(
+        course?.trainees?.filter(trainee => (!savedTrainees.includes(trainee._id)))
+          .map(t => ({ value: t._id, label: formatIdentity(t.identity, LONG_FIRSTNAME_LONG_LASTNAME) }))
+      )]
+      : [];
   }, [course, firstSlot, isSingle, savedAttendanceSheets, groupedSlotsToBeSigned]);
 
   const [imagePreview, setImagePreview] =
-    useState<imagePreviewProps>({ visible: false, id: '', link: '', type: '' });
+    useState<imagePreviewProps>({ visible: false, id: '', link: '', type: '', hasSlots: false });
   const [questionnaireQRCodes, setQuestionnaireQRCodes] = useState<QRCodeType[]>([]);
   const [questionnairesType, setQuestionnairesType] = useState<string[]>([]);
 
@@ -250,26 +271,26 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
 
   const renderTrainee = (person: TraineeType) => <PersonCell person={person} />;
 
-  const deleteAttendanceSheets = async () => {
+  const deleteAttendanceSheets = async (shouldDeleteAttendances: boolean) => {
     try {
-      await AttendanceSheets.delete(imagePreview.id);
+      await AttendanceSheets.delete(imagePreview.id, { shouldDeleteAttendances });
       await refreshAttendanceSheets(course?._id!);
     } catch (error) {
       console.error(error);
     }
   };
 
-  const openImagePreview = async (id: string, link: string) => {
+  const openImagePreview = async (id: string, link: string, hasSlots: boolean) => {
     await new Promise(() => {
       Image.getSize(
         link || '',
-        (image) => { setImagePreview({ visible: true, id, link: link || '', type: image ? IMAGE : PDF }); },
-        () => setImagePreview({ visible: true, id, link, type: PDF })
+        (image) => { setImagePreview({ visible: true, id, link: link || '', type: image ? IMAGE : PDF, hasSlots }); },
+        () => setImagePreview({ visible: true, id, link, type: PDF, hasSlots })
       );
     });
   };
 
-  const resetImagePreview = () => setImagePreview({ visible: false, id: '', link: '', type: '' });
+  const resetImagePreview = () => setImagePreview({ visible: false, id: '', link: '', type: '', hasSlots: false });
 
   const renderSavedAttendanceSheets = (sheet: AttendanceSheetType) => {
     const label = isIntraOrIntraHolding(sheet)
@@ -278,7 +299,7 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
 
     return (
       <View key={sheet._id} style={styles.savedSheetContent}>
-        <TouchableOpacity onPress={() => openImagePreview(sheet._id, sheet.file.link)}>
+        <TouchableOpacity onPress={() => openImagePreview(sheet._id, sheet.file.link, !!sheet.slots)}>
           <Feather name='file-text' size={ICON.XXL} color={GREY[900]} />
           <View style={styles.editButton}><Feather name='edit-2' size={ICON.SM} color={PINK[500]} /></View>
         </TouchableOpacity>
@@ -293,7 +314,7 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
 
     return (
       <SecondaryButton key={sheet._id} customStyle={styles.attendanceSheetButton} caption={label} numberOfLines={1}
-        onPress={() => openImagePreview(sheet._id, sheet.file.link)} />
+        onPress={() => openImagePreview(sheet._id, sheet.file.link, !!sheet.slots)} />
     );
   };
 
@@ -319,17 +340,15 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
           </View>
           {!!missingAttendanceSheets.length && !course.archivedAt && <View style={styles.uploadContainer}>
             <Text style={styles.header}>
-              { isSingle
-                ? 'Pour charger une feuille d\'émargement ou envoyer une demande de signature veuillez cliquer sur le '
+              {
+                'Pour charger une feuille d\'émargement ou envoyer une demande de signature veuillez cliquer sur le '
               + 'bouton ci-dessous.'
-                : 'Chargez vos feuilles d\'émargements quand elles sont complètes.'
               }
             </Text>
             <View style={styles.sectionContainer}>
-              <SecondaryButton caption={isSingle ? 'Emarger des créneaux' : 'Charger une feuille d\'émargement'}
-                onPress={goToAttendanceSheetUpload} customStyle={styles.uploadButton}
-                bgColor={course?.companies?.length ? YELLOW[300] : YELLOW[200]} disabled={!course?.companies?.length}
-                color={course?.companies?.length ? BLACK : GREY[600]} />
+              <SecondaryButton caption={'Emarger des créneaux'} onPress={goToAttendanceSheetUpload}
+                customStyle={styles.uploadButton} bgColor={course?.companies?.length ? YELLOW[300] : YELLOW[200]}
+                disabled={!course?.companies?.length} color={course?.companies?.length ? BLACK : GREY[600]} />
               {!course.companies?.length &&
                 <Text style={styles.italicText}>
                   Au moins une structure doit être rattachée à la formation pour pouvoir ajouter une feuille
@@ -338,12 +357,13 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
               }
             </View>
           </View>}
-          {!!savedAttendanceSheets.length && <>
+          {!!completedAttendanceSheets.length && <>
             {
               isSingle
                 ? (completedAttendanceSheets as SingleAttendanceSheetType[])
                   .map(sheet => renderSingleSavedAttendanceSheets(sheet))
-                : <FlatList data={savedAttendanceSheets} keyExtractor={item => item._id} style={styles.listContainer}
+                : <FlatList data={completedAttendanceSheets} keyExtractor={item => item._id}
+                  style={styles.listContainer}
                   showsHorizontalScrollIndicator={false} renderItem={({ item }) => renderSavedAttendanceSheets(item)}
                   horizontal/>
             }
@@ -371,7 +391,7 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
         </View>}
         <View style={styles.footer} />
       </ScrollView>
-      {imagePreview.visible && <ImagePreview source={pick(imagePreview, ['link', 'type'])}
+      {imagePreview.visible && <ImagePreview source={pick(imagePreview, ['link', 'type', 'hasSlots'])}
         onRequestClose={resetImagePreview} deleteFile={deleteAttendanceSheets} showButton={!course.archivedAt}/>}
     </SafeAreaView>
   )

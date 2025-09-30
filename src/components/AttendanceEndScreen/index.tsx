@@ -9,13 +9,13 @@ import { PINK } from '../../styles/colors';
 import styles from './styles';
 
 interface AttendanceEndScreenProps {
-  traineeName: string,
+  target: string,
   failUpload: boolean,
   goToNextScreen: () => void,
   mode?: string
 }
 
-const AttendanceEndScreen = ({ traineeName, failUpload, goToNextScreen, mode = TRAINER }: AttendanceEndScreenProps) => {
+const AttendanceEndScreen = ({ target, failUpload, goToNextScreen, mode = TRAINER }: AttendanceEndScreenProps) => {
   useFocusEffect(
     useCallback(() => {
       const hardwareBackPress = () => {
@@ -41,12 +41,15 @@ const AttendanceEndScreen = ({ traineeName, failUpload, goToNextScreen, mode = T
       {mode === TRAINER
         ? <>
           {failUpload
-            ? renderFailMessage(`Echec de l'envoi de la demande à ${traineeName}`)
+            ? renderFailMessage(
+              'Echec de l\'envoi de la demande. Assurez-vous de ne pas émarger des créneaux déjà émargés ou liés à un '
+              + 'certificat de réalisation'
+            )
             : <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={IS_WEB}>
               <View>
-                <Text style={styles.title}>Une demande d&apos;émargement a été envoyée à {traineeName}</Text>
+                <Text style={styles.title}>Une demande d&apos;émargement a été envoyée {target}</Text>
                 <Text style={styles.text}>
-                Elle est disponible sur la page de la formation sur son application mobile
+                Elle est disponible sur la page de la formation sur l&apos;application mobile de l&apos;apprenant
                 </Text>
               </View>
               <Image source={require('../../../assets/images/aux_fierte.webp')} style={styles.image} />

@@ -8,7 +8,7 @@ import { StackScreenProps } from '@react-navigation/stack';
 import { CompositeScreenProps, useIsFocused } from '@react-navigation/native';
 import { ImagePickerAsset } from 'expo-image-picker';
 import { RootBottomTabParamList, RootStackParamList } from '../../../types/NavigationType';
-import { formatPhone } from '../../../core/helpers/utils';
+import { formatPhone, removeDiacritics } from '../../../core/helpers/utils';
 import NiSecondaryButton from '../../../components/form/SecondaryButton';
 import NiPrimaryButton from '../../../components/form/PrimaryButton';
 import commonStyles from '../../../styles/common';
@@ -100,7 +100,13 @@ const Profile = ({ navigation }: ProfileProps) => {
   const openCompanyModal = async () => {
     try {
       const fetchCompanies = await Companies.list({ action: DIRECTORY });
-      setCompanyOptions(fetchCompanies);
+      setCompanyOptions(
+        fetchCompanies.map(c => ({
+          ...c,
+          noDiacriticName: removeDiacritics(c.name),
+          ...c.holding && { holding: { ...c.holding, noDiacriticName: removeDiacritics(c.holding.name) } },
+        }))
+      );
     } catch (e) {
       console.error(e);
     } finally {

@@ -5,7 +5,7 @@ import { View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { runOnJS } from 'react-native-reanimated';
-import ExitModal from '../../../components/ExitModal';
+import ConfirmationModal from '../../../components/ConfirmationModal';
 import { IS_IOS, IS_WEB, SWIPE_SENSIBILITY } from '../../../core/data/constants';
 import { useGetExitConfirmationModal, useSetExitConfirmationModal } from '../../../store/cards/hooks';
 import CardTemplate from '../cardTemplates/CardTemplate';
@@ -41,8 +41,9 @@ const CardScreen = ({ index, goBack }: CardScreenProps) => {
   return (
     <GestureDetector gesture={onSwipe}>
       <View style={styles.cardScreen}>
-        <ExitModal onPressConfirmButton={goBack} visible={exitConfirmationModal} title={'Êtes-vous sûr(e) de cela ?'}
-          onPressCancelButton={() => setExitConfirmationModal(false)} contentText={'Tous vos progrès seront perdus'} />
+        <ConfirmationModal onPressConfirmButton={goBack} visible={exitConfirmationModal}
+          title={'Êtes-vous sûr(e) de cela ?'} onPressCancelButton={() => setExitConfirmationModal(false)}
+          contentText={'Tous vos progrès seront perdus'} />
         <CardTemplate index={index} setIsLeftSwipeEnabled={setIsLeftSwipeEnabled}
           setIsRightSwipeEnabled={setIsRightSwipeEnabled} />
       </View>
