@@ -47,7 +47,7 @@ const QuestionnaireCardContainer = ({ route, navigation }: QuestionnaireCardCont
 
   const getQuestionnaires = async () => {
     try {
-      const fetchedQuestionnaires = await Questionnaires.list({ course: profileId });
+      const fetchedQuestionnaires = await Questionnaires.getUserQuestionnaires({ course: profileId });
       const sortedQuestionnaires = [...fetchedQuestionnaires].sort((a, b) => sortStrings(a.type, b.type));
       setQuestionnaires(sortedQuestionnaires);
       setCards(sortedQuestionnaires.map(q => q.cards).flat());
