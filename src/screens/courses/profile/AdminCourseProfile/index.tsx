@@ -13,7 +13,6 @@ import { Feather } from '@expo/vector-icons';
 import pick from 'lodash/pick';
 import uniqBy from 'lodash/uniqBy';
 import groupBy from 'lodash/groupBy';
-import get from 'lodash/get';
 import has from 'lodash/has';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StackScreenProps } from '@react-navigation/stack';
@@ -96,29 +95,25 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
 
   const groupedSlotsToBeSigned = useMemo(() => {
     if (!course?.slots.length) return {};
-    let signedSlots = savedAttendanceSheets
-      .map(as => get(as, 'slots', []).map(s => s._id))
-      .flat();
+    const slotList = course.slots.filter(slot =>
+      course.trainees?.some((trainee) => {
+        if (course.type === INTER_B2B) {
+          const asWithSlot = (savedAttendanceSheets as InterAttendanceSheetType[])
+            .find(as => as.trainee._id === trainee._id && (as.slots?.some(s => s._id === slot._id) || as.file));
+          if (asWithSlot) return false;
+        } else if (course.type === SINGLE) {
+          const asWithSlot = (savedAttendanceSheets)
+            .find(as => as.slots?.some(s => s._id === slot._id));
+          if (asWithSlot) return false;
+        }
 
-    if (course.type === INTER_B2B) {
-      const someTraineesDontHaveAs = (course.trainees || [])
-        .some(t => !(savedAttendanceSheets as InterAttendanceSheetType[]).find(as => as.trainee._id === t._id));
-      if (someTraineesDontHaveAs) signedSlots = [];
-      else {
-        const slotsSignedByAll: string[] = [];
-        signedSlots.forEach((slot) => {
-          const someASDontHaveSlot = savedAttendanceSheets
-            .some(as => !as.file && !get(as, 'slots', []).find(s => slot === s._id));
-          if (!someASDontHaveSlot) slotsSignedByAll.push(slot);
-        });
-        signedSlots = [...new Set(slotsSignedByAll)];
-      }
-    }
+        const missingAttendance = slot.missingAttendances?.some(a => a.trainee === trainee._id);
+        if (missingAttendance) return false;
 
-    const groupedSlots = groupBy(
-      course.slots.filter(slot => !signedSlots.includes(slot._id) && CompaniDate().isAfter(slot.startDate)),
-      'step'
-    );
+        return true;
+      }));
+
+    const groupedSlots = groupBy(slotList.filter(slot => CompaniDate().isAfter(slot.startDate)), 'step');
 
     return course?.subProgram.steps.reduce<Record<string, SlotType[]>>((acc, step) => {
       if (groupedSlots[step._id]) acc[step.name] = groupedSlots[step._id];
@@ -135,7 +130,7 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
         .map(sheet => CompaniDate(sheet.date).startOf('day').toISO());
 
       return uniqBy(
-        course.slots
+        Object.values(groupedSlotsToBeSigned).flat()
           .map(slot => ({
             value: CompaniDate(slot.startDate).startOf('day').toISO(),
             label: CompaniDate(slot.startDate).format(DD_MM_YYYY),
