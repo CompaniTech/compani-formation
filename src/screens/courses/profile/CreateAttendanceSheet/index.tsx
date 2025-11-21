@@ -104,15 +104,24 @@ const CreateAttendanceSheet = ({ route, navigation }: CreateAttendanceSheetProps
   }, [course, missingAttendanceSheets]);
 
   const setTraineesAttendanceOptions = () => {
-    const slots = course!.slots.filter(s => CompaniDate(s.startDate).isSame(attendanceSheetToAdd[0], DAY));
+    const slots = Object.values(groupedSlotsToBeSigned).flat()
+      .filter(s => CompaniDate(s.startDate).isSame(attendanceSheetToAdd[0], DAY));
     setDateSlots(slots);
     const trainees = course!.trainees?.map(t => ({ label: formatIdentity(t.identity, 'FL'), value: t._id })) || [];
-
-    setTraineesOptions(new Array(slots.length).fill(trainees));
+    const traineesBySlot = slots
+      .map(s => trainees.map((t) => {
+        if (s.missingAttendances?.find(a => a.trainee === t.value)) return { ...t, disabled: true };
+        return { ...t, disabled: false };
+      }));
+    setTraineesOptions(traineesBySlot);
     const titles = slots.map(s =>
       `${CompaniDate(s.startDate).format(`${DD_MM_YYYY} ${HH_MM}`)} - ${CompaniDate(s.endDate).format(HH_MM)}`);
     setTraineesAttendanceTitles(titles);
-    setTraineesBySlotToAdd(Object.fromEntries(slots.map(slot => [slot._id, trainees.map(t => t.value)])));
+    setTraineesBySlotToAdd(
+      Object.fromEntries(
+        slots.map((slot, i) => [slot._id, traineesBySlot[i].filter(t => !t.disabled).map(t => t.value)])
+      )
+    );
   };
 
   const setTraineesBySlotOptions = (options: string[][]) => {

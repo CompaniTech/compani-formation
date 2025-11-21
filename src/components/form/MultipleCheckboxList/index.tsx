@@ -50,9 +50,9 @@ const MultipleCheckboxList = <T extends string[] | string[][]> ({
           {options.map((item) => {
             const isChecked = getArrayDepth(checkedList) === 1
               ? (checkedList as string[]).includes(item.value as string)
-              : checkedList[index].includes(item.value as string);
-            return <Checkbox key={item.value} itemLabel={item.label} isChecked={isChecked} disabled={disabled}
-              onPressCheckbox={() => onPressCheckbox(item.value, index)} />;
+              : checkedList[index].includes(item.value as string) && !item.disabled;
+            return <Checkbox key={item.value} itemLabel={item.label} isChecked={isChecked}
+              disabled={disabled || item.disabled} onPressCheckbox={() => onPressCheckbox(item.value, index)} />;
           })}
         </View>
       ))}

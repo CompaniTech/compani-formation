@@ -20,11 +20,14 @@ const Checkbox = ({ itemLabel, isChecked, onPressCheckbox, disabled = false }: R
     if (isChecked) {
       if (disabled) {
         setIconColor(PINK[300]);
-        setTextStyle({ ...styles.text, color: GREY[500] });
+        setTextStyle({ ...styles.text, color: GREY[300] });
       } else {
         setIconColor(PINK[500]);
         setTextStyle({ ...styles.text, color: GREY[600] });
       }
+    } else if (disabled) {
+      setIconColor(GREY[300]);
+      setTextStyle({ ...styles.text, color: GREY[300] });
     } else {
       setIconColor(GREY[600]);
       setTextStyle({ ...styles.text, color: GREY[600] });
