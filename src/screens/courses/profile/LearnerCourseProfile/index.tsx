@@ -200,8 +200,8 @@ const LearnerCourseProfile = ({ route, navigation }: LearnerCourseProfileProps) 
     navigation.navigate('TraineeFollowUp', { courseId: course._id, trainee: course.trainees![0] as string });
   };
 
-  const goToTraineeFile = (sheetId: string) => {
-    const url = `https://docs.google.com/spreadsheets/d/${sheetId}`;
+  const goToTraineeFile = (gSheetId: string) => {
+    const url = `https://docs.google.com/spreadsheets/d/${gSheetId}`;
     Linking.openURL(url);
   };
 
@@ -227,9 +227,9 @@ const LearnerCourseProfile = ({ route, navigation }: LearnerCourseProfileProps) 
         style={styles.traineeProgressContainer}>
         <Text style={styles.traineeProgress}>Accéder à la progression de l&apos;apprenant</Text>
       </TouchableOpacity>
-      {(course as BlendedCourseType).sheetId && <TouchableOpacity hitSlop={HIT_SLOP}
-        onPress={() => goToTraineeFile((course as BlendedCourseType).sheetId!)} style={styles.fileLinkContainer}>
-        <Text style={styles.traineeProgress}>Accéder au fichier de l&apos;apprenant</Text>
+      {(course as BlendedCourseType).gSheetId && <TouchableOpacity hitSlop={HIT_SLOP}
+        onPress={() => goToTraineeFile((course as BlendedCourseType).gSheetId!)} style={styles.fileLinkContainer}>
+        <Text style={styles.traineeProgress}>Accéder au fichier de suivi de l&apos;apprenant</Text>
       </TouchableOpacity>}
     </View>}
   </>;

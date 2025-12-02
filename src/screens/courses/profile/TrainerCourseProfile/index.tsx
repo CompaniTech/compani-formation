@@ -101,8 +101,8 @@ const TrainerCourseProfile = ({
     else navigation.navigate(screen, { courseId: course._id });
   };
 
-  const goToTraineeFile = (sheetId: string) => {
-    const url = `https://docs.google.com/spreadsheets/d/${sheetId}`;
+  const goToTraineeFile = (gSheetId: string) => {
+    const url = `https://docs.google.com/spreadsheets/d/${gSheetId}`;
     Linking.openURL(url);
   };
 
@@ -113,9 +113,9 @@ const TrainerCourseProfile = ({
         customStyle={styles.adminButton} borderColor={GREY[200]} bgColor={GREY[200]} font={FIRA_SANS_MEDIUM.LG} />
       <NiSecondaryButton caption='A propos' onPress={() => goTo(ABOUT_SCREEN)} icon='info' borderColor={GREY[200]}
         bgColor={WHITE} font={FIRA_SANS_MEDIUM.LG} />
-      {course.sheetId && <TouchableOpacity hitSlop={HIT_SLOP}
-        onPress={() => goToTraineeFile(course.sheetId)} style={styles.fileLinkContainer}>
-        <Text style={styles.traineeProgress}>Accéder au fichier de l&apos;apprenant</Text>
+      {course.gSheetId && <TouchableOpacity hitSlop={HIT_SLOP}
+        onPress={() => goToTraineeFile(course.gSheetId)} style={styles.fileLinkContainer}>
+        <Text style={styles.traineeProgress}>Accéder au fichier de suivi de l&apos;apprenant</Text>
       </TouchableOpacity>}
     </View>
   </>;
