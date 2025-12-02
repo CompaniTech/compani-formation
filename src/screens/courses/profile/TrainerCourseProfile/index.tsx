@@ -1,7 +1,17 @@
 // @ts-nocheck
 
 import { useState, useEffect, useCallback } from 'react';
-import { View, BackHandler, ImageSourcePropType, FlatList, ActivityIndicator, RefreshControl } from 'react-native';
+import {
+  View,
+  BackHandler,
+  ImageSourcePropType,
+  FlatList,
+  ActivityIndicator,
+  RefreshControl,
+  TouchableOpacity,
+  Text,
+  Linking,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useIsFocused, CompositeScreenProps } from '@react-navigation/native';
 import get from 'lodash/get';
@@ -12,6 +22,7 @@ import { RootStackParamList, RootBottomTabParamList } from '../../../../types/Na
 import Courses from '../../../../api/courses';
 import { WHITE, GREY } from '../../../../styles/colors';
 import commonStyles from '../../../../styles/common';
+import { HIT_SLOP } from '../../../../styles/metrics';
 import { CourseType, BlendedCourseType } from '../../../../types/CourseTypes';
 import styles from '../styles';
 import { useSetStatusBarVisible } from '../../../../store/main/hooks';
@@ -90,6 +101,11 @@ const TrainerCourseProfile = ({
     else navigation.navigate(screen, { courseId: course._id });
   };
 
+  const goToTraineeFile = (sheetId: string) => {
+    const url = `https://docs.google.com/spreadsheets/d/${sheetId}`;
+    Linking.openURL(url);
+  };
+
   const renderHeader = () => <>
     <CourseProfileHeader source={source} goBack={goBack} title={title} />
     <View style={styles.buttonsContainer}>
@@ -97,6 +113,10 @@ const TrainerCourseProfile = ({
         customStyle={styles.adminButton} borderColor={GREY[200]} bgColor={GREY[200]} font={FIRA_SANS_MEDIUM.LG} />
       <NiSecondaryButton caption='A propos' onPress={() => goTo(ABOUT_SCREEN)} icon='info' borderColor={GREY[200]}
         bgColor={WHITE} font={FIRA_SANS_MEDIUM.LG} />
+      {course.sheetId && <TouchableOpacity hitSlop={HIT_SLOP}
+        onPress={() => goToTraineeFile(course.sheetId)} style={styles.fileLinkContainer}>
+        <Text style={styles.traineeProgress}>Accéder au fichier de l&apos;apprenant</Text>
+      </TouchableOpacity>}
     </View>
   </>;
 

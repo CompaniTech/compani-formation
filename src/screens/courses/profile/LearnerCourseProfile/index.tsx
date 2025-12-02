@@ -10,6 +10,7 @@ import {
   ActivityIndicator,
   FlatList,
   RefreshControl,
+  Linking,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useIsFocused, CompositeScreenProps } from '@react-navigation/native';
@@ -199,6 +200,11 @@ const LearnerCourseProfile = ({ route, navigation }: LearnerCourseProfileProps) 
     navigation.navigate('TraineeFollowUp', { courseId: course._id, trainee: course.trainees![0] as string });
   };
 
+  const goToTraineeFile = (sheetId: string) => {
+    const url = `https://docs.google.com/spreadsheets/d/${sheetId}`;
+    Linking.openURL(url);
+  };
+
   const renderHeader = () => course && has(course, 'subProgram.program') && <>
     <CourseProfileHeader source={source} goBack={goBack} title={title} />
     <View style={styles.buttonsContainer}>
@@ -216,10 +222,16 @@ const LearnerCourseProfile = ({ route, navigation }: LearnerCourseProfileProps) 
       </View>
       <Text style={styles.progressBarText}>{(getCourseProgress(course) * 100).toFixed(0)}%</Text>
     </View>}
-    {mode === TUTOR && <TouchableOpacity hitSlop={HIT_SLOP} onPress={goToTraineeProgress}
-      style={styles.traineeProgressContainer}>
-      <Text style={styles.traineeProgress}>Accéder à la progression de l&apos;apprenant</Text>
-    </TouchableOpacity>}
+    {mode === TUTOR && <View>
+      <TouchableOpacity hitSlop={HIT_SLOP} onPress={goToTraineeProgress}
+        style={styles.traineeProgressContainer}>
+        <Text style={styles.traineeProgress}>Accéder à la progression de l&apos;apprenant</Text>
+      </TouchableOpacity>
+      {(course as BlendedCourseType).sheetId && <TouchableOpacity hitSlop={HIT_SLOP}
+        onPress={() => goToTraineeFile((course as BlendedCourseType).sheetId!)} style={styles.fileLinkContainer}>
+        <Text style={styles.traineeProgress}>Accéder au fichier de l&apos;apprenant</Text>
+      </TouchableOpacity>}
+    </View>}
   </>;
 
   const renderFooter = () => <View style={styles.buttonContainer}>
