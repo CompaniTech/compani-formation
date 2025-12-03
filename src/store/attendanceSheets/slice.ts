@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { resetAllReducers } from '../actions';
 import { BlendedCourseType, SlotType } from '../../types/CourseTypes';
 
-export type DataOptionsType = { value: string; label: string }
+export type DataOptionsType = { value: string; label: string, disabled?: boolean }
 
 export type AttendanceSheetStateType = {
   course: BlendedCourseType | null,
