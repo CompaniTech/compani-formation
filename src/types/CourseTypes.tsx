@@ -122,7 +122,8 @@ export type BlendedCourseType = BaseCourseType & {
   trainees?: TraineeType[],
   companies?: CompanyType[],
   tutors?: TutorType[],
-  attendanceSheets?: AttendanceSheetType[]
+  attendanceSheets?: AttendanceSheetType[],
+  gSheetId?: string
 }
 
 export type CourseModeType = typeof LEARNER | typeof TESTER | typeof TRAINER | typeof TUTOR;
