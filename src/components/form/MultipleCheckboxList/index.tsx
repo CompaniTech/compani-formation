@@ -44,18 +44,20 @@ const MultipleCheckboxList = <T extends string[] | string[][]> ({
 
   return (
     <View style={styles.container}>
-      {optionsGroups.map((options, index) => (
-        <View key={index} style={styles.groupContainer}>
-          <Text style={styles.groupLabel}>{groupTitles[index]}</Text>
-          {options.map((item) => {
-            const isChecked = getArrayDepth(checkedList) === 1
-              ? (checkedList as string[]).includes(item.value as string)
-              : checkedList[index].includes(item.value as string) && !item.disabled;
-            return <Checkbox key={item.value} itemLabel={item.label} isChecked={isChecked}
-              disabled={disabled || item.disabled} onPressCheckbox={() => onPressCheckbox(item.value, index)} />;
-          })}
-        </View>
-      ))}
+      {optionsGroups.flat().length
+        ? optionsGroups.map((options, index) => (
+          <View key={index} style={styles.groupContainer}>
+            {!!options.length && <Text style={styles.groupLabel}>{groupTitles[index]}</Text>}
+            {options.map((item) => {
+              const isChecked = getArrayDepth(checkedList) === 1
+                ? (checkedList as string[]).includes(item.value as string)
+                : checkedList[index].includes(item.value as string) && !item.disabled;
+              return <Checkbox key={item.value} itemLabel={item.label} isChecked={isChecked}
+                disabled={disabled || item.disabled} onPressCheckbox={() => onPressCheckbox(item.value, index)} />;
+            })}
+          </View>
+        ))
+        : <Text style={styles.groupLabel}>Aucun élément à afficher</Text>}
     </View>
   );
 };

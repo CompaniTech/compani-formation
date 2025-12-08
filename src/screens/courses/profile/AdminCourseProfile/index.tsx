@@ -14,6 +14,7 @@ import pick from 'lodash/pick';
 import uniqBy from 'lodash/uniqBy';
 import groupBy from 'lodash/groupBy';
 import has from 'lodash/has';
+import keyBy from 'lodash/keyBy';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StackScreenProps } from '@react-navigation/stack';
 import { useFocusEffect } from '@react-navigation/native';
@@ -110,7 +111,8 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
         const missingAttendance = slot.missingAttendances?.some(a => a.trainee === trainee._id);
         if (missingAttendance) return false;
 
-        return true;
+        const isConcernedBySlot = !slot.trainees || slot.trainees.includes(trainee._id);
+        return isConcernedBySlot;
       }));
 
     const groupedSlots = groupBy(slotList.filter(slot => CompaniDate().isAfter(slot.startDate)), 'step');
@@ -150,12 +152,29 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
       return [];
     }
 
-    const interCourseSavedSheets = savedAttendanceSheets.filter(as => as.file) as InterAttendanceSheetType[];
-    const savedTrainees = interCourseSavedSheets.map(sheet => sheet.trainee?._id);
+    const sheetByTrainee = keyBy(savedAttendanceSheets as InterAttendanceSheetType[], 'trainee._id');
 
     return Object.values(groupedSlotsToBeSigned).flat().length
       ? [...new Set(
-        course?.trainees?.filter(trainee => (!savedTrainees.includes(trainee._id)))
+        course?.trainees?.filter((trainee) => {
+          const isTraineeAlwaysMissing = course.slots
+            .every(s => s.missingAttendances?.some(a => a.trainee === trainee._id));
+          if (isTraineeAlwaysMissing) return false;
+          const sheet = sheetByTrainee[trainee._id];
+          if (!sheet) return true;
+          if (sheet.file) return false;
+          const sheetSlots = (sheet.slots || []).map(s => s._id);
+          const slotsToSign = course.slots.filter((s) => {
+            const isSlotSigned = sheetSlots.includes(s._id);
+            if (isSlotSigned) return false;
+            const isTraineeMissing = s.missingAttendances?.some(a => a.trainee === trainee._id);
+            if (isTraineeMissing) return false;
+            const isTraineeConcerned = !s.trainees || s.trainees.includes(trainee._id);
+            return isTraineeConcerned;
+          });
+
+          return !!slotsToSign.length;
+        })
           .map(t => ({ value: t._id, label: formatIdentity(t.identity, LONG_FIRSTNAME_LONG_LASTNAME) }))
       )]
       : [];

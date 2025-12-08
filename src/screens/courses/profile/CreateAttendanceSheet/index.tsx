@@ -75,6 +75,8 @@ const CreateAttendanceSheet = ({ route, navigation }: CreateAttendanceSheetProps
           label:
         `${CompaniDate(slot.startDate).format(`${DD_MM_YYYY} ${HH_MM}`)} - ${CompaniDate(slot.endDate).format(HH_MM)}`,
           value: slot._id,
+          ...slot.trainees && { trainees: slot.trainees },
+          ...slot.missingAttendances && { missingAttendances: slot.missingAttendances },
         }))),
   [groupedSlotsToBeSigned]);
 
@@ -110,7 +112,9 @@ const CreateAttendanceSheet = ({ route, navigation }: CreateAttendanceSheetProps
     const trainees = course!.trainees?.map(t => ({ label: formatIdentity(t.identity, 'FL'), value: t._id })) || [];
     const traineesBySlot = slots
       .map(s => trainees.map((t) => {
-        if (s.missingAttendances?.find(a => a.trainee === t.value)) return { ...t, disabled: true };
+        const traineeIsMissing = s.missingAttendances?.find(a => a.trainee === t.value);
+        const traineeIsConcerned = !s.trainees || s.trainees.includes(t.value);
+        if (traineeIsMissing || !traineeIsConcerned) return { ...t, disabled: true };
         return { ...t, disabled: false };
       }));
     setTraineesOptions(traineesBySlot);
@@ -199,14 +203,21 @@ const CreateAttendanceSheet = ({ route, navigation }: CreateAttendanceSheetProps
     </AttendanceSheetSelectionForm>
   );
 
-  const renderSlotSelection = () => (
-    <AttendanceSheetSelectionForm title={slotSelectionTitle} error={errorSlots}
+  const renderSlotSelection = () => {
+    const filteredSlotOptions = slotsOptions.map(group =>
+      group.filter(s => attendanceSheetToAdd.every((trainee) => {
+        const isTraineeConcerned = !s.trainees || s.trainees.includes(trainee);
+        if (!isTraineeConcerned) return false;
+        const isTraineePresent = !s.missingAttendances || !s.missingAttendances.some(a => a.trainee === trainee);
+        return isTraineePresent;
+      })));
+    return <AttendanceSheetSelectionForm title={slotSelectionTitle} error={errorSlots}
       dispatchErrorSlots={dispatchErrorSlots} nextScreenName={isSingle ? UPLOAD_METHOD : ATTENDANCE_SIGNATURE}
       courseType={course!.type} currentScreenName={SLOTS_SELECTION} areDataMissing={!slotsToAdd.length}>
-      <MultipleCheckboxList optionsGroups={slotsOptions} groupTitles={Object.keys(groupedSlotsToBeSigned)}
+      <MultipleCheckboxList optionsGroups={filteredSlotOptions} groupTitles={Object.keys(groupedSlotsToBeSigned)}
         setOptions={setSlotsOptions} checkedList={slotsToAdd}/>
-    </AttendanceSheetSelectionForm>
-  );
+    </AttendanceSheetSelectionForm>;
+  };
 
   const renderTraineesAttendanceSelection = () => (
     <AttendanceSheetSelectionForm title={'Quels apprenants ont été présents aux créneaux ?'} error={errorTrainees}
