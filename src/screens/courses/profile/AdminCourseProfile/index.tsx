@@ -155,9 +155,10 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
     const sheetByTrainee = keyBy(savedAttendanceSheets as InterAttendanceSheetType[], 'trainee._id');
 
     return Object.values(groupedSlotsToBeSigned).flat().length
-      ? [...new Set(
-        course?.trainees?.filter((trainee) => {
+      ? (course?.trainees || [])
+        .filter((trainee) => {
           const isTraineeAlwaysMissing = course.slots
+            .filter(s => TODAY.isSameOrAfter(s.startDate))
             .every(s => s.missingAttendances?.some(a => a.trainee === trainee._id));
           if (isTraineeAlwaysMissing) return false;
           const sheet = sheetByTrainee[trainee._id];
@@ -175,8 +176,7 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
 
           return !!slotsToSign.length;
         })
-          .map(t => ({ value: t._id, label: formatIdentity(t.identity, LONG_FIRSTNAME_LONG_LASTNAME) }))
-      )]
+        .map(t => ({ value: t._id, label: formatIdentity(t.identity, LONG_FIRSTNAME_LONG_LASTNAME) }))
       : [];
   }, [course, firstSlot, isSingle, savedAttendanceSheets, groupedSlotsToBeSigned]);
 
