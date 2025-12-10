@@ -266,7 +266,7 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
     setCompletedAttendanceSheets(fetchedAttendanceSheets.filter(as => as.file));
   }, []);
 
-  const getQuestionnaireQRCode = useCallback(async (courseId: string) => {
+  const getQuestionnaireQRCode = async (courseId: string) => {
     try {
       const publishedQuestionnaires = await Questionnaires.list({ course: courseId });
       const questionnairesTypeList = publishedQuestionnaires.map(q => q.type).sort(sortStrings);
@@ -279,14 +279,14 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
       }
       if (questionnairesTypeList.includes(END_OF_COURSE)) {
         const img = await Questionnaires.getQRCode({ course: courseId, courseTimeline: END_COURSE });
-        qrCodes.push({ img, courseTimeline: END_OF_COURSE });
+        qrCodes.push({ img, courseTimeline: END_COURSE });
       }
       setQuestionnaireQRCodes(qrCodes);
     } catch (e: any) {
       console.error(e);
       setQuestionnaireQRCodes([]);
     }
-  }, []);
+  };
 
   useEffect(() => {
     const getCourse = async () => {
@@ -306,7 +306,7 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
     };
 
     getCourse();
-  }, [getQuestionnaireQRCode, refreshAttendanceSheets, route.params.courseId, setCourse]);
+  }, [refreshAttendanceSheets, route.params.courseId, setCourse]);
 
   useEffect(() => {
     setMissingAttendanceSheet(missingAttendanceSheets);
@@ -356,14 +356,14 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
 
   const renderTrainee = useCallback((person: TraineeType) => <PersonCell key={person._id} person={person} />, []);
 
-  const deleteAttendanceSheets = useCallback(async (shouldDeleteAttendances: boolean) => {
+  const deleteAttendanceSheets = async (shouldDeleteAttendances: boolean) => {
     try {
       await AttendanceSheets.delete(imagePreview.id, { shouldDeleteAttendances });
       await refreshAttendanceSheets(course?._id!);
     } catch (error) {
       console.error(error);
     }
-  }, [imagePreview.id, course?._id, refreshAttendanceSheets]);
+  };
 
   const openImagePreview = useCallback(async (sheet: any) => {
     const { _id: id, link, slots, trainee } = sheet;
