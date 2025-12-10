@@ -24,6 +24,7 @@ import {
   useGetCourse,
   useGetMissingAttendanceSheets,
   useGetGroupedSlotsToBeSigned,
+  useSetShouldRefreshSheets,
 } from '../../../../store/attendanceSheets/hooks';
 import { useGetLoggedUserId } from '../../../../store/main/hooks';
 import { DataOptionsType } from '../../../../store/attendanceSheets/slice';
@@ -44,6 +45,7 @@ StackScreenProps<RootCreateAttendanceSheetParamList>
 
 const CreateAttendanceSheet = ({ route, navigation }: CreateAttendanceSheetProps) => {
   const { isSingle } = route.params;
+  const setShouldRefreshSheets = useSetShouldRefreshSheets();
   const course = useGetCourse();
   const missingAttendanceSheets = useGetMissingAttendanceSheets();
   const groupedSlotsToBeSigned = useGetGroupedSlotsToBeSigned();
@@ -264,8 +266,13 @@ const CreateAttendanceSheet = ({ route, navigation }: CreateAttendanceSheetProps
       confirmation={confirmation} setSelectedOptions={setTraineesOptionsForSummary}
       target={`le ${CompaniDate(attendanceSheetToAdd[0]).format(DD_MM_YYYY)}`} options={selectedTraineesOptions} />
   );
+
+  const endScreenGoBack = () => {
+    setShouldRefreshSheets(true);
+    navigation.goBack();
+  };
   const renderEndScreen = () => (
-    <AttendanceEndScreen goToNextScreen={navigation.goBack}
+    <AttendanceEndScreen goToNextScreen={endScreenGoBack}
       target={`${isSingle || course?.type === INTER_B2B ? 'à' : 'pour le'} ${target}`}
       failUpload={failUpload} />
   );

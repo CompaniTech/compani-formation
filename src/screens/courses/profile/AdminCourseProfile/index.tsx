@@ -64,7 +64,9 @@ import {
   useSetCourse,
   useSetMissingAttendanceSheets,
   useSetGroupedSlotsToBeSigned,
-  useResetAttendanceSheetReducer,
+  useResetCourseData,
+  useGetShouldRefreshSheets,
+  useSetShouldRefreshSheets,
 } from '../../../../store/attendanceSheets/hooks';
 
 interface AdminCourseProfileProps extends StackScreenProps<RootStackParamList, 'TrainerCourseProfile'> {}
@@ -115,7 +117,9 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
   const setCourse = useSetCourse();
   const setMissingAttendanceSheet = useSetMissingAttendanceSheets();
   const setGroupedSlotsToBeSigned = useSetGroupedSlotsToBeSigned();
-  const resetAttendanceSheetReducer = useResetAttendanceSheetReducer();
+  const resetCourseData = useResetCourseData();
+  const shouldRefreshSheets = useGetShouldRefreshSheets();
+  const setShouldRefreshSheets = useSetShouldRefreshSheets();
   const [savedAttendanceSheets, setSavedAttendanceSheets] = useState<AttendanceSheetType[]>([]);
   const [completedAttendanceSheets, setCompletedAttendanceSheets] = useState<AttendanceSheetType[]>([]);
   const [firstSlot, setFirstSlot] = useState<SlotType | null>(null);
@@ -177,6 +181,9 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
     }, {});
   }, [course, attendanceSheetMaps, missingAttendanceMaps, isSingle, savedAttendanceSheets]);
 
+  // Memoize flattened slots to avoid repeated Object.values().flat() calls
+  const flatGroupedSlots = useMemo(() => Object.values(groupedSlotsToBeSigned).flat(), [groupedSlotsToBeSigned]);
+
   const missingAttendanceSheets = useMemo(() => {
     if (!course?.slots?.length || !firstSlot) return [];
 
@@ -187,7 +194,7 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
       );
 
       return uniqBy(
-        Object.values(groupedSlotsToBeSigned).flat()
+        flatGroupedSlots
           .map(slot => ({
             value: CompaniDate(slot.startDate).startOf('day').toISO(),
             label: CompaniDate(slot.startDate).format(DD_MM_YYYY),
@@ -200,7 +207,7 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
     if (TODAY.isBefore(firstSlot?.startDate!)) return [];
 
     if (isSingle) {
-      if (Object.values(groupedSlotsToBeSigned).flat().length) {
+      if (flatGroupedSlots.length) {
         return course.trainees!
           .map(t => ({ value: t._id, label: formatIdentity(t.identity, LONG_FIRSTNAME_LONG_LASTNAME) }));
       }
@@ -209,9 +216,8 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
 
     const { sheetsByTraineeId, slotsBySheetId } = attendanceSheetMaps;
     const { missingAttendancesBySlotId, traineesBySlotId } = missingAttendanceMaps;
-    const slotList = Object.values(groupedSlotsToBeSigned).flat();
 
-    if (!slotList.length) return [];
+    if (!flatGroupedSlots.length) return [];
 
     // Build set of past slots for quick lookup
     const pastSlotIds = new Set<string>();
@@ -232,7 +238,7 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
         const sheetSlots = slotsBySheetId.get(sheet._id);
 
         // Check if there are slots to sign
-        return slotList.some((slot) => {
+        return flatGroupedSlots.some((slot) => {
           // Skip if sheet already contains the slot
           if (sheetSlots?.has(slot._id)) return false;
           // Skip if trainee is marked as missing
@@ -251,7 +257,7 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
     attendanceSheetMaps,
     missingAttendanceMaps,
     savedAttendanceSheets,
-    groupedSlotsToBeSigned,
+    flatGroupedSlots,
   ]);
 
   const refreshAttendanceSheets = useCallback(async (courseId: string) => {
@@ -309,13 +315,19 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
 
   useEffect(() => () => {
     const currentRoute = navigation.getState().routes[navigation.getState().index];
-    if (currentRoute?.name !== 'CreateAttendanceSheet') resetAttendanceSheetReducer();
-  }, [navigation, resetAttendanceSheetReducer]);
+    if (currentRoute?.name !== 'CreateAttendanceSheet') resetCourseData();
+  }, [navigation, resetCourseData]);
 
   useFocusEffect(
     useCallback(() => {
-      if (course) refreshAttendanceSheets(course._id);
-    }, [course, refreshAttendanceSheets])
+      if (!course) return undefined;
+      if (shouldRefreshSheets) {
+        setShouldRefreshSheets(false);
+        // Use setTimeout to defer heavy computation to next frame
+        setTimeout(() => { refreshAttendanceSheets(course._id); }, 0);
+      }
+      return undefined;
+    }, [course, shouldRefreshSheets, setShouldRefreshSheets, refreshAttendanceSheets])
   );
 
   useEffect(() => {
@@ -339,7 +351,7 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
 
   useEffect(() => {
     const subscription = BackHandler.addEventListener('hardwareBackPress', hardwareBackPress);
-    return () => subscription.remove();
+    return () => { subscription.remove(); };
   }, [hardwareBackPress]);
 
   const renderTrainee = useCallback((person: TraineeType) => <PersonCell key={person._id} person={person} />, []);
@@ -415,8 +427,8 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
       courseTimeline={item.courseTimeline} />;
   }, [course, questionnairesType]);
 
-  const hasCompletedSheets = completedAttendanceSheets.length;
-  const hasMissingSheets = missingAttendanceSheets.length;
+  const hasCompletedSheets = !!completedAttendanceSheets.length;
+  const hasMissingSheets = !!missingAttendanceSheets.length;
 
   return course && has(course, 'subProgram.program') ? (
     <SafeAreaView style={commonStyles.container} edges={['top']}>
