@@ -14,7 +14,6 @@ import pick from 'lodash/pick';
 import uniqBy from 'lodash/uniqBy';
 import groupBy from 'lodash/groupBy';
 import has from 'lodash/has';
-import keyBy from 'lodash/keyBy';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StackScreenProps } from '@react-navigation/stack';
 import { useFocusEffect } from '@react-navigation/native';
@@ -68,8 +67,7 @@ import {
   useResetAttendanceSheetReducer,
 } from '../../../../store/attendanceSheets/hooks';
 
-interface AdminCourseProfileProps extends StackScreenProps<RootStackParamList, 'TrainerCourseProfile'> {
-}
+interface AdminCourseProfileProps extends StackScreenProps<RootStackParamList, 'TrainerCourseProfile'> {}
 
 interface imagePreviewProps {
   visible: boolean,
@@ -82,55 +80,111 @@ interface imagePreviewProps {
 
 type QRCodeType = { img: string, courseTimeline: string };
 
+// Helper function to build quick lookup maps for attendance sheets - O(1) lookups instead of O(n)
+const buildAttendanceSheetMaps = (sheets: AttendanceSheetType[], courseType: string) => {
+  const sheetsByTraineeId = new Map<string, InterAttendanceSheetType>();
+  const slotsBySheetId = new Map<string, Set<string>>();
+
+  sheets.forEach((sheet: any) => {
+    if (courseType === INTER_B2B && sheet.trainee?._id) {
+      sheetsByTraineeId.set(sheet.trainee._id, sheet);
+      if (sheet.slots?.length) slotsBySheetId.set(sheet._id, new Set(sheet.slots.map((s: any) => s._id)));
+    }
+  });
+
+  return { sheetsByTraineeId, slotsBySheetId };
+};
+
+// Helper function to build lookup sets for missing attendances
+const buildMissingAttendanceMaps = (slots: SlotType[]) => {
+  const missingAttendancesBySlotId = new Map<string, Set<string>>();
+  const traineesBySlotId = new Map<string, Set<string>>();
+
+  slots.forEach((slot) => {
+    if (slot.missingAttendances?.length) {
+      missingAttendancesBySlotId.set(slot._id, new Set(slot.missingAttendances.map(a => a.trainee)));
+    }
+    if (slot.trainees?.length) traineesBySlotId.set(slot._id, new Set(slot.trainees));
+  });
+
+  return { missingAttendancesBySlotId, traineesBySlotId };
+};
+
 const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
   const course = useGetCourse();
   const setCourse = useSetCourse();
   const setMissingAttendanceSheet = useSetMissingAttendanceSheets();
   const setGroupedSlotsToBeSigned = useSetGroupedSlotsToBeSigned();
   const resetAttendanceSheetReducer = useResetAttendanceSheetReducer();
-  const [isSingle, setIsSingle] = useState<boolean>(false);
   const [savedAttendanceSheets, setSavedAttendanceSheets] = useState<AttendanceSheetType[]>([]);
   const [completedAttendanceSheets, setCompletedAttendanceSheets] = useState<AttendanceSheetType[]>([]);
-  const [title, setTitle] = useState<string>('');
   const [firstSlot, setFirstSlot] = useState<SlotType | null>(null);
   const [noAttendancesMessage, setNoAttendancesMessage] = useState<string>('');
+  const [imagePreview, setImagePreview] =
+    useState<imagePreviewProps>({ visible: false, id: '', link: '', type: '', hasSlots: false, hasTrainee: false });
+  const [questionnaireQRCodes, setQuestionnaireQRCodes] = useState<QRCodeType[]>([]);
+  const [questionnairesType, setQuestionnairesType] = useState<string[]>([]);
+
+  const isSingle = useMemo(() => course?.type === SINGLE, [course?.type]);
+  const title = useMemo(() => (course ? getTitle(course) : ''), [course]);
+
+  // Memoized lookup maps for faster computations - O(1) lookups instead of O(n)
+  const attendanceSheetMaps = useMemo(() => buildAttendanceSheetMaps(savedAttendanceSheets, course?.type || ''),
+    [savedAttendanceSheets, course?.type]);
+  const missingAttendanceMaps = useMemo(() => buildMissingAttendanceMaps(course?.slots || []),
+    [course?.slots]);
 
   const groupedSlotsToBeSigned = useMemo(() => {
-    if (!course?.slots.length) return {};
-    const slotList = course.slots.filter(slot =>
-      course.trainees?.some((trainee) => {
+    if (!course?.slots.length || !course?.trainees?.length) return {};
+
+    const { sheetsByTraineeId, slotsBySheetId } = attendanceSheetMaps;
+    const { missingAttendancesBySlotId, traineesBySlotId } = missingAttendanceMaps;
+
+    const slotList = course.slots.filter((slot) => {
+      // Only check slots that are in the past
+      if (!TODAY.isAfter(slot.startDate)) return false;
+
+      return course.trainees!.some((trainee) => {
+        // Check if trainee already has attendance sheet for this slot
         if (course.type === INTER_B2B) {
-          const asWithSlot = (savedAttendanceSheets as InterAttendanceSheetType[])
-            .find(as => as.trainee._id === trainee._id && (as.slots?.some(s => s._id === slot._id) || as.file));
-          if (asWithSlot) return false;
-        } else if (course.type === SINGLE) {
-          const asWithSlot = (savedAttendanceSheets)
-            .find(as => as.slots?.some(s => s._id === slot._id));
-          if (asWithSlot) return false;
+          const sheet = sheetsByTraineeId.get(trainee._id);
+          if (sheet?.file) return false; // Sheet with file means complete
+          if (sheet) {
+            const sheetSlots = slotsBySheetId.get(sheet._id);
+            if (sheetSlots?.has(slot._id)) return false;
+          }
+        } else if (isSingle) {
+          // For SINGLE, if any saved sheet has this slot, skip it
+          const isSlotAlreadySigned = savedAttendanceSheets.some(sheet => sheet.slots?.some(s => s._id === slot._id));
+          if (isSlotAlreadySigned) return false;
         }
 
-        const missingAttendance = slot.missingAttendances?.some(a => a.trainee === trainee._id);
-        if (missingAttendance) return false;
+        // Check if trainee has missing attendance
+        const missingAttendances = missingAttendancesBySlotId.get(slot._id);
+        if (missingAttendances?.has(trainee._id)) return false;
 
-        const isConcernedBySlot = !slot.trainees || slot.trainees.includes(trainee._id);
-        return isConcernedBySlot;
-      }));
+        // Check if trainee is concerned by this slot
+        const slotTrainees = traineesBySlotId.get(slot._id);
+        return !slotTrainees || slotTrainees.has(trainee._id);
+      });
+    });
 
-    const groupedSlots = groupBy(slotList.filter(slot => CompaniDate().isAfter(slot.startDate)), 'step');
+    const groupedSlots = groupBy(slotList, 'step');
 
-    return course?.subProgram.steps.reduce<Record<string, SlotType[]>>((acc, step) => {
+    return course.subProgram.steps.reduce<Record<string, SlotType[]>>((acc, step) => {
       if (groupedSlots[step._id]) acc[step.name] = groupedSlots[step._id];
       return acc;
     }, {});
-  }, [course, savedAttendanceSheets]);
+  }, [course, attendanceSheetMaps, missingAttendanceMaps, isSingle, savedAttendanceSheets]);
 
   const missingAttendanceSheets = useMemo(() => {
     if (!course?.slots?.length || !firstSlot) return [];
 
-    if ([INTRA, INTRA_HOLDING].includes(course?.type)) {
+    if ([INTRA, INTRA_HOLDING].includes(course.type)) {
       const intraOrIntraHoldingCourseSavedSheets = savedAttendanceSheets as IntraOrIntraHoldingAttendanceSheetType[];
-      const savedDates = intraOrIntraHoldingCourseSavedSheets
-        .map(sheet => CompaniDate(sheet.date).startOf('day').toISO());
+      const savedDatesSet = new Set(
+        intraOrIntraHoldingCourseSavedSheets.map(sheet => CompaniDate(sheet.date).startOf('day').toISO())
+      );
 
       return uniqBy(
         Object.values(groupedSlotsToBeSigned).flat()
@@ -138,7 +192,7 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
             value: CompaniDate(slot.startDate).startOf('day').toISO(),
             label: CompaniDate(slot.startDate).format(DD_MM_YYYY),
           }))
-          .filter(date => !savedDates.includes(date.value) && TODAY.isSameOrAfter(date.value)),
+          .filter(date => !savedDatesSet.has(date.value) && TODAY.isSameOrAfter(date.value)),
         'value'
       );
     }
@@ -153,69 +207,80 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
       return [];
     }
 
-    const sheetByTrainee = keyBy(savedAttendanceSheets as InterAttendanceSheetType[], 'trainee._id');
+    const { sheetsByTraineeId, slotsBySheetId } = attendanceSheetMaps;
+    const { missingAttendancesBySlotId, traineesBySlotId } = missingAttendanceMaps;
+    const slotList = Object.values(groupedSlotsToBeSigned).flat();
 
-    return Object.values(groupedSlotsToBeSigned).flat().length
-      ? (course?.trainees || [])
-        .filter((trainee) => {
-          const isTraineeAlwaysMissing = course.slots
-            .filter(s => TODAY.isSameOrAfter(s.startDate))
-            .every(s => s.missingAttendances?.some(a => a.trainee === trainee._id));
-          if (isTraineeAlwaysMissing) return false;
-          const sheet = sheetByTrainee[trainee._id];
-          if (!sheet) return true;
-          if (sheet.file) return false;
-          const sheetSlots = (sheet.slots || []).map(s => s._id);
-          const slotsToSign = course.slots.filter((s) => {
-            const isSlotSigned = sheetSlots.includes(s._id);
-            if (isSlotSigned) return false;
-            const isTraineeMissing = s.missingAttendances?.some(a => a.trainee === trainee._id);
-            if (isTraineeMissing) return false;
-            const isTraineeConcerned = !s.trainees || s.trainees.includes(trainee._id);
-            return isTraineeConcerned;
-          });
+    if (!slotList.length) return [];
 
-          return !!slotsToSign.length;
-        })
-        .map(t => ({ value: t._id, label: formatIdentity(t.identity, LONG_FIRSTNAME_LONG_LASTNAME) }))
-      : [];
-  }, [course, firstSlot, isSingle, savedAttendanceSheets, groupedSlotsToBeSigned]);
+    // Build set of past slots for quick lookup
+    const pastSlotIds = new Set<string>();
+    course.slots.forEach((s) => { if (TODAY.isSameOrAfter(s.startDate)) pastSlotIds.add(s._id); });
 
-  const [imagePreview, setImagePreview] =
-    useState<imagePreviewProps>({ visible: false, id: '', link: '', type: '', hasSlots: false, hasTrainee: false });
-  const [questionnaireQRCodes, setQuestionnaireQRCodes] = useState<QRCodeType[]>([]);
-  const [questionnairesType, setQuestionnairesType] = useState<string[]>([]);
+    return (course?.trainees || [])
+      .filter((trainee) => {
+        // Check if trainee is always missing in past slots
+        const haveBeenPresentToPastSlot = Array.from(pastSlotIds).some((slotId) => {
+          const missingAttendances = missingAttendancesBySlotId.get(slotId);
+          return !missingAttendances?.has(trainee._id);
+        });
+        if (!haveBeenPresentToPastSlot) return false;
 
-  const refreshAttendanceSheets = async (courseId: string) => {
+        const sheet = sheetsByTraineeId.get(trainee._id);
+        if (!sheet) return true;
+        if (sheet.file) return false;
+        const sheetSlots = slotsBySheetId.get(sheet._id);
+
+        // Check if there are slots to sign
+        return slotList.some((slot) => {
+          // Skip if sheet already contains the slot
+          if (sheetSlots?.has(slot._id)) return false;
+          // Skip if trainee is marked as missing
+          const missingAttendances = missingAttendancesBySlotId.get(slot._id);
+          if (missingAttendances?.has(trainee._id)) return false;
+          // Check if trainee is concerned by the slot
+          const sloTrainees = traineesBySlotId.get(slot._id);
+          return !sloTrainees || sloTrainees.has(trainee._id);
+        });
+      })
+      .map(t => ({ value: t._id, label: formatIdentity(t.identity, LONG_FIRSTNAME_LONG_LASTNAME) }));
+  }, [
+    course,
+    firstSlot,
+    isSingle,
+    attendanceSheetMaps,
+    missingAttendanceMaps,
+    savedAttendanceSheets,
+    groupedSlotsToBeSigned,
+  ]);
+
+  const refreshAttendanceSheets = useCallback(async (courseId: string) => {
     const fetchedAttendanceSheets = await AttendanceSheets.getAttendanceSheetList({ course: courseId });
     setSavedAttendanceSheets(fetchedAttendanceSheets);
-    setCompletedAttendanceSheets(fetchedAttendanceSheets.filter(as => !!as.file));
-  };
+    setCompletedAttendanceSheets(fetchedAttendanceSheets.filter(as => as.file));
+  }, []);
 
-  const getQuestionnaireQRCode = async (courseId: string) => {
+  const getQuestionnaireQRCode = useCallback(async (courseId: string) => {
     try {
       const publishedQuestionnaires = await Questionnaires.list({ course: courseId });
-      const questionnairesTypeList = publishedQuestionnaires.map(q => q.type).sort((a, b) => sortStrings(a, b));
+      const questionnairesTypeList = publishedQuestionnaires.map(q => q.type).sort(sortStrings);
       setQuestionnairesType(questionnairesTypeList);
 
-      const qrCodes = [];
-      if (publishedQuestionnaires.length) {
-        if (questionnairesTypeList.includes(EXPECTATIONS)) {
-          const img = await Questionnaires.getQRCode({ course: courseId, courseTimeline: START_COURSE });
-          qrCodes.push({ img, courseTimeline: START_COURSE });
-        }
-        if (questionnairesTypeList.includes(END_OF_COURSE)) {
-          const img = await Questionnaires.getQRCode({ course: courseId, courseTimeline: END_COURSE });
-          qrCodes.push({ img, courseTimeline: END_COURSE });
-        }
-
-        setQuestionnaireQRCodes(qrCodes);
+      const qrCodes: QRCodeType[] = [];
+      if (questionnairesTypeList.includes(EXPECTATIONS)) {
+        const img = await Questionnaires.getQRCode({ course: courseId, courseTimeline: START_COURSE });
+        qrCodes.push({ img, courseTimeline: START_COURSE });
       }
+      if (questionnairesTypeList.includes(END_OF_COURSE)) {
+        const img = await Questionnaires.getQRCode({ course: courseId, courseTimeline: END_COURSE });
+        qrCodes.push({ img, courseTimeline: END_OF_COURSE });
+      }
+      setQuestionnaireQRCodes(qrCodes);
     } catch (e: any) {
       console.error(e);
       setQuestionnaireQRCodes([]);
     }
-  };
+  }, []);
 
   useEffect(() => {
     const getCourse = async () => {
@@ -227,8 +292,6 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
         ]);
 
         if (fetchedCourse.slots.length) setFirstSlot(fetchedCourse.slots[0]);
-        setTitle(getTitle(fetchedCourse));
-        setIsSingle(fetchedCourse.type === SINGLE);
         setCourse(fetchedCourse as BlendedCourseType);
       } catch (e: any) {
         console.error(e);
@@ -237,7 +300,7 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
     };
 
     getCourse();
-  }, [route.params.courseId, setCourse]);
+  }, [getQuestionnaireQRCode, refreshAttendanceSheets, route.params.courseId, setCourse]);
 
   useEffect(() => {
     setMissingAttendanceSheet(missingAttendanceSheets);
@@ -246,15 +309,13 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
 
   useEffect(() => () => {
     const currentRoute = navigation.getState().routes[navigation.getState().index];
-    if (currentRoute?.name !== 'CreateAttendanceSheet') {
-      resetAttendanceSheetReducer();
-    }
+    if (currentRoute?.name !== 'CreateAttendanceSheet') resetAttendanceSheetReducer();
   }, [navigation, resetAttendanceSheetReducer]);
 
   useFocusEffect(
     useCallback(() => {
       if (course) refreshAttendanceSheets(course._id);
-    }, [course])
+    }, [course, refreshAttendanceSheets])
   );
 
   useEffect(() => {
@@ -264,14 +325,12 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
       setNoAttendancesMessage('L\'émargement sera disponible une fois le premier créneau passé.');
     } else if (course?.type === INTER_B2B && !course?.trainees?.length) {
       setNoAttendancesMessage('Veuillez ajouter des stagiaires pour émarger la formation.');
-    } else if (!!savedAttendanceSheets.length && !completedAttendanceSheets.length) {
+    } else if (savedAttendanceSheets.length && !completedAttendanceSheets.length) {
       setNoAttendancesMessage('Toutes les feuilles d\'émargement sont en attente de signature du stagiaire.');
     }
   }, [completedAttendanceSheets, course, firstSlot, savedAttendanceSheets]);
 
-  const goBack = useCallback(() => {
-    navigation.goBack();
-  }, [navigation]);
+  const goBack = useCallback(() => navigation.goBack(), [navigation]);
 
   const hardwareBackPress = useCallback(() => {
     goBack();
@@ -280,40 +339,44 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
 
   useEffect(() => {
     const subscription = BackHandler.addEventListener('hardwareBackPress', hardwareBackPress);
-
-    return () => { subscription.remove(); };
+    return () => subscription.remove();
   }, [hardwareBackPress]);
 
-  const renderTrainee = (person: TraineeType) => <PersonCell person={person} />;
+  const renderTrainee = useCallback((person: TraineeType) => <PersonCell key={person._id} person={person} />, []);
 
-  const deleteAttendanceSheets = async (shouldDeleteAttendances: boolean) => {
+  const deleteAttendanceSheets = useCallback(async (shouldDeleteAttendances: boolean) => {
     try {
       await AttendanceSheets.delete(imagePreview.id, { shouldDeleteAttendances });
       await refreshAttendanceSheets(course?._id!);
     } catch (error) {
       console.error(error);
     }
-  };
+  }, [imagePreview.id, course?._id, refreshAttendanceSheets]);
 
-  const openImagePreview = async (sheet: any) => {
+  const openImagePreview = useCallback(async (sheet: any) => {
     const { _id: id, link, slots, trainee } = sheet;
     const hasSlots = !!slots;
     const hasTrainee = !!trainee;
-    await new Promise(() => {
+    await new Promise<void>((resolve) => {
       Image.getSize(
         link || '',
-        (image) => {
-          setImagePreview({ visible: true, id, link: link || '', type: image ? IMAGE : PDF, hasSlots, hasTrainee });
+        () => {
+          setImagePreview({ visible: true, id, link: link || '', type: IMAGE, hasSlots, hasTrainee });
+          resolve();
         },
-        () => setImagePreview({ visible: true, id, link, type: PDF, hasSlots, hasTrainee })
+        () => {
+          setImagePreview({ visible: true, id, link: link || '', type: PDF, hasSlots, hasTrainee });
+          resolve();
+        }
       );
     });
-  };
+  }, []);
 
-  const resetImagePreview = () =>
-    setImagePreview({ visible: false, id: '', link: '', type: '', hasSlots: false, hasTrainee: false });
+  const resetImagePreview = useCallback(() =>
+    setImagePreview({ visible: false, id: '', link: '', type: '', hasSlots: false, hasTrainee: false }),
+  []);
 
-  const renderSavedAttendanceSheets = (sheet: AttendanceSheetType) => {
+  const renderSavedAttendanceSheets = useCallback((sheet: AttendanceSheetType) => {
     const label = isIntraOrIntraHolding(sheet)
       ? CompaniDate(sheet.date).format(DD_MM_YYYY)
       : formatIdentity(sheet.trainee.identity, SHORT_FIRSTNAME_LONG_LASTNAME);
@@ -325,10 +388,12 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
           <View style={styles.editButton}><Feather name='edit-2' size={ICON.SM} color={PINK[500]} /></View>
         </TouchableOpacity>
         <Text style={styles.savedSheetText} numberOfLines={2}>{label}</Text>
-      </View>);
-  };
+      </View>
+    );
+  },
+  [openImagePreview]);
 
-  const renderSingleSavedAttendanceSheets = (sheet: SingleAttendanceSheetType) => {
+  const renderSingleSavedAttendanceSheets = useCallback((sheet: SingleAttendanceSheetType) => {
     const label = sheet.slots
       ? [...new Set(sheet.slots.map(slot => CompaniDate(slot.startDate).format(DD_MM_YYYY)))].join(', ')
       : formatIdentity(sheet.trainee.identity, SHORT_FIRSTNAME_LONG_LASTNAME);
@@ -337,17 +402,21 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
       <SecondaryButton key={sheet._id} customStyle={styles.attendanceSheetButton} caption={label} numberOfLines={1}
         onPress={() => openImagePreview(sheet)} />
     );
-  };
+  }, [openImagePreview]);
 
-  const goToAttendanceSheetUpload = () => navigation.navigate('CreateAttendanceSheet', { isSingle });
+  const goToAttendanceSheetUpload = useCallback(() =>
+    navigation.navigate('CreateAttendanceSheet', { isSingle }), [navigation, isSingle]);
 
-  const renderQuestionnaireCell = (item: QRCodeType) => {
+  const renderQuestionnaireCell = useCallback((item: QRCodeType) => {
     const types = questionnairesType
       .filter(qType => (item.courseTimeline === START_COURSE ? qType !== END_OF_COURSE : qType !== EXPECTATIONS));
 
     return <QuestionnaireQRCodeCell img={item.img} types={types} courseId={course!._id}
-      courseTimeline={item.courseTimeline}/>;
-  };
+      courseTimeline={item.courseTimeline} />;
+  }, [course, questionnairesType]);
+
+  const hasCompletedSheets = completedAttendanceSheets.length;
+  const hasMissingSheets = missingAttendanceSheets.length;
 
   return course && has(course, 'subProgram.program') ? (
     <SafeAreaView style={commonStyles.container} edges={['top']}>
@@ -356,15 +425,12 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
         <View style={styles.attendancesContainer}>
           <View style={styles.titleContainer}>
             <Text style={styles.sectionTitle}>Emargements</Text>
-            {!missingAttendanceSheets.length && !completedAttendanceSheets.length &&
-              <Text style={styles.italicText}>{noAttendancesMessage}</Text>}
+            {!hasMissingSheets && !hasCompletedSheets && <Text style={styles.italicText}>{noAttendancesMessage}</Text>}
           </View>
-          {!!missingAttendanceSheets.length && !course.archivedAt && <View style={styles.uploadContainer}>
+          {hasMissingSheets && !course.archivedAt && <View style={styles.uploadContainer}>
             <Text style={styles.header}>
-              {
-                'Pour charger une feuille d\'émargement ou envoyer une demande de signature veuillez cliquer sur le '
-              + 'bouton ci-dessous.'
-              }
+              Pour charger une feuille d&apos;émargement ou envoyer une demande de signature veuillez cliquer sur le
+              bouton ci-dessous.
             </Text>
             <View style={styles.sectionContainer}>
               <SecondaryButton caption={'Emarger des créneaux'} onPress={goToAttendanceSheetUpload}
@@ -378,42 +444,36 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
               }
             </View>
           </View>}
-          {!!completedAttendanceSheets.length && <>
-            {
-              isSingle
-                ? (completedAttendanceSheets as SingleAttendanceSheetType[])
-                  .map(sheet => renderSingleSavedAttendanceSheets(sheet))
-                : <FlatList data={completedAttendanceSheets} keyExtractor={item => item._id}
-                  style={styles.listContainer}
-                  showsHorizontalScrollIndicator={false} renderItem={({ item }) => renderSavedAttendanceSheets(item)}
-                  horizontal/>
-            }
-          </>}
+          {hasCompletedSheets && (isSingle
+            ? (completedAttendanceSheets as SingleAttendanceSheetType[]).map(renderSingleSavedAttendanceSheets)
+            : <FlatList data={completedAttendanceSheets} keyExtractor={item => item._id}
+              style={styles.listContainer}
+              showsHorizontalScrollIndicator={false} renderItem={({ item }) => renderSavedAttendanceSheets(item)}
+              horizontal />
+          )}
         </View>
         <View style={styles.sectionContainer}>
           <View style={commonStyles.sectionDelimiter} />
           <Text style={styles.sectionTitle}>Stagiaires</Text>
           {!course.trainees?.length &&
-          <Text style={styles.italicText}>Il n&apos;y a aucun stagiaire pour cette formation.</Text>
+            <Text style={styles.italicText}>Il n&apos;y a aucun stagiaire pour cette formation.</Text>
           }
-          {!!course.trainees && course.trainees.map(item => <View key={item._id}>{renderTrainee(item)}</View>)}
+          {course.trainees?.map(renderTrainee)}
         </View>
         {!!questionnaireQRCodes.length && <View style={styles.sectionContainer}>
           <View style={commonStyles.sectionDelimiter} />
           <Text style={styles.sectionTitle}>Questionnaires</Text>
           <FlatList data={questionnaireQRCodes} keyExtractor={(item, idx) => `qrcode_${idx}`} scrollEnabled={false}
-            renderItem={({ item }) => renderQuestionnaireCell(item)}
-            showsHorizontalScrollIndicator={false} />
+            renderItem={({ item }) => renderQuestionnaireCell(item)} showsHorizontalScrollIndicator={false} />
         </View>}
         {course.type !== INTER_B2B && <View style={styles.sectionContainer}>
           <View style={commonStyles.sectionDelimiter} />
-          <ContactInfoContainer contact={course.companyRepresentative}
-            title={'Votre chargé de formation structure'} />
+          <ContactInfoContainer contact={course.companyRepresentative} title={'Votre chargé de formation structure'} />
         </View>}
         <View style={styles.footer} />
       </ScrollView>
       {imagePreview.visible && <ImagePreview source={pick(imagePreview, ['link', 'type', 'hasSlots', 'hasTrainee'])}
-        onRequestClose={resetImagePreview} deleteFile={deleteAttendanceSheets} showButton={!course.archivedAt}/>}
+        onRequestClose={resetImagePreview} deleteFile={deleteAttendanceSheets} showButton={!course.archivedAt} />}
     </SafeAreaView>
   )
     : <View style={commonStyles.loadingContainer}>
