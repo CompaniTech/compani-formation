@@ -69,6 +69,7 @@ export type SlotType = {
   meetingLink?: string,
   step: { _id: string, type: string },
   missingAttendances?: { trainee: string }[]
+  trainees?: string[]
 }
 
 export type SlotToPlanType = {
