@@ -360,24 +360,28 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
     try {
       await AttendanceSheets.delete(imagePreview.id, { shouldDeleteAttendances });
       await refreshAttendanceSheets(course?._id!);
+      if (shouldDeleteAttendances) {
+        const fetchedCourse = await Courses.getCourse(route.params.courseId, OPERATIONS) as BlendedCourseType;
+        setCourse(fetchedCourse as BlendedCourseType);
+      }
     } catch (error) {
       console.error(error);
     }
   };
 
-  const openImagePreview = useCallback(async (sheet: any) => {
-    const { _id: id, link, slots, trainee } = sheet;
+  const openImagePreview = useCallback(async (sheet: AttendanceSheetType) => {
+    const { _id: id, file, slots } = sheet;
     const hasSlots = !!slots;
-    const hasTrainee = !!trainee;
+    const hasTrainee = 'trainee' in sheet;
     await new Promise<void>((resolve) => {
       Image.getSize(
-        link || '',
+        file.link || '',
         () => {
-          setImagePreview({ visible: true, id, link: link || '', type: IMAGE, hasSlots, hasTrainee });
+          setImagePreview({ visible: true, id, link: file.link || '', type: IMAGE, hasSlots, hasTrainee });
           resolve();
         },
         () => {
-          setImagePreview({ visible: true, id, link: link || '', type: PDF, hasSlots, hasTrainee });
+          setImagePreview({ visible: true, id, link: file.link || '', type: PDF, hasSlots, hasTrainee });
           resolve();
         }
       );
