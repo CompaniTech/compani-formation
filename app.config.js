@@ -49,7 +49,6 @@ export default {
     primaryColor: '#005774',
     icon: './assets/images/ios_icon.png',
     backgroundColor: '#FFFFFF',
-    newArchEnabled: false,
     assetBundlePatterns: ['assets/images/*'],
     extra: {
       ...ENVIRONMENT_VARIABLES,
