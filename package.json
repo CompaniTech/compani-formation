@@ -26,7 +26,7 @@
       "<rootDir>/node_modules/"
     ],
     "transformIgnorePatterns": [
-      "node_modules/(?!(jest-)?react-native|@react-native|react-clone-referenced-element|@react-native-community|@react-native-async-storage|expo(nent)?|@expo(nent)?/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|native-base|@sentry/.*|react-redux|mime)"
+      "node_modules/(?!(jest-)?react-native|@react-native|react-clone-referenced-element|@react-native-community|@react-native-async-storage|expo(nent)?|@expo(nent)?/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|native-base|@sentry/.*|react-redux|mime|immer)"
     ],
     "cacheDirectory": ".jest/cache",
     "setupFiles": [
@@ -48,7 +48,7 @@
     "@react-navigation/material-top-tabs": "~7.4.9",
     "@react-navigation/native": "~7.1.14",
     "@react-navigation/stack": "~7.6.2",
-    "@reduxjs/toolkit": "~2.8.2",
+    "@reduxjs/toolkit": "~2.11.1",
     "@sentry/react-native": "~7.2.0",
     "array-flat-polyfill": "~1.0.1",
     "axios": "~1.10.0",
