@@ -1795,13 +1795,14 @@
     invariant "^2.2.4"
     nullthrows "^1.1.1"
 
-"@react-navigation/bottom-tabs@~7.4.2":
-  version "7.4.9"
-  resolved "https://registry.yarnpkg.com/@react-navigation/bottom-tabs/-/bottom-tabs-7.4.9.tgz#464351385350e2c80d1f0665bed07310c5e19202"
-  integrity sha512-Q7oUEB3YjwGyY/OLzkq+tv0STe2d9m8NAJOtKsd6GtN/LtrHmG7LdpOm5qitL60+gdY1zY7SWUD4am5c33RssA==
+"@react-navigation/bottom-tabs@~7.8.12":
+  version "7.8.12"
+  resolved "https://registry.yarnpkg.com/@react-navigation/bottom-tabs/-/bottom-tabs-7.8.12.tgz#22863a5a26e73714075f5966a80ea18d7eaceb84"
+  integrity sha512-efVt5ydHK+b4ZtjmN81iduaO5dPCmzhLBFwjCR8pV4x4VzUfJmtUJizLqTXpT3WatHdeon2gDPwhhoelsvu/JA==
   dependencies:
-    "@react-navigation/elements" "^2.6.5"
+    "@react-navigation/elements" "^2.9.2"
     color "^4.2.3"
+    sf-symbols-typescript "^2.1.0"
 
 "@react-navigation/core@^7.13.6":
   version "7.13.6"
@@ -1817,7 +1818,7 @@
     use-latest-callback "^0.2.4"
     use-sync-external-store "^1.5.0"
 
-"@react-navigation/elements@^2.6.5", "@react-navigation/elements@^2.7.0":
+"@react-navigation/elements@^2.9.2":
   version "2.9.2"
   resolved "https://registry.yarnpkg.com/@react-navigation/elements/-/elements-2.9.2.tgz#0ee330ff9b82f748f05630616ada9426b1f07911"
   integrity sha512-J1GltOAGowNLznEphV/kr4zs0U7mUBO1wVA2CqpkN8ePBsoxrAmsd+T5sEYUCXN9KgTDFvc6IfcDqrGSQngd/g==
@@ -1826,12 +1827,12 @@
     use-latest-callback "^0.2.4"
     use-sync-external-store "^1.5.0"
 
-"@react-navigation/material-top-tabs@~7.3.2":
-  version "7.3.9"
-  resolved "https://registry.yarnpkg.com/@react-navigation/material-top-tabs/-/material-top-tabs-7.3.9.tgz#c090c4f48f3162bc6738e794bd32b1616125f80e"
-  integrity sha512-wWldiNNwH/0gq3fesaUNmCxY/oMKPRkJf2pRp3ZkGtgWguvNSOTQ9HRfQRctugDnMtM1NhlBjBEl3MApd41ORQ==
+"@react-navigation/material-top-tabs@~7.4.9":
+  version "7.4.9"
+  resolved "https://registry.yarnpkg.com/@react-navigation/material-top-tabs/-/material-top-tabs-7.4.9.tgz#85f211e469c3b069ae0ca7d40cbf22195bb0ecf9"
+  integrity sha512-oYpdTfa2D1Tn0HJER9dRCR260agKGgYe+ydSHt3RIsJ9sLg8hU7ntKYWo1FnEC/Nsv1/N1u/tRst7ZpQRjjl4A==
   dependencies:
-    "@react-navigation/elements" "^2.7.0"
+    "@react-navigation/elements" "^2.9.2"
     color "^4.2.3"
     react-native-tab-view "^4.2.0"
 
@@ -1853,13 +1854,14 @@
   dependencies:
     nanoid "^3.3.11"
 
-"@react-navigation/stack@~7.4.2":
-  version "7.4.10"
-  resolved "https://registry.yarnpkg.com/@react-navigation/stack/-/stack-7.4.10.tgz#777adf11c15e91cf586c706002f1cf1ae0225c70"
-  integrity sha512-sA00ag632RRwnXPibjvHBE5sxf8xVBztyQ7HfgmcGZ4vaVUjRWG7XEhwdrf/jrsnnqU5nK1qz9NslRAOvpWPVA==
+"@react-navigation/stack@~7.6.2":
+  version "7.6.12"
+  resolved "https://registry.yarnpkg.com/@react-navigation/stack/-/stack-7.6.12.tgz#c31682981696cfa85a982c3ec93d3616e3858e07"
+  integrity sha512-hq5d+lWUwBnwPcBNyUYHiirzRuiD5YhQDIgZWzRConfcRwI/qwFW5+5bCCJ3fQZnNlP05UA4ZlI6r1ysU6y6ww==
   dependencies:
-    "@react-navigation/elements" "^2.6.5"
+    "@react-navigation/elements" "^2.9.2"
     color "^4.2.3"
+    use-latest-callback "^0.2.4"
 
 "@reduxjs/toolkit@~2.8.2":
   version "2.8.2"
@@ -8055,6 +8057,11 @@ setprototypeof@1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/setprototypeof/-/setprototypeof-1.2.0.tgz#66c9a24a73f9fc28cbe66b09fed3d33dcaf1b424"
   integrity sha512-E5LDX7Wrp85Kil5bhZv46j8jOeboKq5JMmYM3gVGdGH8xFpPWXUMsNrlODCrkoxMEeNi/XZIwuRvY4XNwYMJpw==
+
+sf-symbols-typescript@^2.1.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/sf-symbols-typescript/-/sf-symbols-typescript-2.2.0.tgz#926d6e0715e3d8784cadf7658431e36581254208"
+  integrity sha512-TPbeg0b7ylrswdGCji8FRGFAKuqbpQlLbL8SOle3j1iHSs5Ob5mhvMAxWN2UItOjgALAB5Zp3fmMfj8mbWvXKw==
 
 shebang-command@^2.0.0:
   version "2.0.0"
