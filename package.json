@@ -51,7 +51,7 @@
     "@reduxjs/toolkit": "~2.11.1",
     "@sentry/react-native": "~7.2.0",
     "array-flat-polyfill": "~1.0.1",
-    "axios": "~1.10.0",
+    "axios": "~1.13.2",
     "babel-jest": "~30.0.2",
     "bignumber.js": "~9.3.0",
     "eslint-config-airbnb-base": "~15.0.0",
