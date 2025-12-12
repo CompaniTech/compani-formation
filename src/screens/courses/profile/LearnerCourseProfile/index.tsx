@@ -17,7 +17,7 @@ import { useIsFocused, CompositeScreenProps } from '@react-navigation/native';
 import get from 'lodash/get';
 import has from 'lodash/has';
 import isEqual from 'lodash/isEqual';
-import * as FileSystem from 'expo-file-system';
+import { File, Paths } from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 import * as IntentLauncher from 'expo-intent-launcher';
 import { Buffer } from 'buffer';
@@ -150,21 +150,19 @@ const LearnerCourseProfile = ({ route, navigation }: LearnerCourseProfileProps) 
     const data = await Courses.downloadCertificate(course._id);
 
     const buffer = Buffer.from(data, 'base64');
-    const pdf = buffer.toString('base64');
     const pdfName = getPdfName(course as BlendedCourseType);
 
     if (!IS_WEB) {
-      const fileUri = `${FileSystem.documentDirectory}${encodeURI(pdfName)}.pdf`;
-      await FileSystem.writeAsStringAsync(fileUri, pdf, { encoding: FileSystem.EncodingType.Base64 });
+      const fileName = `${encodeURI(pdfName)}.pdf`;
+      const pdfFile = new File(Paths.document, fileName);
+      pdfFile.write(buffer);
 
       if (IS_IOS) {
-        await Sharing.shareAsync(fileUri);
+        await Sharing.shareAsync(pdfFile.uri);
       } else {
-        FileSystem.getContentUriAsync(fileUri).then((cUri) => {
-          IntentLauncher.startActivityAsync('android.intent.action.VIEW' as IntentLauncher.ActivityAction, {
-            data: cUri,
-            flags: 1,
-          });
+        IntentLauncher.startActivityAsync('android.intent.action.VIEW' as IntentLauncher.ActivityAction, {
+          data: pdfFile.contentUri,
+          flags: 1,
         });
       }
     } else if (typeof document !== 'undefined') {
