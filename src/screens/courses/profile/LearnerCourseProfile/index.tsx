@@ -16,6 +16,7 @@ import get from 'lodash/get';
 import has from 'lodash/has';
 import isEqual from 'lodash/isEqual';
 import { File, Paths } from 'expo-file-system';
+import * as FileSystem from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
 import * as IntentLauncher from 'expo-intent-launcher';
 import { Buffer } from 'buffer';
@@ -152,12 +153,15 @@ const LearnerCourseProfile = ({ route, navigation }: LearnerCourseProfileProps) 
 
     if (!IS_WEB) {
       const fileName = `${encodeURI(pdfName)}.pdf`;
-      const pdfFile = new File(Paths.document, fileName);
-      pdfFile.write(buffer);
 
       if (IS_IOS) {
-        await Sharing.shareAsync(pdfFile.uri);
+        const pdf = buffer.toString('base64');
+        const fileUri = `${FileSystem.documentDirectory}${encodeURI(pdfName)}.pdf`;
+        await FileSystem.writeAsStringAsync(fileUri, pdf, { encoding: FileSystem.EncodingType.Base64 });
+        await Sharing.shareAsync(fileUri);
       } else {
+        const pdfFile = new File(Paths.document, fileName);
+        pdfFile.write(buffer);
         IntentLauncher.startActivityAsync('android.intent.action.VIEW' as IntentLauncher.ActivityAction, {
           data: pdfFile.contentUri,
           flags: 1,
