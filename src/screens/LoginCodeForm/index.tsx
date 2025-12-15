@@ -146,7 +146,7 @@ const LoginCodeForm = ({ navigation }: LoginCodeFormProps) => {
   }, []);
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={['top']}>
+    <SafeAreaView style={styles.safeArea}>
       <KeyboardAvoidingView behavior={IS_IOS ? 'padding' : 'height'} style={styles.keyboard}
         keyboardVerticalOffset={IS_LARGE_SCREEN ? MARGIN.MD : MARGIN.XS}>
         <View style={styles.goBack}>

@@ -37,7 +37,7 @@ const AttendanceEndScreen = ({ target, failUpload, goToNextScreen, mode = TRAINE
     </ScrollView>;
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={['top']}>
+    <SafeAreaView style={styles.safeArea}>
       {mode === TRAINER
         ? <>
           {failUpload

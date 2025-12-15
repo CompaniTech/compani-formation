@@ -80,7 +80,7 @@ const EmailForm = ({ route, navigation }: EmailFormProps) => {
   const enterEmail = (text: string) => setEmail(text.trim());
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={['top']}>
+    <SafeAreaView style={styles.safeArea}>
       <KeyboardAvoidingView behavior={behavior} style={accountCreationStyles.screenView}
         keyboardVerticalOffset={IS_LARGE_SCREEN ? MARGIN.MD : MARGIN.XS}>
         <View style={styles.goBack}>

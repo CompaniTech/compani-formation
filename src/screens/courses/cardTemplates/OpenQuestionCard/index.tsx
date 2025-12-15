@@ -54,7 +54,7 @@ const OpenQuestionCard = ({ isLoading, setIsRightSwipeEnabled }: OpenQuestionCar
   const onFocusTextInput = (contentHeight: number) => scrollRef.current?.scrollTo({ y: contentHeight, animated: true });
 
   return (
-    <SafeAreaView style={style.safeArea} edges={['top']}>
+    <SafeAreaView style={style.safeArea}>
       <KeyboardAvoidingView behavior={IS_IOS ? 'padding' : 'height'} style={style.keyboardAvoidingView}
         keyboardVerticalOffset={IS_LARGE_SCREEN ? MARGIN.MD : MARGIN.XS}>
         {!isSelected && <CardHeader />}

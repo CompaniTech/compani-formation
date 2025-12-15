@@ -72,7 +72,7 @@ const QuestionAnswerCard = ({ isLoading, setIsRightSwipeEnabled }: QuestionAnswe
     item={item.text} isSelected={item.isSelected} index={index} />;
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={['top']}>
+    <SafeAreaView style={styles.safeArea}>
       <CardHeader />
       <ScrollView contentContainerStyle={styles.scrollView} showsVerticalScrollIndicator={false}>
         <Text style={cardsStyle.question}>{card.question}</Text>

@@ -56,7 +56,7 @@ const TextMediaCard = ({ isLoading, setIsRightSwipeEnabled, setIsLeftSwipeEnable
   if (isLoading) return null;
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={['top']}>
+    <SafeAreaView style={styles.safeArea}>
       <CardHeader />
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
         <Markdown style={markdownStyle(cardsStyle.text)}>{card.text}</Markdown>

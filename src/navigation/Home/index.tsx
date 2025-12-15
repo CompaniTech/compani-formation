@@ -1,5 +1,6 @@
 import { Text, View } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import CatalogIcon from '../../../assets/icons/CatalogIcon';
 import CatalogSelectedIcon from '../../../assets/icons/CatalogSelectedIcon';
 import LearnerCoursesIcon from '../../../assets/icons/LearnerCoursesIcon';
@@ -58,16 +59,19 @@ const Home = () => {
     [VENDOR_ADMIN, TRAINING_ORGANISATION_MANAGER, TRAINER].includes(userVendorRole);
 
   return (
-    <Tab.Navigator screenOptions={{ headerShown: false, tabBarShowLabel: false, tabBarStyle: styles.tabBar }}
-      initialRouteName="LearnerCourses">
-      <Tab.Screen name="Catalog" component={Catalog} options={{ tabBarIcon: catalogIcon, title: tabsNames.Catalog }} />
-      <Tab.Screen name="LearnerCourses" component={LearnerCourses}
-        options={{ tabBarIcon: learnerCoursesIcon, title: tabsNames.LearnerCourses }} />
-      { showTrainerTab &&
+    <SafeAreaView style={{ flex: 1 }}>
+      <Tab.Navigator screenOptions={{ headerShown: false, tabBarShowLabel: false, tabBarStyle: styles.tabBar }}
+        initialRouteName="LearnerCourses">
+        <Tab.Screen name="Catalog" component={Catalog}
+          options={{ tabBarIcon: catalogIcon, title: tabsNames.Catalog }} />
+        <Tab.Screen name="LearnerCourses" component={LearnerCourses}
+          options={{ tabBarIcon: learnerCoursesIcon, title: tabsNames.LearnerCourses }} />
+        { showTrainerTab &&
         <Tab.Screen name="TrainerCourses" component={TrainerCourses} options={{ tabBarIcon: trainerCoursesIcon }} />}
-      <Tab.Screen name="Profile" options={{ tabBarIcon: profileIcon, title: tabsNames.Profile }}
-        component={ProfileDetails} />
-    </Tab.Navigator>
+        <Tab.Screen name="Profile" options={{ tabBarIcon: profileIcon, title: tabsNames.Profile }}
+          component={ProfileDetails} />
+      </Tab.Navigator>
+    </SafeAreaView>
   );
 };
 

@@ -148,7 +148,7 @@ const OrderTheSequenceCard = ({ isLoading, setIsRightSwipeEnabled }: OrderTheSeq
   const style = styles(footerColors.background);
 
   return (
-    <SafeAreaView style={style.safeArea} edges={['top']}>
+    <SafeAreaView style={style.safeArea}>
       <CardHeader />
       <ScrollView contentContainerStyle={style.container}>
         <Text style={[cardsStyle.question, style.question]}>{card.question}</Text>

@@ -22,7 +22,7 @@ const StartCard = ({ title, isLoading, goBack, startTimer }: StartCardProps) => 
   };
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={['top']}>
+    <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.contentContainer} showsVerticalScrollIndicator={false}>
         <CardHeader color={WHITE} onPress={goBack} icon='arrow-left' />
         <View style={styles.wrapper}>

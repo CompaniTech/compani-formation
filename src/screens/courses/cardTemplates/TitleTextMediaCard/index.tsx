@@ -56,7 +56,7 @@ const TitleTextMediaCard = ({ isLoading, setIsRightSwipeEnabled, setIsLeftSwipeE
   if (isLoading) return null;
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={['top']}>
+    <SafeAreaView style={styles.safeArea}>
       <CardHeader />
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
         <Text style={cardsStyle.title}>{card.title}</Text>

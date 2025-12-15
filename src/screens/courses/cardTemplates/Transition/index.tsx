@@ -21,7 +21,7 @@ const Transition = ({ isLoading, setIsRightSwipeEnabled }: TransitionProps) => {
   if (isLoading) return null;
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={['top']}>
+    <SafeAreaView style={styles.safeArea}>
       <CardHeader color={WHITE} />
       <View style={styles.titleContainer}>
         <Text style={styles.title}>{card.title}</Text>

@@ -44,7 +44,7 @@ const About = ({ program, buttonCaption = 'Continuer', children, onPress }: Abou
 
   return (
     <>
-      <SafeAreaView style={commonStyles.container} edges={['top']}>
+      <SafeAreaView style={commonStyles.container}>
         <ScrollView contentContainerStyle={styles.contentContainer} showsVerticalScrollIndicator={IS_WEB}>
           <CourseAboutHeader screenTitle='A PROPOS' courseTitle={program.name} goBack={navigation.goBack} />
           <View style={styles.content}>
@@ -62,11 +62,11 @@ const About = ({ program, buttonCaption = 'Continuer', children, onPress }: Abou
           </View>
           {children}
         </ScrollView>
+        <View style={styles.footer}>
+          <FooterGradient colors={[TRANSPARENT_GRADIENT, GREY[0]]} />
+          <NiPrimaryButton caption={buttonCaption} onPress={onPress} />
+        </View>
       </SafeAreaView>
-      <View style={styles.footer}>
-        <FooterGradient colors={[TRANSPARENT_GRADIENT, GREY[0]]} />
-        <NiPrimaryButton caption={buttonCaption} onPress={onPress} />
-      </View>
     </>
   );
 };

@@ -65,7 +65,7 @@ const FlashCard = ({ isLoading, setIsRightSwipeEnabled }: FlashCardProps) => {
   const style = styles(card);
 
   return (
-    <SafeAreaView style={style.safeArea} edges={['top']}>
+    <SafeAreaView style={style.safeArea}>
       <CardHeader />
       <ScrollView contentContainerStyle={style.scrollView} showsVerticalScrollIndicator={false}>
         <View style={style.container}>

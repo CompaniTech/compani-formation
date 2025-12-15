@@ -91,7 +91,7 @@ const AttendanceSheetSelectionForm = ({
     } else navigation.navigate(nextScreenName);
   };
 
-  return <SafeAreaView style={styles.safeArea} edges={['top']}>
+  return <SafeAreaView style={styles.safeArea}>
     <View style={styles.header}>
       <FeatherButton name='arrow-left' onPress={() => navigation.goBack()} size={ICON.MD} color={GREY[600]} />
     </View>

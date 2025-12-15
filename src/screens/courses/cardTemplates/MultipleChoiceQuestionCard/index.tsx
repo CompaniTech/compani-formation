@@ -102,7 +102,7 @@ const MultipleChoiceQuestionCard = ({ isLoading, setIsRightSwipeEnabled }: Multi
   const style = styles(footerColors.background);
 
   return (
-    <SafeAreaView style={style.safeArea} edges={['top']}>
+    <SafeAreaView style={style.safeArea}>
       <CardHeader />
       <ScrollView contentContainerStyle={style.scrollView} showsVerticalScrollIndicator={false}>
         <Text style={cardsStyle.question}>{card.question}</Text>

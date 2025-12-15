@@ -48,7 +48,7 @@ const SurveyCard = ({ isLoading, setIsRightSwipeEnabled }: SurveyCardProps) => {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={['top']}>
+    <SafeAreaView style={styles.safeArea}>
       <CardHeader />
       <ScrollView contentContainerStyle={styles.container}>
         <Text style={styles.question}>{card.question}</Text>

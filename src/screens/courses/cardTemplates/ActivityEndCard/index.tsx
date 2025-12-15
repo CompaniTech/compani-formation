@@ -95,7 +95,7 @@ const ActivityEndCard = ({ mode, activity, finalTimer, goBack, stopTimer }: Acti
   }, [finalTimer, mode, questionnaireAnswersList, quizzAnswersList, saveHistory, score]);
 
   return (
-    <SafeAreaView style={commonStyles.container} edges={['top']}>
+    <SafeAreaView style={commonStyles.container}>
       <ScrollView contentContainerStyle={styles.contentContainer} showsVerticalScrollIndicator={false}>
         <ImageBackground style={styles.elipse}
           source={require('../../../../../assets/images/end_card_background.webp')}>

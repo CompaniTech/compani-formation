@@ -37,7 +37,7 @@ const ZoomImage = ({ image, setZoomImage }: ZoomImageProps) => {
   }));
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView style={styles.container}>
       <FeatherButton name='x-circle' onPress={() => setZoomImage(false)} size={ICON.LG} color={WHITE}
         style={styles.goBack} />
       <GestureDetector gesture={composed}>

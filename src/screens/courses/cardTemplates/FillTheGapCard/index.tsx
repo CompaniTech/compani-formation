@@ -192,7 +192,7 @@ const FillTheGapCard = ({ isLoading, setIsRightSwipeEnabled }: FillTheGap) => {
   };
 
   return (
-    <SafeAreaView style={style.safeArea} edges={['top']}>
+    <SafeAreaView style={style.safeArea}>
       <CardHeader />
       <ScrollView contentContainerStyle={style.container} showsVerticalScrollIndicator={false}>
         {IS_WEB

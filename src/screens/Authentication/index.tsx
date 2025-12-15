@@ -43,7 +43,7 @@ const Authentication = ({ navigation }: AuthenticationProps) => {
   };
 
   return (
-    <SafeAreaView style={commonStyles.container} edges={['top']}>
+    <SafeAreaView style={commonStyles.container}>
       <ImageBackground style={styles.image}
         source={require('../../../assets/images/authentication_background_image.webp')}>
         <KeyboardAvoidingView behavior={IS_IOS ? 'padding' : 'height'} style={{ flex: 1 }}>

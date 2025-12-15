@@ -251,7 +251,7 @@ const LearnerCourseProfile = ({ route, navigation }: LearnerCourseProfileProps) 
   const renderRefreshControl = <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />;
 
   return course && has(course, 'subProgram.program') ? (
-    <SafeAreaView style={commonStyles.container} edges={['top']}>
+    <SafeAreaView style={commonStyles.container}>
       <FlatList data={course.subProgram.steps} keyExtractor={item => item._id} ListHeaderComponent={renderHeader}
         renderItem={({ item, index }) => renderStepList(mode, route, item, index)} ListFooterComponent={renderFooter}
         showsVerticalScrollIndicator={IS_WEB} refreshControl={renderRefreshControl} />

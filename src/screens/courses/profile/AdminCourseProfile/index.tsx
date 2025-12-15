@@ -434,7 +434,7 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
   const hasMissingSheets = !!missingAttendanceSheets.length;
 
   return course && has(course, 'subProgram.program') ? (
-    <SafeAreaView style={commonStyles.container} edges={['top']}>
+    <SafeAreaView style={commonStyles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <CourseAboutHeader screenTitle="ESPACE INTERVENANT" courseTitle={title} goBack={goBack} />
         <View style={styles.attendancesContainer}>

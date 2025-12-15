@@ -113,7 +113,7 @@ const AttendanceSignatureContainer = ({
   };
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={['top']}>
+    <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
         <FeatherButton name='x-circle' onPress={() => setExitConfirmationModal(true)} size={ICON.LG}
           color={GREY[600]} />

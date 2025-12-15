@@ -23,7 +23,7 @@ const PasswordReset = ({ route, navigation }: PasswordResetProps) => {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={['top']}>
+    <SafeAreaView style={styles.safeArea}>
       <PasswordForm goBack={goBack} onPress={savePassword} email={email} />
     </SafeAreaView>
   );

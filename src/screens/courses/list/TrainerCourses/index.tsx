@@ -157,7 +157,7 @@ const TrainerCourses = ({ navigation }: TrainerCoursesProps) => {
   const renderRefreshControl = <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />;
 
   return (
-    <SafeAreaView style={commonStyles.container} edges={['top']}>
+    <SafeAreaView style={commonStyles.container} edges={[]}>
       <View style={styles.container}>
         <FlatList data={coursesDisplays} keyExtractor={item => item.title} ListHeaderComponent={renderHeader}
           renderItem={({ item }) => renderCourseDisplay(item)} showsVerticalScrollIndicator={false}

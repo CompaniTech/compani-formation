@@ -24,7 +24,7 @@ const PasswordEdition = ({ route, navigation }: PasswordEditionProps) => {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={['top']}>
+    <SafeAreaView style={styles.safeArea}>
       <PasswordForm goBack={goBack} onPress={savePassword} />
     </SafeAreaView>
   );

@@ -105,7 +105,7 @@ const SubProgramProfile = ({ route, navigation }: SubProgramProfileProps) => {
   const renderRefreshControl = <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />;
 
   return subProgram && subProgram.steps ? (
-    <SafeAreaView style={commonStyles.container} edges={['top']}>
+    <SafeAreaView style={commonStyles.container}>
       <FlatList data={subProgram.steps} keyExtractor={item => item._id} ListHeaderComponent={renderHeader}
         renderItem={({ item, index }) => renderStepList(TESTER, route, item, index)}
         showsVerticalScrollIndicator={false} refreshControl={renderRefreshControl} />

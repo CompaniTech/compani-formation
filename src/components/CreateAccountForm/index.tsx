@@ -112,7 +112,7 @@ const CreateAccountForm = ({
   };
 
   const render = (
-    <SafeAreaView style={styles.safeArea} edges={['top']}>
+    <SafeAreaView style={styles.safeArea}>
       <View style={styles.header}>
         <FeatherButton name='arrow-left' onPress={() => goBack(index)} size={ICON.MD} color={GREY[600]}
           disabled={isLoading} />
