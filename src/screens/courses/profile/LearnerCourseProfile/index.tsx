@@ -16,7 +16,6 @@ import get from 'lodash/get';
 import has from 'lodash/has';
 import isEqual from 'lodash/isEqual';
 import { File, Paths } from 'expo-file-system';
-import * as FileSystem from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
 import * as IntentLauncher from 'expo-intent-launcher';
 import { Buffer } from 'buffer';
@@ -142,6 +141,11 @@ const LearnerCourseProfile = ({ route, navigation }: LearnerCourseProfileProps) 
     return `attestation_${c.subProgram.program.name}${misc}`.replace(/[^a-zA-Zà-üÀ-Ü0-9-+]{1,}/g, '_');
   };
 
+  const shareWithTimeout = async (uri: string, timeout = 5000) => Promise.race([
+    Sharing.shareAsync(uri),
+    new Promise<void>((resolve) => { setTimeout(resolve, timeout); }),
+  ]);
+
   const downloadCompletionCertificate = async () => {
     if (!course) return;
 
@@ -153,14 +157,11 @@ const LearnerCourseProfile = ({ route, navigation }: LearnerCourseProfileProps) 
 
     if (!IS_WEB) {
       const fileName = `${encodeURI(pdfName)}.pdf`;
+      const pdfFile = new File(Paths.document, fileName);
 
       if (IS_IOS) {
-        const pdf = buffer.toString('base64');
-        const fileUri = `${FileSystem.documentDirectory}${encodeURI(pdfName)}.pdf`;
-        await FileSystem.writeAsStringAsync(fileUri, pdf, { encoding: FileSystem.EncodingType.Base64 });
-        await Sharing.shareAsync(fileUri);
+        await shareWithTimeout(pdfFile.uri);
       } else {
-        const pdfFile = new File(Paths.document, fileName);
         pdfFile.write(buffer);
         IntentLauncher.startActivityAsync('android.intent.action.VIEW' as IntentLauncher.ActivityAction, {
           data: pdfFile.contentUri,
