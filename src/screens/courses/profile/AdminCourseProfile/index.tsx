@@ -372,17 +372,13 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
     const { _id: id, file, slots } = sheet;
     const hasSlots = !!slots;
     const hasTrainee = 'trainee' in sheet;
-    await new Promise<void>((resolve) => {
+    await new Promise(() => {
       Image.getSize(
         file.link || '',
-        () => {
-          setImagePreview({ visible: true, id, link: file.link || '', type: IMAGE, hasSlots, hasTrainee });
-          resolve();
+        (size) => {
+          setImagePreview({ visible: true, id, link: file.link || '', type: size ? IMAGE : PDF, hasSlots, hasTrainee });
         },
-        () => {
-          setImagePreview({ visible: true, id, link: file.link || '', type: PDF, hasSlots, hasTrainee });
-          resolve();
-        }
+        () => { setImagePreview({ visible: true, id, link: file.link || '', type: PDF, hasSlots, hasTrainee }); }
       );
     });
   }, []);
