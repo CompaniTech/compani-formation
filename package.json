@@ -7,7 +7,7 @@
     "web": "npx expo start --web",
     "eject": "expo eject",
     "test": "node_modules/jest/bin/jest.js",
-    "ts-lint": "tsc --noEmit && eslint ./src --ext .js,.jsx,.ts,.tsx -c .eslintrc.js",
+    "ts-lint": "tsc --noEmit && eslint ./src --ext .js,.jsx,.ts,.tsx",
     "eas-build-pre-install": "echo $ANDROID_GOOGLE_SERVICES_BASE64 | base64 --decode > ./google-services.json"
   },
   "jest": {
@@ -119,7 +119,7 @@
     "axios-mock-adapter": "~2.1.0",
     "babel-preset-expo": "~54.0.0",
     "dotenv": "~16.5.0",
-    "eslint": "~8.57.1",
+    "eslint": "~9.39.1",
     "eslint-plugin-react": "~7.37.4",
     "eslint-plugin-react-hooks": "~5.2.0",
     "expo-doctor": "~1.17.13",

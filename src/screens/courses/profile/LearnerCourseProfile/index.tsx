@@ -1,5 +1,3 @@
-/* eslint-env browser */
-
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   View,

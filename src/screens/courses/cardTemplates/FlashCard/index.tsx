@@ -19,7 +19,6 @@ interface FlashCardProps {
   setIsRightSwipeEnabled: (boolean: boolean) => void,
 }
 
-// eslint-disable-next-line no-shadow
 export enum ClickOnCard {
   UNCLICKED_CARD = 'unclicked',
   CLICKED_ONCE_CARD = 'clickedOnce',

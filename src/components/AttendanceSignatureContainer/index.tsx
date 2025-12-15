@@ -43,7 +43,6 @@ const AttendanceSignatureContainer = ({
   };
 
   const handleIframeMessage = useCallback((event: MessageEvent<string>) => {
-    // eslint-disable-next-line no-undef
     if ((event.origin !== window.location.origin && event.origin !== 'null') || !isFocused) return;
     const dataURI = event.data;
     setSignature(dataURI);
@@ -52,12 +51,10 @@ const AttendanceSignatureContainer = ({
 
   useEffect(() => {
     if (IS_WEB) {
-      // eslint-disable-next-line no-undef
       window.addEventListener('message', handleIframeMessage);
     }
     return () => {
       if (IS_WEB) {
-        // eslint-disable-next-line no-undef
         window.removeEventListener('message', handleIframeMessage);
       }
     };
