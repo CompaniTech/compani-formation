@@ -134,9 +134,8 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
 
   // Memoized lookup maps for faster computations - O(1) lookups instead of O(n)
   const attendanceSheetMaps = useMemo(() => buildAttendanceSheetMaps(savedAttendanceSheets, course?.type || ''),
-    [savedAttendanceSheets, course?.type]);
-  const missingAttendanceMaps = useMemo(() => buildMissingAttendanceMaps(course?.slots || []),
-    [course?.slots]);
+    [savedAttendanceSheets, course]);
+  const missingAttendanceMaps = useMemo(() => buildMissingAttendanceMaps(course?.slots || []), [course]);
 
   const groupedSlotsToBeSigned = useMemo(() => {
     if (!course?.slots.length || !course?.trainees?.length) return {};

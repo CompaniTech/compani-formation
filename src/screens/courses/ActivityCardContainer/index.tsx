@@ -73,6 +73,10 @@ const ActivityCardContainer = ({ route, navigation }: ActivityCardContainerProps
 
   const pauseTimer = useCallback(() => { if (interval.current) clearInterval(interval.current); }, []);
 
+  const startTimer = () => {
+    interval.current = setInterval(() => { timer.current += 1; }, 1000);
+  };
+
   const handleAppStateChange = useCallback((nextAppState: AppStateStatus) => {
     if (nextAppState === 'active') startTimer();
     else pauseTimer();
@@ -82,10 +86,6 @@ const ActivityCardContainer = ({ route, navigation }: ActivityCardContainerProps
     const { remove } = AppState.addEventListener('change', handleAppStateChange);
     return () => { remove(); };
   }, [handleAppStateChange]);
-
-  const startTimer = () => {
-    interval.current = setInterval(() => { timer.current += 1; }, 1000);
-  };
 
   const stopTimer = useCallback(() => {
     if (interval.current) clearInterval(interval.current);

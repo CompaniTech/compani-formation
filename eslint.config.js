@@ -86,6 +86,8 @@ module.exports = [
       'function-paren-newline': ['error', 'consistent'],
       'react/jsx-uses-react': 'off',
       'react/react-in-jsx-scope': 'off',
+      'react-hooks/set-state-in-effect': 0,
+      'react-hooks/refs': 0,
     },
   },
 ];
