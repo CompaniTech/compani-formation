@@ -123,7 +123,7 @@ export default {
         {
           ios: { useFrameworks: 'static' },
           android: {
-            enableProguardInReleaseBuilds: true,
+            enableMinifyInReleaseBuilds: true,
             enableShrinkResourcesInReleaseBuilds: true,
             extraProguardRules: '-keep public class com.horcrux.svg.** {*;}',
           },

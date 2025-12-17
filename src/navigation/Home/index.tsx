@@ -59,7 +59,7 @@ const Home = () => {
     [VENDOR_ADMIN, TRAINING_ORGANISATION_MANAGER, TRAINER].includes(userVendorRole);
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={styles.container}>
       <Tab.Navigator screenOptions={{ headerShown: false, tabBarShowLabel: false, tabBarStyle: styles.tabBar }}
         initialRouteName="LearnerCourses">
         <Tab.Screen name="Catalog" component={Catalog}

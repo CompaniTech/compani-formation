@@ -1,9 +1,13 @@
 import { StyleSheet } from 'react-native';
-import { PINK } from '../../styles/colors';
+import { PINK, WHITE } from '../../styles/colors';
 import { FIRA_SANS_BOLD } from '../../styles/fonts';
 import { MARGIN, TAB_BAR_HEIGHT, TAB_BAR_LABEL_WIDTH } from '../../styles/metrics';
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: WHITE,
+  },
   tabBar: {
     height: TAB_BAR_HEIGHT,
   },
