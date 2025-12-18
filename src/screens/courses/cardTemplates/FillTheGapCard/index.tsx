@@ -144,13 +144,14 @@ const FillTheGapCard = ({ isLoading, setIsRightSwipeEnabled }: FillTheGap) => {
 
     const webAnswer = { dragged: { payload: item._id, dragTranslationRatio: { x: 0, y: 0 } } };
 
+    const setAnswerOnClick = () => setAnswersAndPropositions(webAnswer as DraxDragWithReceiverEventData);
+
     return IS_WEB
-      ? <TouchableOpacity style={style.answerContainer}
-        onPress={() => setAnswersAndPropositions(webAnswer as DraxDragWithReceiverEventData)}>
+      ? <TouchableOpacity style={style.answerContainer} onPress={setAnswerOnClick}>
         {proposition}
       </TouchableOpacity>
       : <DraxView style={style.answerContainer} draggingStyle={{ opacity: 0 }} dragPayload={item._id}
-        longPressDelay={0}>
+        longPressDelay={0} onTouchEnd={setAnswerOnClick}>
         {proposition}
       </DraxView>;
   };
