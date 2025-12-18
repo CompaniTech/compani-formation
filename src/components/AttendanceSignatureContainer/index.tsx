@@ -3,7 +3,7 @@ import { BackHandler, View } from 'react-native';
 import { WebView, WebViewMessageEvent } from 'react-native-webview';
 import { useFocusEffect, useIsFocused, useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { ICON } from '../../styles/metrics';
+import { EDGES, ICON } from '../../styles/metrics';
 import { GREY } from '../../styles/colors';
 import FeatherButton from '../../components/icons/FeatherButton';
 import NiPrimaryButton from '../../components/form/PrimaryButton';
@@ -113,7 +113,7 @@ const AttendanceSignatureContainer = ({
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={styles.safeArea} edges={EDGES}>
       <View style={styles.container}>
         <FeatherButton name='x-circle' onPress={() => setExitConfirmationModal(true)} size={ICON.LG}
           color={GREY[600]} />

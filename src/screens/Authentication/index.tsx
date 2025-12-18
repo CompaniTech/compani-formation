@@ -17,6 +17,7 @@ import NiErrorMessage from '../../components/ErrorMessage';
 import FirstConnectionModal from '../../components/FirstConnectionModal';
 import { AuthContextType, Context as AuthContext } from '../../context/AuthContext';
 import { AUTHENTICATION, IS_IOS } from '../../core/data/constants';
+import { EDGES } from '../../styles/metrics';
 import { useResetAllReducers } from '../../store/hooks';
 import commonStyles from '../../styles/common';
 import { RootStackParamList } from '../../types/NavigationType';
@@ -43,7 +44,7 @@ const Authentication = ({ navigation }: AuthenticationProps) => {
   };
 
   return (
-    <SafeAreaView style={commonStyles.container}>
+    <SafeAreaView style={commonStyles.container} edges={EDGES}>
       <ImageBackground style={styles.image}
         source={require('../../../assets/images/authentication_background_image.webp')}>
         <KeyboardAvoidingView behavior={IS_IOS ? 'padding' : 'height'} style={{ flex: 1 }}>

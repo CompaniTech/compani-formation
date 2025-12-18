@@ -2,7 +2,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { GestureDetector, Gesture } from 'react-native-gesture-handler';
 import Animated, { useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
 import { WHITE } from '../../styles/colors';
-import { ICON } from '../../styles/metrics';
+import { EDGES, ICON } from '../../styles/metrics';
 import FeatherButton from '../icons/FeatherButton';
 import cardsStyle from '../../styles/cards';
 import styles from './styles';
@@ -37,7 +37,7 @@ const ZoomImage = ({ image, setZoomImage }: ZoomImageProps) => {
   }));
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={EDGES}>
       <FeatherButton name='x-circle' onPress={() => setZoomImage(false)} size={ICON.LG} color={WHITE}
         style={styles.goBack} />
       <GestureDetector gesture={composed}>

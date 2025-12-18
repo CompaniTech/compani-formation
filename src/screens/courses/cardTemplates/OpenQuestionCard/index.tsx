@@ -13,7 +13,7 @@ import {
   useGetQuestionnaireAnswer,
 } from '../../../../store/cards/hooks';
 import { GREY, PINK } from '../../../../styles/colors';
-import { IS_LARGE_SCREEN, MARGIN } from '../../../../styles/metrics';
+import { EDGES, IS_LARGE_SCREEN, MARGIN } from '../../../../styles/metrics';
 import { OpenQuestionType } from '../../../../types/CardType';
 import styles from './styles';
 
@@ -54,7 +54,7 @@ const OpenQuestionCard = ({ isLoading, setIsRightSwipeEnabled }: OpenQuestionCar
   const onFocusTextInput = (contentHeight: number) => scrollRef.current?.scrollTo({ y: contentHeight, animated: true });
 
   return (
-    <SafeAreaView style={style.safeArea}>
+    <SafeAreaView style={style.safeArea} edges={EDGES}>
       <KeyboardAvoidingView behavior={IS_IOS ? 'padding' : 'height'} style={style.keyboardAvoidingView}
         keyboardVerticalOffset={IS_LARGE_SCREEN ? MARGIN.MD : MARGIN.XS}>
         {!isSelected && <CardHeader />}

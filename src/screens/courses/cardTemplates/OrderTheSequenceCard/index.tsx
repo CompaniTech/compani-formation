@@ -17,6 +17,7 @@ import {
 } from '../../../../store/cards/hooks';
 import cardsStyle from '../../../../styles/cards';
 import { GREEN, GREY, ORANGE, PINK } from '../../../../styles/colors';
+import { EDGES } from '../../../../styles/metrics';
 import { footerColorsType, OrderTheSequenceType, AnswerPositionType } from '../../../../types/CardType';
 import styles from './styles';
 
@@ -148,7 +149,7 @@ const OrderTheSequenceCard = ({ isLoading, setIsRightSwipeEnabled }: OrderTheSeq
   const style = styles(footerColors.background);
 
   return (
-    <SafeAreaView style={style.safeArea}>
+    <SafeAreaView style={style.safeArea} edges={EDGES}>
       <CardHeader />
       <ScrollView contentContainerStyle={style.container}>
         <Text style={[cardsStyle.question, style.question]}>{card.question}</Text>

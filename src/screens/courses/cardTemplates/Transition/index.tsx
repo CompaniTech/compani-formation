@@ -5,6 +5,7 @@ import CardFooter from '../../../../components/cards/CardFooter';
 import CardHeader from '../../../../components/cards/CardHeader';
 import { useGetCard, useGetCardIndex } from '../../../../store/cards/hooks';
 import { WHITE } from '../../../../styles/colors';
+import { EDGES } from '../../../../styles/metrics';
 import { TransitionType } from '../../../../types/CardType';
 import styles from './styles';
 
@@ -21,7 +22,7 @@ const Transition = ({ isLoading, setIsRightSwipeEnabled }: TransitionProps) => {
   if (isLoading) return null;
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={styles.safeArea} edges={EDGES}>
       <CardHeader color={WHITE} />
       <View style={styles.titleContainer}>
         <Text style={styles.title}>{card.title}</Text>

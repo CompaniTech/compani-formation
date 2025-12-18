@@ -17,6 +17,7 @@ import ProfileDetails from '../../screens/profile/Profile';
 import styles from './styles';
 import { RootBottomTabParamList } from '../../types/NavigationType';
 import { VENDOR_ADMIN, TRAINING_ORGANISATION_MANAGER, TRAINER, IS_WEB } from '../../core/data/constants';
+import { EDGES } from '../../styles/metrics';
 import { tabsNames } from '../../core/data/tabs';
 
 const Tab = createBottomTabNavigator<RootBottomTabParamList>();
@@ -59,7 +60,7 @@ const Home = () => {
     [VENDOR_ADMIN, TRAINING_ORGANISATION_MANAGER, TRAINER].includes(userVendorRole);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={EDGES}>
       <Tab.Navigator screenOptions={{ headerShown: false, tabBarShowLabel: false, tabBarStyle: styles.tabBar }}
         initialRouteName="LearnerCourses">
         <Tab.Screen name="Catalog" component={Catalog}

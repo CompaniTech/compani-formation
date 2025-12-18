@@ -6,6 +6,7 @@ import { useCallback } from 'react';
 import { IS_WEB, TRAINER } from '../../core/data/constants';
 import NiPrimaryButton from '../form/PrimaryButton';
 import { PINK } from '../../styles/colors';
+import { EDGES } from '../../styles/metrics';
 import styles from './styles';
 
 interface AttendanceEndScreenProps {
@@ -37,7 +38,7 @@ const AttendanceEndScreen = ({ target, failUpload, goToNextScreen, mode = TRAINE
     </ScrollView>;
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={styles.safeArea} edges={EDGES}>
       {mode === TRAINER
         ? <>
           {failUpload

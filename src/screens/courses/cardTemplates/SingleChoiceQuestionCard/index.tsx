@@ -16,6 +16,7 @@ import {
 } from '../../../../store/cards/hooks';
 import cardsStyle from '../../../../styles/cards';
 import { GREY, GREEN, ORANGE, PINK } from '../../../../styles/colors';
+import { EDGES } from '../../../../styles/metrics';
 import { footerColorsType, StoreAnswerType, SingleChoiceQuestionType } from '../../../../types/CardType';
 import styles from './styles';
 
@@ -88,7 +89,7 @@ const SingleChoiceQuestionCard = ({ isLoading, setIsRightSwipeEnabled }: SingleC
   const style = styles(isPressed, footerColors.background);
 
   return (
-    <SafeAreaView style={style.safeArea}>
+    <SafeAreaView style={style.safeArea} edges={EDGES}>
       <CardHeader />
       <ScrollView contentContainerStyle={style.scrollView} showsVerticalScrollIndicator={false}>
         <Text style={cardsStyle.question}>{card.question}</Text>

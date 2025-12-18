@@ -5,7 +5,7 @@ import { StackScreenProps } from '@react-navigation/stack';
 import { useFocusEffect } from '@react-navigation/native';
 import ConfirmationModal from '../../components/ConfirmationModal';
 import FeatherButton from '../../components/icons/FeatherButton';
-import { ICON, IS_LARGE_SCREEN, MARGIN } from '../../styles/metrics';
+import { EDGES, ICON, IS_LARGE_SCREEN, MARGIN } from '../../styles/metrics';
 import { RootStackParamList } from '../../types/NavigationType';
 import NiInput from '../../components/form/Input';
 import NiPrimaryButton from '../../components/form/PrimaryButton';
@@ -80,7 +80,7 @@ const EmailForm = ({ route, navigation }: EmailFormProps) => {
   const enterEmail = (text: string) => setEmail(text.trim());
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={styles.safeArea} edges={EDGES}>
       <KeyboardAvoidingView behavior={behavior} style={accountCreationStyles.screenView}
         keyboardVerticalOffset={IS_LARGE_SCREEN ? MARGIN.MD : MARGIN.XS}>
         <View style={styles.goBack}>

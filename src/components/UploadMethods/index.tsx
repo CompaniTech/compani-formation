@@ -21,7 +21,7 @@ import { useGetLoggedUserId } from '../../store/main/hooks';
 import { formatImage, formatPayload } from '../../core/helpers/pictures';
 import { CourseType } from '../../types/CourseTypes';
 import FeatherButton from '../icons/FeatherButton';
-import { ICON } from '../../styles/metrics';
+import { EDGES, ICON } from '../../styles/metrics';
 
 interface UploadMethodsProps {
   attendanceSheetToAdd: string[],
@@ -130,7 +130,7 @@ const UploadMethods = ({
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={styles.safeArea} edges={EDGES}>
       <View style={styles.header}>
         <FeatherButton name='arrow-left' onPress={navigation.goBack} size={ICON.MD} color={GREY[600]} />
       </View>

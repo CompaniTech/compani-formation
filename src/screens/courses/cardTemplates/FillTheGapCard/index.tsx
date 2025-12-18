@@ -19,6 +19,7 @@ import {
   useIncGoodAnswersCount,
 } from '../../../../store/cards/hooks';
 import { PINK, GREY, GREEN, ORANGE } from '../../../../styles/colors';
+import { EDGES } from '../../../../styles/metrics';
 import { FillTheGapType, footerColorsType, StoreAnswerType } from '../../../../types/CardType';
 import styles from './styles';
 
@@ -192,7 +193,7 @@ const FillTheGapCard = ({ isLoading, setIsRightSwipeEnabled }: FillTheGap) => {
   };
 
   return (
-    <SafeAreaView style={style.safeArea}>
+    <SafeAreaView style={style.safeArea} edges={EDGES}>
       <CardHeader />
       <ScrollView contentContainerStyle={style.container} showsVerticalScrollIndicator={false}>
         {IS_WEB

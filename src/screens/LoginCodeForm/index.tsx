@@ -26,7 +26,7 @@ import { errorReducer, initialErrorState, SET_ERROR } from '../../reducers/error
 import { CompanyType } from '../../types/CompanyType';
 import { LOGIN_CODE, IS_IOS, IS_WEB, DIRECTORY } from '../../core/data/constants';
 import { GREY, WHITE } from '../../styles/colors';
-import { ICON, IS_LARGE_SCREEN, MARGIN } from '../../styles/metrics';
+import { EDGES, ICON, IS_LARGE_SCREEN, MARGIN } from '../../styles/metrics';
 import styles from './styles';
 import { FIRA_SANS_MEDIUM } from '../../styles/fonts';
 
@@ -146,7 +146,7 @@ const LoginCodeForm = ({ navigation }: LoginCodeFormProps) => {
   }, []);
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={styles.safeArea} edges={EDGES}>
       <KeyboardAvoidingView behavior={IS_IOS ? 'padding' : 'height'} style={styles.keyboard}
         keyboardVerticalOffset={IS_LARGE_SCREEN ? MARGIN.MD : MARGIN.XS}>
         <View style={styles.goBack}>

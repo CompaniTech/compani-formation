@@ -13,7 +13,7 @@ import { AUDIO, IMAGE, VIDEO } from '../../../../core/data/constants';
 import { useGetCard, useGetCardIndex } from '../../../../store/cards/hooks';
 import cardsStyle from '../../../../styles/cards';
 import { markdownStyle } from '../../../../styles/common';
-import { CARD_MEDIA_MAX_HEIGHT } from '../../../../styles/metrics';
+import { CARD_MEDIA_MAX_HEIGHT, EDGES } from '../../../../styles/metrics';
 import { CacheType } from '../../../../types/CacheType';
 import { TitleTextMediaType } from '../../../../types/CardType';
 import styles from './styles';
@@ -56,7 +56,7 @@ const TitleTextMediaCard = ({ isLoading, setIsRightSwipeEnabled, setIsLeftSwipeE
   if (isLoading) return null;
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={styles.safeArea} edges={EDGES}>
       <CardHeader />
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
         <Text style={cardsStyle.title}>{card.title}</Text>

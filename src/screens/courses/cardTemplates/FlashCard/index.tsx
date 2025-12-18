@@ -11,6 +11,7 @@ import {
   useGetViewedFlashCards,
 } from '../../../../store/cards/hooks';
 import { IS_WEB } from '../../../../core/data/constants';
+import { EDGES } from '../../../../styles/metrics';
 import { FlashCardType } from '../../../../types/CardType';
 import styles from './styles';
 
@@ -65,7 +66,7 @@ const FlashCard = ({ isLoading, setIsRightSwipeEnabled }: FlashCardProps) => {
   const style = styles(card);
 
   return (
-    <SafeAreaView style={style.safeArea}>
+    <SafeAreaView style={style.safeArea} edges={EDGES}>
       <CardHeader />
       <ScrollView contentContainerStyle={style.scrollView} showsVerticalScrollIndicator={false}>
         <View style={style.container}>

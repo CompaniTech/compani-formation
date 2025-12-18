@@ -25,7 +25,7 @@ import { RootStackParamList, RootBottomTabParamList } from '../../../../types/Na
 import Courses from '../../../../api/courses';
 import Questionnaires from '../../../../api/questionnaires';
 import { WHITE, GREY } from '../../../../styles/colors';
-import { HIT_SLOP, ICON } from '../../../../styles/metrics';
+import { EDGES, HIT_SLOP, ICON } from '../../../../styles/metrics';
 import commonStyles from '../../../../styles/common';
 import { CourseType, BlendedCourseType, ELearningProgramType } from '../../../../types/CourseTypes';
 import styles from '../styles';
@@ -256,7 +256,7 @@ const LearnerCourseProfile = ({ route, navigation }: LearnerCourseProfileProps) 
   const renderRefreshControl = <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />;
 
   return course && has(course, 'subProgram.program') ? (
-    <SafeAreaView style={commonStyles.container}>
+    <SafeAreaView style={commonStyles.container} edges={EDGES}>
       <FlatList data={course.subProgram.steps} keyExtractor={item => item._id} ListHeaderComponent={renderHeader}
         renderItem={({ item, index }) => renderStepList(mode, route, item, index)} ListFooterComponent={renderFooter}
         showsVerticalScrollIndicator={IS_WEB} refreshControl={renderRefreshControl} />

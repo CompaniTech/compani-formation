@@ -22,7 +22,7 @@ import Courses from '../../../../api/courses';
 import AttendanceSheets from '../../../../api/attendanceSheets';
 import Questionnaires from '../../../../api/questionnaires';
 import commonStyles from '../../../../styles/common';
-import { ICON } from '../../../../styles/metrics';
+import { EDGES, ICON } from '../../../../styles/metrics';
 import { BLACK, GREY, PINK, YELLOW } from '../../../../styles/colors';
 import { BlendedCourseType, SlotType, TraineeType } from '../../../../types/CourseTypes';
 import styles from './styles';
@@ -430,7 +430,7 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
   const hasMissingSheets = !!missingAttendanceSheets.length;
 
   return course && has(course, 'subProgram.program') ? (
-    <SafeAreaView style={commonStyles.container}>
+    <SafeAreaView style={commonStyles.container} edges={EDGES}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <CourseAboutHeader screenTitle="ESPACE INTERVENANT" courseTitle={title} goBack={goBack} />
         <View style={styles.attendancesContainer}>

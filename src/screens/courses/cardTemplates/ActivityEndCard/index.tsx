@@ -17,6 +17,7 @@ import {
   useGetScore,
   useSetCardIndex,
 } from '../../../../store/cards/hooks';
+import { EDGES } from '../../../../styles/metrics';
 import styles from '../../../../styles/endCard';
 import commonStyles from '../../../../styles/common';
 import { ActivityType, QuestionnaireAnswersType, QuizzAnswersType } from '../../../../types/ActivityTypes';
@@ -95,7 +96,7 @@ const ActivityEndCard = ({ mode, activity, finalTimer, goBack, stopTimer }: Acti
   }, [finalTimer, mode, questionnaireAnswersList, quizzAnswersList, saveHistory, score]);
 
   return (
-    <SafeAreaView style={commonStyles.container}>
+    <SafeAreaView style={commonStyles.container} edges={EDGES}>
       <ScrollView contentContainerStyle={styles.contentContainer} showsVerticalScrollIndicator={false}>
         <ImageBackground style={styles.elipse}
           source={require('../../../../../assets/images/end_card_background.webp')}>

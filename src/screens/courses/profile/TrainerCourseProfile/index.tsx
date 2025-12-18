@@ -22,14 +22,14 @@ import { RootStackParamList, RootBottomTabParamList } from '../../../../types/Na
 import Courses from '../../../../api/courses';
 import { WHITE, GREY } from '../../../../styles/colors';
 import commonStyles from '../../../../styles/common';
-import { HIT_SLOP } from '../../../../styles/metrics';
+import { EDGES, HIT_SLOP } from '../../../../styles/metrics';
 import { CourseType, BlendedCourseType } from '../../../../types/CourseTypes';
 import styles from '../styles';
 import { useSetStatusBarVisible } from '../../../../store/main/hooks';
 import NiSecondaryButton from '../../../../components/form/SecondaryButton';
 import CourseProfileHeader from '../../../../components/CourseProfileHeader';
 import { FIRA_SANS_MEDIUM } from '../../../../styles/fonts';
-import { getTitle, renderStepList } from '../helper';
+import { getTitle, renderFooter, renderStepList } from '../helper';
 import { PEDAGOGY, TRAINER } from '../../../../core/data/constants';
 
 const ADMIN_SCREEN = 'AdminCourseProfile';
@@ -128,9 +128,9 @@ const TrainerCourseProfile = ({
   const renderRefreshControl = <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />;
 
   return course && has(course, 'subProgram.program') ? (
-    <SafeAreaView style={commonStyles.container}>
+    <SafeAreaView style={commonStyles.container} edges={EDGES}>
       <FlatList data={course.subProgram.steps} keyExtractor={item => item._id} ListHeaderComponent={renderHeader}
-        renderItem={({ item, index }) => renderStepList(TRAINER, route, item, index)}
+        renderItem={({ item, index }) => renderStepList(TRAINER, route, item, index)} ListFooterComponent={renderFooter}
         showsVerticalScrollIndicator={false} refreshControl={renderRefreshControl} />
     </SafeAreaView>
   )
