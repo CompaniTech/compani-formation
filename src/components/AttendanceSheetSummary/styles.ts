@@ -24,12 +24,12 @@ const styles = StyleSheet.create({
     marginVertical: MARGIN.LG,
   },
   checkboxContainer: {
-    marginHorizontal: MARGIN.MD,
+    marginHorizontal: MARGIN.LG,
     backgroundColor: GREY[100],
   },
   button: {
-    marginHorizontal: MARGIN.MD,
-    marginBottom: MARGIN.MD,
+    marginHorizontal: MARGIN.LG,
+    marginBottom: MARGIN.LG,
     height: BUTTON_HEIGHT + 2 * MARGIN.MD,
     justifyContent: 'flex-end',
   },

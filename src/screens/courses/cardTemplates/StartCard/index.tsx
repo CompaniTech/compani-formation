@@ -3,6 +3,7 @@ import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import NiPrimaryButton from '../../../../components/form/PrimaryButton';
 import { PINK, WHITE } from '../../../../styles/colors';
+import { EDGES } from '../../../../styles/metrics';
 import CardHeader from '../../../../components/cards/CardHeader';
 import styles from './styles';
 
@@ -22,7 +23,7 @@ const StartCard = ({ title, isLoading, goBack, startTimer }: StartCardProps) => 
   };
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={['top']}>
+    <SafeAreaView style={styles.safeArea} edges={EDGES}>
       <ScrollView contentContainerStyle={styles.contentContainer} showsVerticalScrollIndicator={false}>
         <CardHeader color={WHITE} onPress={goBack} icon='arrow-left' />
         <View style={styles.wrapper}>

@@ -18,7 +18,7 @@ import { ImagePickerAsset } from 'expo-image-picker';
 import FeatherButton from '../../../components/icons/FeatherButton';
 import NiPrimaryButton from '../../../components/form/PrimaryButton';
 import { GREY } from '../../../styles/colors';
-import { ICON, IS_LARGE_SCREEN, MARGIN } from '../../../styles/metrics';
+import { EDGES, ICON, IS_LARGE_SCREEN, MARGIN } from '../../../styles/metrics';
 import styles from './styles';
 import NiInput from '../../../components/form/Input';
 import { RootStackParamList, RootBottomTabParamList } from '../../../types/NavigationType';
@@ -191,7 +191,7 @@ const ProfileEdition = ({ navigation }: ProfileEditionProps) => {
   };
 
   return !!loggedUser && (
-    <SafeAreaView style={styles.safeArea} edges={['top']}>
+    <SafeAreaView style={styles.safeArea} edges={EDGES}>
       <KeyboardAvoidingView behavior={IS_IOS ? 'padding' : 'height'} style={styles.keyboardAvoidingView}
         keyboardVerticalOffset={IS_LARGE_SCREEN ? MARGIN.MD : MARGIN.XS}>
         <View style={styles.goBack}>

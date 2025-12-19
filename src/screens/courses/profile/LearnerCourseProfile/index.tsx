@@ -1,5 +1,3 @@
-/* eslint-env browser */
-
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   View,
@@ -17,7 +15,7 @@ import { useIsFocused, CompositeScreenProps } from '@react-navigation/native';
 import get from 'lodash/get';
 import has from 'lodash/has';
 import isEqual from 'lodash/isEqual';
-import * as FileSystem from 'expo-file-system';
+import { File, Paths } from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 import * as IntentLauncher from 'expo-intent-launcher';
 import { Buffer } from 'buffer';
@@ -27,7 +25,7 @@ import { RootStackParamList, RootBottomTabParamList } from '../../../../types/Na
 import Courses from '../../../../api/courses';
 import Questionnaires from '../../../../api/questionnaires';
 import { WHITE, GREY } from '../../../../styles/colors';
-import { HIT_SLOP, ICON } from '../../../../styles/metrics';
+import { EDGES, HIT_SLOP, ICON } from '../../../../styles/metrics';
 import commonStyles from '../../../../styles/common';
 import { CourseType, BlendedCourseType, ELearningProgramType } from '../../../../types/CourseTypes';
 import styles from '../styles';
@@ -143,6 +141,11 @@ const LearnerCourseProfile = ({ route, navigation }: LearnerCourseProfileProps) 
     return `attestation_${c.subProgram.program.name}${misc}`.replace(/[^a-zA-Zà-üÀ-Ü0-9-+]{1,}/g, '_');
   };
 
+  const shareWithTimeout = async (uri: string, timeout = 5000) => Promise.race([
+    Sharing.shareAsync(uri),
+    new Promise<void>((resolve) => { setTimeout(resolve, timeout); }),
+  ]);
+
   const downloadCompletionCertificate = async () => {
     if (!course) return;
 
@@ -150,21 +153,19 @@ const LearnerCourseProfile = ({ route, navigation }: LearnerCourseProfileProps) 
     const data = await Courses.downloadCertificate(course._id);
 
     const buffer = Buffer.from(data, 'base64');
-    const pdf = buffer.toString('base64');
     const pdfName = getPdfName(course as BlendedCourseType);
 
     if (!IS_WEB) {
-      const fileUri = `${FileSystem.documentDirectory}${encodeURI(pdfName)}.pdf`;
-      await FileSystem.writeAsStringAsync(fileUri, pdf, { encoding: FileSystem.EncodingType.Base64 });
+      const fileName = `${encodeURI(pdfName)}.pdf`;
+      const pdfFile = new File(Paths.document, fileName);
 
       if (IS_IOS) {
-        await Sharing.shareAsync(fileUri);
+        await shareWithTimeout(pdfFile.uri);
       } else {
-        FileSystem.getContentUriAsync(fileUri).then((cUri) => {
-          IntentLauncher.startActivityAsync('android.intent.action.VIEW' as IntentLauncher.ActivityAction, {
-            data: cUri,
-            flags: 1,
-          });
+        pdfFile.write(buffer);
+        IntentLauncher.startActivityAsync('android.intent.action.VIEW' as IntentLauncher.ActivityAction, {
+          data: pdfFile.contentUri,
+          flags: 1,
         });
       }
     } else if (typeof document !== 'undefined') {
@@ -255,7 +256,7 @@ const LearnerCourseProfile = ({ route, navigation }: LearnerCourseProfileProps) 
   const renderRefreshControl = <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />;
 
   return course && has(course, 'subProgram.program') ? (
-    <SafeAreaView style={commonStyles.container} edges={['top']}>
+    <SafeAreaView style={commonStyles.container} edges={EDGES}>
       <FlatList data={course.subProgram.steps} keyExtractor={item => item._id} ListHeaderComponent={renderHeader}
         renderItem={({ item, index }) => renderStepList(mode, route, item, index)} ListFooterComponent={renderFooter}
         showsVerticalScrollIndicator={IS_WEB} refreshControl={renderRefreshControl} />

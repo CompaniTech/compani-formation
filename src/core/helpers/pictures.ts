@@ -2,7 +2,7 @@
 
 import mime from 'mime';
 import * as ImageManipulator from 'expo-image-manipulator';
-import * as FileSystem from 'expo-file-system';
+import { File } from 'expo-file-system';
 import { ImagePickerAsset } from 'expo-image-picker';
 import { IMAGE_MAX_SIZE } from '../data/constants';
 import { ImageType, FormDataType } from '../../types/FileType';
@@ -23,14 +23,14 @@ export const formatImage = async (
   image: ImagePickerAsset,
   fileName: string
 ): Promise<ImageType> => {
-  const fileInfos = await FileSystem.getInfoAsync(image.uri);
-  const uri = (fileInfos.size && ((fileInfos.size / IMAGE_MAX_SIZE) > 1))
-    ? await compressPhoto(image.uri, fileInfos.size)
+  const file = new File(image.uri);
+  const fileSize = file.size;
+
+  const uri = (fileSize && ((fileSize / IMAGE_MAX_SIZE) > 1))
+    ? await compressPhoto(image.uri, fileSize)
     : formatPhotoURI(image.uri);
 
-  const file = { uri, type: mime.getType(uri), name: fileName };
-
-  return file;
+  return { uri, type: mime.getType(uri), name: fileName };
 };
 
 export const formatPayload = (payload): FormDataType => {

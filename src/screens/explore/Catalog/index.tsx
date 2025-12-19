@@ -79,7 +79,7 @@ const Catalog = ({ navigation }: CatalogProps) => {
     program={program} theoreticalDuration={getTheoreticalDuration(get(program, 'subPrograms[0].steps'))} />;
 
   return (
-    <SafeAreaView style={commonStyles.container} edges={['top']}>
+    <SafeAreaView style={commonStyles.container} edges={[]}>
       <ScrollView contentContainerStyle={style.container} showsVerticalScrollIndicator={IS_WEB}>
         <Text style={commonStyles.title}>Explorer</Text>
         {Object.keys(programsByCategories).map((key, i) =>

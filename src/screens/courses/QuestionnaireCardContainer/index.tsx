@@ -21,7 +21,7 @@ import {
   useSetExitConfirmationModal,
 } from '../../../store/cards/hooks';
 import commonStyles from '../../../styles/common';
-import { IS_IOS, LEARNER } from '../../../core/data/constants';
+import { LEARNER } from '../../../core/data/constants';
 import CardScreen from '../CardScreen';
 import QuestionnaireEndCard from '../cardTemplates/QuestionnaireEndCard';
 import StartCard from '../cardTemplates/StartCard';
@@ -103,7 +103,7 @@ const QuestionnaireCardContainer = ({ route, navigation }: QuestionnaireCardCont
   const Tab = createMaterialTopTabNavigator<RootCardParamList>();
 
   return isActive
-    ? <SafeAreaView style={commonStyles.container} edges={IS_IOS ? [] : ['bottom']}>
+    ? <SafeAreaView style={commonStyles.container} edges={[]}>
       <Tab.Navigator tabBar={() => <></>} screenOptions={{ swipeEnabled: false }}>
         <Tab.Screen key={0} name={'startCard'} options={{ title: title || tabsNames.QuestionnaireCardContainer }}>
           {() => <StartCard title={title} goBack={goBack}

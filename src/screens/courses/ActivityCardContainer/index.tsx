@@ -20,7 +20,7 @@ import commonStyles from '../../../styles/common';
 import { useSetStatusBarVisible } from '../../../store/main/hooks';
 import { ActivityWithCardsType } from '../../../types/ActivityTypes';
 import { RootCardParamList, RootStackParamList } from '../../../types/NavigationType';
-import { IS_IOS, LEARNER, TUTOR } from '../../../core/data/constants';
+import { LEARNER, TUTOR } from '../../../core/data/constants';
 import CardScreen from '../CardScreen';
 import ActivityEndCard from '../cardTemplates/ActivityEndCard';
 import StartCard from '../cardTemplates/StartCard';
@@ -73,6 +73,10 @@ const ActivityCardContainer = ({ route, navigation }: ActivityCardContainerProps
 
   const pauseTimer = useCallback(() => { if (interval.current) clearInterval(interval.current); }, []);
 
+  const startTimer = () => {
+    interval.current = setInterval(() => { timer.current += 1; }, 1000);
+  };
+
   const handleAppStateChange = useCallback((nextAppState: AppStateStatus) => {
     if (nextAppState === 'active') startTimer();
     else pauseTimer();
@@ -82,10 +86,6 @@ const ActivityCardContainer = ({ route, navigation }: ActivityCardContainerProps
     const { remove } = AppState.addEventListener('change', handleAppStateChange);
     return () => { remove(); };
   }, [handleAppStateChange]);
-
-  const startTimer = () => {
-    interval.current = setInterval(() => { timer.current += 1; }, 1000);
-  };
 
   const stopTimer = useCallback(() => {
     if (interval.current) clearInterval(interval.current);
@@ -133,7 +133,7 @@ const ActivityCardContainer = ({ route, navigation }: ActivityCardContainerProps
   const Tab = createMaterialTopTabNavigator<RootCardParamList>();
 
   return isActive
-    ? <SafeAreaView style={commonStyles.container} edges={IS_IOS ? [] : ['bottom']}>
+    ? <SafeAreaView style={commonStyles.container} edges={[]}>
       <Tab.Navigator tabBar={() => <></>} screenOptions={{ swipeEnabled: false }}>
         <Tab.Screen key={0} name={'startCard'} options={{ title: activity?.name || tabsNames.ActivityCardContainer }}>
           {() => <StartCard title={activity?.name || ''} goBack={goBack} isLoading={!(cards.length > 0 && activity)}

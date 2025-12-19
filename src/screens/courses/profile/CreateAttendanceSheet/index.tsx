@@ -231,8 +231,13 @@ const CreateAttendanceSheet = ({ route, navigation }: CreateAttendanceSheetProps
     </AttendanceSheetSelectionForm>
   );
 
+  const endScreenGoBack = () => {
+    setShouldRefreshSheets(true);
+    navigation.goBack();
+  };
+
   const renderUploadMethod = () => (
-    <UploadMethods course={course!} goToParent={navigation.goBack} attendanceSheetToAdd={attendanceSheetToAdd}
+    <UploadMethods course={course!} goToParent={endScreenGoBack} attendanceSheetToAdd={attendanceSheetToAdd}
       slotsToAdd={slotsToAdd} />
   );
 
@@ -267,10 +272,6 @@ const CreateAttendanceSheet = ({ route, navigation }: CreateAttendanceSheetProps
       target={`le ${CompaniDate(attendanceSheetToAdd[0]).format(DD_MM_YYYY)}`} options={selectedTraineesOptions} />
   );
 
-  const endScreenGoBack = () => {
-    setShouldRefreshSheets(true);
-    navigation.goBack();
-  };
   const renderEndScreen = () => (
     <AttendanceEndScreen goToNextScreen={endScreenGoBack}
       target={`${isSingle || course?.type === INTER_B2B ? 'à' : 'pour le'} ${target}`}

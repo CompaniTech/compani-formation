@@ -1,4 +1,6 @@
 import { Dimensions, PixelRatio, Platform } from 'react-native';
+import { Edges } from 'react-native-safe-area-context';
+import { IS_IOS } from '../core/data/constants';
 
 const { width, height } = Dimensions.get('window');
 
@@ -79,3 +81,4 @@ export const HIT_SLOP = { top: 8, bottom: 8 };
 export const BACKGROUND_SPOT_WIDTH = 332;
 export const WEB_AUDIO_ICON_SIZE = 250;
 export const SMALL_SCREEN_WATERMARK_SIZE = 268;
+export const EDGES: Edges = IS_IOS ? ['top'] : ['top', 'bottom'];

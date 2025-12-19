@@ -33,7 +33,7 @@ const ToastMessage = ({ message, onFinish }: ToastMessageProps) => {
   return (
     <Animated.View style={[styles.container, { transform: [{ translateY: translation }] }]}>
       <View style={styles.content}>
-        <AntDesign name={'closecircleo'} size={24} color={WHITE} />
+        <AntDesign name={'close-circle'} size={24} color={WHITE} />
         <Text style={styles.text}>{message}</Text>
       </View>
     </Animated.View>

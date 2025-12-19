@@ -11,7 +11,7 @@ import styles from './styles';
 import accountCreationStyles from '../../styles/accountCreation';
 import commonStyles from '../../styles/common';
 import { COUNTRY_CODE_REGEX, IS_IOS, IS_WEB, PHONE_REGEX } from '../../core/data/constants';
-import { ICON, IS_LARGE_SCREEN, MARGIN } from '../../styles/metrics';
+import { EDGES, ICON, IS_LARGE_SCREEN, MARGIN } from '../../styles/metrics';
 import FeatherButton from '../icons/FeatherButton';
 import { GREY } from '../../styles/colors';
 import ProgressBar from '../cards/ProgressBar';
@@ -112,7 +112,7 @@ const CreateAccountForm = ({
   };
 
   const render = (
-    <SafeAreaView style={styles.safeArea} edges={['top']}>
+    <SafeAreaView style={styles.safeArea} edges={EDGES}>
       <View style={styles.header}>
         <FeatherButton name='arrow-left' onPress={() => goBack(index)} size={ICON.MD} color={GREY[600]}
           disabled={isLoading} />

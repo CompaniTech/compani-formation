@@ -22,7 +22,7 @@ import Courses from '../../../../api/courses';
 import AttendanceSheets from '../../../../api/attendanceSheets';
 import Questionnaires from '../../../../api/questionnaires';
 import commonStyles from '../../../../styles/common';
-import { ICON } from '../../../../styles/metrics';
+import { EDGES, ICON } from '../../../../styles/metrics';
 import { BLACK, GREY, PINK, YELLOW } from '../../../../styles/colors';
 import { BlendedCourseType, SlotType, TraineeType } from '../../../../types/CourseTypes';
 import styles from './styles';
@@ -134,9 +134,8 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
 
   // Memoized lookup maps for faster computations - O(1) lookups instead of O(n)
   const attendanceSheetMaps = useMemo(() => buildAttendanceSheetMaps(savedAttendanceSheets, course?.type || ''),
-    [savedAttendanceSheets, course?.type]);
-  const missingAttendanceMaps = useMemo(() => buildMissingAttendanceMaps(course?.slots || []),
-    [course?.slots]);
+    [savedAttendanceSheets, course]);
+  const missingAttendanceMaps = useMemo(() => buildMissingAttendanceMaps(course?.slots || []), [course]);
 
   const groupedSlotsToBeSigned = useMemo(() => {
     if (!course?.slots.length || !course?.trainees?.length) return {};
@@ -373,17 +372,13 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
     const { _id: id, file, slots } = sheet;
     const hasSlots = !!slots;
     const hasTrainee = 'trainee' in sheet;
-    await new Promise<void>((resolve) => {
+    await new Promise(() => {
       Image.getSize(
         file.link || '',
-        () => {
-          setImagePreview({ visible: true, id, link: file.link || '', type: IMAGE, hasSlots, hasTrainee });
-          resolve();
+        (size) => {
+          setImagePreview({ visible: true, id, link: file.link || '', type: size ? IMAGE : PDF, hasSlots, hasTrainee });
         },
-        () => {
-          setImagePreview({ visible: true, id, link: file.link || '', type: PDF, hasSlots, hasTrainee });
-          resolve();
-        }
+        () => { setImagePreview({ visible: true, id, link: file.link || '', type: PDF, hasSlots, hasTrainee }); }
       );
     });
   }, []);
@@ -435,7 +430,7 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
   const hasMissingSheets = !!missingAttendanceSheets.length;
 
   return course && has(course, 'subProgram.program') ? (
-    <SafeAreaView style={commonStyles.container} edges={['top']}>
+    <SafeAreaView style={commonStyles.container} edges={EDGES}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <CourseAboutHeader screenTitle="ESPACE INTERVENANT" courseTitle={title} goBack={goBack} />
         <View style={styles.attendancesContainer}>
