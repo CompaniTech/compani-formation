@@ -1,14 +1,6 @@
 import { StyleSheet } from 'react-native';
-import { FIRA_SANS_MEDIUM, FIRA_SANS_REGULAR } from '../../../styles/fonts';
-import {
-  MAIN_MARGIN_LEFT,
-  MARGIN, SCREEN_WIDTH,
-  BACKGROUND_SPOT_WIDTH,
-  INPUT_HEIGHT,
-  BORDER_RADIUS,
-  PADDING,
-} from '../../../styles/metrics';
-import { GREY } from '../../../styles/colors';
+import { FIRA_SANS_REGULAR } from '../../../styles/fonts';
+import { MAIN_MARGIN_LEFT, MARGIN, SCREEN_WIDTH, BACKGROUND_SPOT_WIDTH } from '../../../styles/metrics';
 
 const styles = (count = { color: '', background: '' }) => StyleSheet.create({
   container: {
@@ -41,18 +33,7 @@ const styles = (count = { color: '', background: '' }) => StyleSheet.create({
     top: -32,
   },
   input: {
-    ...FIRA_SANS_MEDIUM.MD,
-    backgroundColor: GREY[100],
-    height: INPUT_HEIGHT,
-    marginHorizontal: MARGIN.MD,
-    borderRadius: BORDER_RADIUS.SM,
-    paddingHorizontal: PADDING.LG,
     marginTop: -MARGIN.MD,
-    color: GREY[900],
-    textAlignVertical: 'top',
-  },
-  placeholder: {
-    ...FIRA_SANS_REGULAR.MD,
   },
 });
 

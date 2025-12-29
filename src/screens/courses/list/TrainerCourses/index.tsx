@@ -80,6 +80,7 @@ const formatCoursesDiplaysContent = (courses: BlendedCourseType[]) => {
 
 const renderNextStepsItem = (step: NextSlotsStepType) => <NextStepCell nextSlotsStep={step} mode={TRAINER} />;
 
+const inputStyle = { ...commonStyles.searchInput, ...styles.input };
 type TrainerCoursesHeaderProps = { answer: string, setAnswer: (v: string) => void, nextSteps: NextSlotsStepType[] };
 const TrainerCoursesHeader = memo(({ answer, setAnswer, nextSteps }: TrainerCoursesHeaderProps) => (
   <>
@@ -90,7 +91,7 @@ const TrainerCoursesHeader = memo(({ answer, setAnswer, nextSteps }: TrainerCour
     </View>
     }
     <TextInput placeholder="Chercher une formation" value={answer} onChangeText={setAnswer}
-      style={!answer ? [styles.input, styles.placeholder] : styles.input} placeholderTextColor={GREY[600]} />
+      style={!answer ? [inputStyle, commonStyles.placeholder] : inputStyle} placeholderTextColor={GREY[600]} />
   </>
 ));
 
@@ -164,7 +165,7 @@ const TrainerCourses = ({ navigation }: TrainerCoursesProps) => {
   useEffect(() => {
     if (isFocused) {
       if (!isLoaded) getCourses();
-    }
+    } else setAnswer('');
   }, [isFocused, getCourses, loggedUserId, isLoaded]);
 
   const renderFooter = () => (!!coursesDisplays.length &&

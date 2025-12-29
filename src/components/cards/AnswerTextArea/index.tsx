@@ -3,6 +3,7 @@ import { Keyboard, TextInput, View } from 'react-native';
 import Shadow from '../../design/Shadow';
 import { GREY } from '../../../styles/colors';
 import styles from './styles';
+import commonStyle from '../../../styles/common';
 
 interface AnswerQuestionProps {
   answer: string,
@@ -36,7 +37,7 @@ const AnswerTextArea = ({ onChangeText, onSelect, scrollTo, answer }: AnswerQues
 
   return (
     <View style={style.container}>
-      <TextInput style={!answer.length ? [style.input, style.placeholder] : style.input}
+      <TextInput style={!answer.length ? [style.input, commonStyle.placeholder] : style.input}
         placeholder={'Votre réponse...'} placeholderTextColor={GREY[300]} value={answer} multiline={true}
         onChangeText={onChangeText} onTouchStart={onTouchStart} onBlur={onBlur}
         onContentSizeChange={(event) => { scrollTo(event.nativeEvent.contentSize.height); }}/>

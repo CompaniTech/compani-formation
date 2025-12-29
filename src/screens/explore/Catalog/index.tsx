@@ -87,7 +87,7 @@ const Catalog = ({ navigation }: CatalogProps) => {
     async function fetchData() { await getPrograms(); }
     if (isFocused) {
       fetchData();
-    }
+    } else setAnswer('');
   }, [loggedUserId, isFocused]);
 
   const goToProgram = (program: ELearningProgramType) => navigation.navigate('ElearningAbout', { program });
@@ -95,12 +95,13 @@ const Catalog = ({ navigation }: CatalogProps) => {
   const renderItem = (program: ELearningProgramType) => <ProgramCell onPress={() => goToProgram(program)}
     program={program} theoreticalDuration={getTheoreticalDuration(get(program, 'subPrograms[0].steps'))} />;
 
+  const inputStyle = { ...commonStyles.searchInput, ...style.input };
   return (
     <SafeAreaView style={commonStyles.container} edges={[]}>
       <ScrollView contentContainerStyle={style.container} showsVerticalScrollIndicator={IS_WEB}>
         <Text style={commonStyles.title}>Explorer</Text>
         <TextInput placeholder="Chercher une formation" value={answer} onChangeText={setAnswer}
-          style={!answer ? [style.input, style.placeholder] : style.input} placeholderTextColor={GREY[600]} />
+          style={!answer ? [inputStyle, commonStyles.placeholder] : inputStyle} placeholderTextColor={GREY[600]} />
         {Object.keys(filteredProgramsByCategories).map((key, i) =>
           <ImageBackground imageStyle={CategoriesStyleList[i % 4].backgroundStyle} style={style.sectionContainer}
             key={`program${i}`} source={CategoriesStyleList[i % 4].imageBackground}>
