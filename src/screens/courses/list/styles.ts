@@ -7,9 +7,10 @@ import {
   BORDER_RADIUS,
   SCREEN_WIDTH,
   BACKGROUND_SPOT_WIDTH,
+  INPUT_HEIGHT,
 } from '../../../styles/metrics';
 import { GREEN, GREY, PINK, PURPLE, YELLOW, TRANSPARENT_GREY, WHITE } from '../../../styles/colors';
-import { FIRA_SANS_REGULAR, FIRA_SANS_BOLD } from '../../../styles/fonts';
+import { FIRA_SANS_REGULAR, FIRA_SANS_BOLD, FIRA_SANS_MEDIUM } from '../../../styles/fonts';
 
 const styles = StyleSheet.create({
   container: {
@@ -86,6 +87,20 @@ const styles = StyleSheet.create({
     ...FIRA_SANS_BOLD.MD,
     color: GREY[900],
     textAlign: 'center',
+  },
+  input: {
+    ...FIRA_SANS_MEDIUM.MD,
+    backgroundColor: GREY[100],
+    height: INPUT_HEIGHT,
+    marginHorizontal: MARGIN.MD,
+    borderRadius: BORDER_RADIUS.SM,
+    paddingHorizontal: PADDING.LG,
+    marginTop: -MARGIN.MD,
+    color: GREY[900],
+    textAlignVertical: 'top',
+  },
+  placeholder: {
+    ...FIRA_SANS_REGULAR.MD,
   },
 });
 

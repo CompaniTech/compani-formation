@@ -1,22 +1,24 @@
 import 'array-flat-polyfill';
-import { useState, useEffect, useCallback } from 'react';
-import { Text, View, ImageBackground, FlatList, RefreshControl } from 'react-native';
+import { useState, useEffect, useCallback, useMemo, memo } from 'react';
+import { Text, View, ImageBackground, FlatList, RefreshControl, TextInput } from 'react-native';
 import { useIsFocused, CompositeScreenProps } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StackScreenProps } from '@react-navigation/stack';
 import get from 'lodash/get';
+import escapeRegExp from 'lodash/escapeRegExp';
 import Courses from '../../../../api/courses';
 import CoursesSection, { EVENT_SECTION } from '../../../../components/CoursesSection';
 import NextStepCell from '../../../../components/steps/NextStepCell';
 import ProgramCell from '../../../../components/ProgramCell';
 import HomeScreenFooter from '../../../../components/HomeScreenFooter';
-import { getTheoreticalDuration } from '../../../../core/helpers/utils';
+import { getTheoreticalDuration, removeDiacritics } from '../../../../core/helpers/utils';
 import { BlendedCourseType } from '../../../../types/CourseTypes';
 import { NextSlotsStepType } from '../../../../types/StepTypes';
 import { RootBottomTabParamList, RootStackParamList } from '../../../../types/NavigationType';
 import { OperationsCourseListResponseType } from '../../../../types/AxiosTypes';
 import { useGetLoggedUserId } from '../../../../store/main/hooks';
 import commonStyles from '../../../../styles/common';
+import { GREY } from '../../../../styles/colors';
 import {
   BLENDED,
   COMPLETED,
@@ -78,6 +80,20 @@ const formatCoursesDiplaysContent = (courses: BlendedCourseType[]) => {
 
 const renderNextStepsItem = (step: NextSlotsStepType) => <NextStepCell nextSlotsStep={step} mode={TRAINER} />;
 
+type TrainerCoursesHeaderProps = { answer: string, setAnswer: (v: string) => void, nextSteps: NextSlotsStepType[] };
+const TrainerCoursesHeader = memo(({ answer, setAnswer, nextSteps }: TrainerCoursesHeaderProps) => (
+  <>
+    <Text style={commonStyles.title} testID='header'>Espace intervenant</Text>
+    {!!nextSteps.length && <View style={styles.nextSteps}>
+      <CoursesSection items={nextSteps} title="Les prochaines sessions que j'anime"
+        countStyle={styles.purpleCount} renderItem={renderNextStepsItem} type={EVENT_SECTION} />
+    </View>
+    }
+    <TextInput placeholder="Chercher une formation" value={answer} onChangeText={setAnswer}
+      style={!answer ? [styles.input, styles.placeholder] : styles.input} placeholderTextColor={GREY[600]} />
+  </>
+));
+
 interface TrainerCoursesProps extends CompositeScreenProps<
 StackScreenProps<RootBottomTabParamList>,
 StackScreenProps<RootStackParamList>
@@ -90,8 +106,30 @@ const TrainerCourses = ({ navigation }: TrainerCoursesProps) => {
   const [nextSteps, setNextSteps] = useState<NextSlotsStepType[]>([]);
   const [refreshing, setRefreshing] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [answer, setAnswer] = useState<string>('');
 
   const isFocused = useIsFocused();
+
+  const filteredCoursesDisplays = useMemo(() => {
+    if (!answer) return coursesDisplays;
+
+    const normalizedAnswer = escapeRegExp(removeDiacritics(answer.toLowerCase()));
+
+    return coursesDisplays
+      .map(section => ({
+        ...section,
+        courses: section.courses.filter((course) => {
+          const courseName = escapeRegExp(
+            removeDiacritics(
+              `${course.subProgram.program.name?.toLowerCase()}${course.misc ? ` - ${course.misc.toLowerCase()}` : ''}`
+            )
+          );
+
+          return courseName.includes(normalizedAnswer);
+        }),
+      }))
+      .filter(section => section.courses.length);
+  }, [answer, coursesDisplays]);
 
   const getCourses = useCallback(async () => {
     try {
@@ -129,15 +167,6 @@ const TrainerCourses = ({ navigation }: TrainerCoursesProps) => {
     }
   }, [isFocused, getCourses, loggedUserId, isLoaded]);
 
-  const renderHeader = () => <>
-    <Text style={commonStyles.title} testID='header'>Espace intervenant</Text>
-    {!!nextSteps.length && <View style={styles.nextSteps}>
-      <CoursesSection items={nextSteps} title="Les prochaines sessions que j'anime"
-        countStyle={styles.purpleCount} renderItem={renderNextStepsItem} type={EVENT_SECTION} />
-    </View>
-    }
-  </>;
-
   const renderFooter = () => (!!coursesDisplays.length &&
     <HomeScreenFooter source={require('../../../../../assets/images/pa_aidant_balade_bleu.webp')} />
   );
@@ -159,7 +188,8 @@ const TrainerCourses = ({ navigation }: TrainerCoursesProps) => {
   return (
     <SafeAreaView style={commonStyles.container} edges={[]}>
       <View style={styles.container}>
-        <FlatList data={coursesDisplays} keyExtractor={item => item.title} ListHeaderComponent={renderHeader}
+        <FlatList data={filteredCoursesDisplays} keyExtractor={item => item.title}
+          ListHeaderComponent={<TrainerCoursesHeader answer={answer} setAnswer={setAnswer} nextSteps={nextSteps} />}
           renderItem={({ item }) => renderCourseDisplay(item)} showsVerticalScrollIndicator={false}
           ListEmptyComponent={<TrainerEmptyState />} ListFooterComponent={renderFooter}
           refreshControl={renderRefreshControl} />
