@@ -95,13 +95,13 @@ const Catalog = ({ navigation }: CatalogProps) => {
   const renderItem = (program: ELearningProgramType) => <ProgramCell onPress={() => goToProgram(program)}
     program={program} theoreticalDuration={getTheoreticalDuration(get(program, 'subPrograms[0].steps'))} />;
 
-  const inputStyle = { ...commonStyles.searchInput, ...style.input };
+  const inputStyle = !answer ? [commonStyles.searchInput, commonStyles.placeholder] : commonStyles.searchInput;
   return (
     <SafeAreaView style={commonStyles.container} edges={[]}>
       <ScrollView contentContainerStyle={style.container} showsVerticalScrollIndicator={IS_WEB}>
-        <Text style={commonStyles.title}>Explorer</Text>
-        <TextInput placeholder="Chercher une formation" value={answer} onChangeText={setAnswer}
-          style={!answer ? [inputStyle, commonStyles.placeholder] : inputStyle} placeholderTextColor={GREY[600]} />
+        <Text style={{ ...commonStyles.title, ...style.title }}>Explorer</Text>
+        <TextInput placeholder="Chercher une formation" value={answer} onChangeText={setAnswer} style={inputStyle}
+          placeholderTextColor={GREY[600]} />
         {Object.keys(filteredProgramsByCategories).map((key, i) =>
           <ImageBackground imageStyle={CategoriesStyleList[i % 4].backgroundStyle} style={style.sectionContainer}
             key={`program${i}`} source={CategoriesStyleList[i % 4].imageBackground}>

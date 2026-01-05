@@ -32,8 +32,8 @@ const styles = (count = { color: '', background: '' }) => StyleSheet.create({
     transform: [{ translateX: -BACKGROUND_SPOT_WIDTH * 0.5 }],
     top: -32,
   },
-  input: {
-    marginTop: -MARGIN.MD,
+  title: {
+    marginBottom: 0,
   },
 });
 
