@@ -101,7 +101,7 @@ const Catalog = ({ navigation }: CatalogProps) => {
       <ScrollView contentContainerStyle={style.container} showsVerticalScrollIndicator={IS_WEB}>
         <Text style={{ ...commonStyles.title, ...style.title }}>Explorer</Text>
         <TextInput placeholder="Chercher une formation" value={answer} onChangeText={setAnswer} style={inputStyle}
-          placeholderTextColor={GREY[600]} />
+          placeholderTextColor={GREY[600]} clearButtonMode='always' />
         {Object.keys(filteredProgramsByCategories).map((key, i) =>
           <ImageBackground imageStyle={CategoriesStyleList[i % 4].backgroundStyle} style={style.sectionContainer}
             key={`program${i}`} source={CategoriesStyleList[i % 4].imageBackground}>

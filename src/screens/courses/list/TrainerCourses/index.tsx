@@ -90,7 +90,7 @@ const TrainerCoursesHeader = memo(({ answer, setAnswer, nextSteps }: TrainerCour
         countStyle={styles.purpleCount} renderItem={renderNextStepsItem} type={EVENT_SECTION} />
     </View>
     }
-    <TextInput placeholder="Chercher une formation" value={answer} onChangeText={setAnswer}
+    <TextInput placeholder="Chercher une formation" value={answer} onChangeText={setAnswer} clearButtonMode='always'
       style={!answer ? [inputStyle, commonStyles.placeholder] : inputStyle} placeholderTextColor={GREY[600]} />
   </>
 ));
