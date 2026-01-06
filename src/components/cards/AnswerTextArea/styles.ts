@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
 import { GREY, PINK, TRANSPARENT_PINK, WHITE } from '../../../styles/colors';
 import { BORDER_RADIUS, BORDER_WIDTH, MARGIN, PADDING, TEXT_AREA_HEIGHT } from '../../../styles/metrics';
-import { FIRA_SANS_MEDIUM, FIRA_SANS_REGULAR } from '../../../styles/fonts';
+import { FIRA_SANS_MEDIUM } from '../../../styles/fonts';
 
 const styles = (isSelected: boolean) => StyleSheet.create({
   container: {
@@ -19,9 +19,6 @@ const styles = (isSelected: boolean) => StyleSheet.create({
     color: GREY[900],
     textAlignVertical: 'top',
     flexGrow: 1,
-  },
-  placeholder: {
-    ...FIRA_SANS_REGULAR.MD,
   },
   shadow: {
     backgroundColor: isSelected ? TRANSPARENT_PINK : GREY[200],

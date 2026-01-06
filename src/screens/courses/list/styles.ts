@@ -87,6 +87,9 @@ const styles = StyleSheet.create({
     color: GREY[900],
     textAlign: 'center',
   },
+  input: {
+    marginTop: -MARGIN.MD,
+  },
 });
 
 export default styles;

@@ -1,21 +1,23 @@
-import { useState, useEffect } from 'react';
-import { Text, ScrollView, ImageBackground } from 'react-native';
+import { useState, useEffect, useMemo } from 'react';
+import { Text, ScrollView, ImageBackground, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import groupBy from 'lodash/groupBy';
 import { useIsFocused, CompositeScreenProps } from '@react-navigation/native';
 import { StackScreenProps } from '@react-navigation/stack';
 import get from 'lodash/get';
+import escapeRegExp from 'lodash/escapeRegExp';
 import { RootBottomTabParamList, RootStackParamList } from '../../../types/NavigationType';
 import Programs from '../../../api/programs';
-import { ELearningProgramType, ProgramType } from '../../../types/CourseTypes';
+import { ELearningProgramType } from '../../../types/CourseTypes';
+import { ElearningProgramType } from '../../../types/AxiosTypes';
 import commonStyles from '../../../styles/common';
 import { useGetLoggedUserId } from '../../../store/main/hooks';
 import ProgramCell from '../../../components/ProgramCell';
 import styles from './styles';
 import CoursesSection from '../../../components/CoursesSection';
 import HomeScreenFooter from '../../../components/HomeScreenFooter';
-import { GREEN, PINK, YELLOW, PURPLE } from '../../../styles/colors';
-import { capitalizeFirstLetter, getTheoreticalDuration } from '../../../core/helpers/utils';
+import { GREEN, PINK, YELLOW, PURPLE, GREY } from '../../../styles/colors';
+import { capitalizeFirstLetter, getTheoreticalDuration, removeDiacritics } from '../../../core/helpers/utils';
 import { IS_WEB } from '../../../core/data/constants';
 
 interface CatalogProps extends CompositeScreenProps<
@@ -49,20 +51,35 @@ const CategoriesStyleList = [
 const Catalog = ({ navigation }: CatalogProps) => {
   const loggedUserId = useGetLoggedUserId();
 
-  const [programsByCategories, setProgramsByCategories] = useState<{ [key: string]: ProgramType[] }>({});
+  const [programs, setPrograms] = useState<ElearningProgramType[]>([]);
+  const [answer, setAnswer] = useState<string>('');
   const isFocused = useIsFocused();
   const style = styles();
+
+  const filteredProgramsByCategories = useMemo(() => {
+    if (!answer) {
+      const splittedByCategoryPrograms = programs.map(f => (
+        f.categories.map(category => ({ ...f, category: category.name }))
+      )).flat();
+      return groupBy(splittedByCategoryPrograms, f => f.category);
+    }
+
+    const normalizedAnswer = escapeRegExp(removeDiacritics(answer.toLowerCase()));
+    const splittedByCategoryPrograms = programs
+      .filter(program => escapeRegExp(removeDiacritics(program.name.toLowerCase())).includes(normalizedAnswer))
+      .map(f => (
+        f.categories.map(category => ({ ...f, category: category.name }))
+      )).flat();
+    return groupBy(splittedByCategoryPrograms, f => f.category);
+  }, [answer, programs]);
 
   const getPrograms = async () => {
     try {
       const fetchedPrograms = await Programs.getELearningPrograms();
-      const splittedByCategoryPrograms = fetchedPrograms.map(f => (
-        f.categories.map(category => ({ ...f, category: category.name }))
-      )).flat();
-      setProgramsByCategories(groupBy(splittedByCategoryPrograms, f => f.category));
+      setPrograms(fetchedPrograms);
     } catch (e: any) {
       console.error(e);
-      setProgramsByCategories({});
+      setPrograms([]);
     }
   };
 
@@ -70,7 +87,7 @@ const Catalog = ({ navigation }: CatalogProps) => {
     async function fetchData() { await getPrograms(); }
     if (isFocused) {
       fetchData();
-    }
+    } else setAnswer('');
   }, [loggedUserId, isFocused]);
 
   const goToProgram = (program: ELearningProgramType) => navigation.navigate('ElearningAbout', { program });
@@ -78,14 +95,17 @@ const Catalog = ({ navigation }: CatalogProps) => {
   const renderItem = (program: ELearningProgramType) => <ProgramCell onPress={() => goToProgram(program)}
     program={program} theoreticalDuration={getTheoreticalDuration(get(program, 'subPrograms[0].steps'))} />;
 
+  const inputStyle = !answer ? [commonStyles.searchInput, commonStyles.placeholder] : commonStyles.searchInput;
   return (
     <SafeAreaView style={commonStyles.container} edges={[]}>
       <ScrollView contentContainerStyle={style.container} showsVerticalScrollIndicator={IS_WEB}>
-        <Text style={commonStyles.title}>Explorer</Text>
-        {Object.keys(programsByCategories).map((key, i) =>
+        <Text style={{ ...commonStyles.title, ...style.title }}>Explorer</Text>
+        <TextInput placeholder="Chercher une formation" value={answer} onChangeText={setAnswer} style={inputStyle}
+          placeholderTextColor={GREY[600]} clearButtonMode='always' />
+        {Object.keys(filteredProgramsByCategories).map((key, i) =>
           <ImageBackground imageStyle={CategoriesStyleList[i % 4].backgroundStyle} style={style.sectionContainer}
             key={`program${i}`} source={CategoriesStyleList[i % 4].imageBackground}>
-            <CoursesSection items={programsByCategories[key]} title={capitalizeFirstLetter(key)}
+            <CoursesSection items={filteredProgramsByCategories[key]} title={capitalizeFirstLetter(key)}
               countStyle={styles(CategoriesStyleList[i % 4].countStyle).programsCount} renderItem={renderItem} />
           </ImageBackground>)}
         <HomeScreenFooter source={require('../../../../assets/images/aux_detective.webp')} />

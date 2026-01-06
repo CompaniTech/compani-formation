@@ -1,9 +1,17 @@
 // @ts-nocheck
 
 import { StyleSheet } from 'react-native';
-import { MARGIN, MAIN_MARGIN_LEFT, PROGRESS_BAR_HEIGHT, BORDER_WIDTH } from './metrics';
+import {
+  MARGIN,
+  MAIN_MARGIN_LEFT,
+  PROGRESS_BAR_HEIGHT,
+  BORDER_WIDTH,
+  INPUT_HEIGHT,
+  BORDER_RADIUS,
+  PADDING,
+} from './metrics';
 import { WHITE, PINK, GREY } from './colors';
-import { FIRA_SANS_BLACK, FIRA_SANS_BOLD, FIRA_SANS_ITALIC, FIRA_SANS_REGULAR } from './fonts';
+import { FIRA_SANS_BLACK, FIRA_SANS_BOLD, FIRA_SANS_ITALIC, FIRA_SANS_MEDIUM, FIRA_SANS_REGULAR } from './fonts';
 
 export default StyleSheet.create({
   loadingContainer: {
@@ -46,6 +54,19 @@ export default StyleSheet.create({
     ...FIRA_SANS_REGULAR.MD,
     color: GREY[800],
     marginBottom: MARGIN.MD,
+  },
+  placeholder: {
+    ...FIRA_SANS_REGULAR.MD,
+  },
+  searchInput: {
+    ...FIRA_SANS_MEDIUM.MD,
+    backgroundColor: GREY[100],
+    height: INPUT_HEIGHT,
+    margin: MARGIN.MD,
+    borderRadius: BORDER_RADIUS.SM,
+    paddingHorizontal: PADDING.LG,
+    color: GREY[900],
+    textAlignVertical: 'top',
   },
 });
 

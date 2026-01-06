@@ -32,6 +32,9 @@ const styles = (count = { color: '', background: '' }) => StyleSheet.create({
     transform: [{ translateX: -BACKGROUND_SPOT_WIDTH * 0.5 }],
     top: -32,
   },
+  title: {
+    marginBottom: 0,
+  },
 });
 
 export default styles;
