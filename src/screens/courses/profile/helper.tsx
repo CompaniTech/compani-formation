@@ -32,6 +32,8 @@ export const renderStepList = (mode, route, item, index) => (
   </>
 );
 
+export const renderFooter = () => <View style={styles.buttonContainer} />;
+
 export const getTitle = (course) => {
   if (!course) return '';
   const programName = get(course, 'subProgram.program.name') || '';

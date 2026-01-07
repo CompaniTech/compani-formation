@@ -177,7 +177,7 @@ const Profile = ({ navigation }: ProfileProps) => {
   };
 
   return (
-    <SafeAreaView style={commonStyles.container} edges={['top']}>
+    <SafeAreaView style={commonStyles.container} edges={[]}>
       <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={IS_WEB}>
         {!!loggedUser &&
           <>

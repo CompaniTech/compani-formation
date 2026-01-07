@@ -3,11 +3,18 @@ import { useAppDispatch, useAppSelector } from '../hooks';
 import {
   DataOptionsType,
   resetAttendanceSheetReducer,
+  resetCourseData,
   setCourse,
   setMissingAttendanceSheets,
   setGroupedSlotsToBeSigned,
+  setShouldRefreshSheets,
 } from './slice';
-import { getCourse, getMissingAttendanceSheets, getGroupedSlotsToBeSigned } from './selectors';
+import {
+  getCourse,
+  getMissingAttendanceSheets,
+  getGroupedSlotsToBeSigned,
+  getShouldRefreshSheets,
+} from './selectors';
 import { BlendedCourseType, SlotType } from '../../types/CourseTypes';
 
 export const useSetCourse = () => {
@@ -36,8 +43,23 @@ export const useResetAttendanceSheetReducer = () => {
   return useCallback(() => dispatch(resetAttendanceSheetReducer()), [dispatch]);
 };
 
+export const useResetCourseData = () => {
+  const dispatch = useAppDispatch();
+
+  return useCallback(() => dispatch(resetCourseData()), [dispatch]);
+};
+
 export const useGetCourse = () => useAppSelector(getCourse);
 
 export const useGetMissingAttendanceSheets = () => useAppSelector(getMissingAttendanceSheets);
 
 export const useGetGroupedSlotsToBeSigned = () => useAppSelector(getGroupedSlotsToBeSigned);
+
+export const useGetShouldRefreshSheets = () => useAppSelector(getShouldRefreshSheets);
+
+export const useSetShouldRefreshSheets = () => {
+  const dispatch = useAppDispatch();
+
+  return useCallback((shouldRefresh: boolean) =>
+    dispatch(setShouldRefreshSheets(shouldRefresh)), [dispatch]);
+};

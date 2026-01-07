@@ -1,7 +1,17 @@
 // @ts-nocheck
 
 import { useState, useEffect, useCallback } from 'react';
-import { View, BackHandler, ImageSourcePropType, FlatList, ActivityIndicator, RefreshControl } from 'react-native';
+import {
+  View,
+  BackHandler,
+  ImageSourcePropType,
+  FlatList,
+  ActivityIndicator,
+  RefreshControl,
+  TouchableOpacity,
+  Text,
+  Linking,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useIsFocused, CompositeScreenProps } from '@react-navigation/native';
 import get from 'lodash/get';
@@ -12,13 +22,14 @@ import { RootStackParamList, RootBottomTabParamList } from '../../../../types/Na
 import Courses from '../../../../api/courses';
 import { WHITE, GREY } from '../../../../styles/colors';
 import commonStyles from '../../../../styles/common';
+import { EDGES, HIT_SLOP } from '../../../../styles/metrics';
 import { CourseType, BlendedCourseType } from '../../../../types/CourseTypes';
 import styles from '../styles';
 import { useSetStatusBarVisible } from '../../../../store/main/hooks';
 import NiSecondaryButton from '../../../../components/form/SecondaryButton';
 import CourseProfileHeader from '../../../../components/CourseProfileHeader';
 import { FIRA_SANS_MEDIUM } from '../../../../styles/fonts';
-import { getTitle, renderStepList } from '../helper';
+import { getTitle, renderFooter, renderStepList } from '../helper';
 import { PEDAGOGY, TRAINER } from '../../../../core/data/constants';
 
 const ADMIN_SCREEN = 'AdminCourseProfile';
@@ -90,6 +101,11 @@ const TrainerCourseProfile = ({
     else navigation.navigate(screen, { courseId: course._id });
   };
 
+  const goToTraineeFile = (gSheetId: string) => {
+    const url = `https://docs.google.com/spreadsheets/d/${gSheetId}`;
+    Linking.openURL(url);
+  };
+
   const renderHeader = () => <>
     <CourseProfileHeader source={source} goBack={goBack} title={title} />
     <View style={styles.buttonsContainer}>
@@ -97,6 +113,10 @@ const TrainerCourseProfile = ({
         customStyle={styles.adminButton} borderColor={GREY[200]} bgColor={GREY[200]} font={FIRA_SANS_MEDIUM.LG} />
       <NiSecondaryButton caption='A propos' onPress={() => goTo(ABOUT_SCREEN)} icon='info' borderColor={GREY[200]}
         bgColor={WHITE} font={FIRA_SANS_MEDIUM.LG} />
+      {course.gSheetId && <TouchableOpacity hitSlop={HIT_SLOP}
+        onPress={() => goToTraineeFile(course.gSheetId)} style={styles.fileLinkContainer}>
+        <Text style={styles.traineeProgress}>Accéder au fichier de suivi de l&apos;apprenant</Text>
+      </TouchableOpacity>}
     </View>
   </>;
 
@@ -108,9 +128,9 @@ const TrainerCourseProfile = ({
   const renderRefreshControl = <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />;
 
   return course && has(course, 'subProgram.program') ? (
-    <SafeAreaView style={commonStyles.container} edges={['top']}>
+    <SafeAreaView style={commonStyles.container} edges={EDGES}>
       <FlatList data={course.subProgram.steps} keyExtractor={item => item._id} ListHeaderComponent={renderHeader}
-        renderItem={({ item, index }) => renderStepList(TRAINER, route, item, index)}
+        renderItem={({ item, index }) => renderStepList(TRAINER, route, item, index)} ListFooterComponent={renderFooter}
         showsVerticalScrollIndicator={false} refreshControl={renderRefreshControl} />
     </SafeAreaView>
   )

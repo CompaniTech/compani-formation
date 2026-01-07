@@ -24,8 +24,8 @@ const styles = StyleSheet.create({
     marginVertical: MARGIN.LG,
   },
   button: {
-    marginHorizontal: MARGIN.MD,
-    marginBottom: MARGIN.MD,
+    marginHorizontal: MARGIN.LG,
+    marginBottom: MARGIN.LG,
   },
 });
 

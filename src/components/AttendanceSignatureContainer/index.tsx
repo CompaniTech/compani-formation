@@ -3,7 +3,7 @@ import { BackHandler, View } from 'react-native';
 import { WebView, WebViewMessageEvent } from 'react-native-webview';
 import { useFocusEffect, useIsFocused, useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { ICON } from '../../styles/metrics';
+import { EDGES, ICON } from '../../styles/metrics';
 import { GREY } from '../../styles/colors';
 import FeatherButton from '../../components/icons/FeatherButton';
 import NiPrimaryButton from '../../components/form/PrimaryButton';
@@ -43,7 +43,6 @@ const AttendanceSignatureContainer = ({
   };
 
   const handleIframeMessage = useCallback((event: MessageEvent<string>) => {
-    // eslint-disable-next-line no-undef
     if ((event.origin !== window.location.origin && event.origin !== 'null') || !isFocused) return;
     const dataURI = event.data;
     setSignature(dataURI);
@@ -52,12 +51,10 @@ const AttendanceSignatureContainer = ({
 
   useEffect(() => {
     if (IS_WEB) {
-      // eslint-disable-next-line no-undef
       window.addEventListener('message', handleIframeMessage);
     }
     return () => {
       if (IS_WEB) {
-        // eslint-disable-next-line no-undef
         window.removeEventListener('message', handleIframeMessage);
       }
     };
@@ -116,7 +113,7 @@ const AttendanceSignatureContainer = ({
   };
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={['top']}>
+    <SafeAreaView style={styles.safeArea} edges={EDGES}>
       <View style={styles.container}>
         <FeatherButton name='x-circle' onPress={() => setExitConfirmationModal(true)} size={ICON.LG}
           color={GREY[600]} />

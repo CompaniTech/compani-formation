@@ -9,7 +9,7 @@ import { StepType } from '../../../types/StepTypes';
 import commonStyles from '../../../styles/common';
 import styles from './styles';
 import FeatherButton from '../../../components/icons/FeatherButton';
-import { ICON } from '../../../styles/metrics';
+import { EDGES, ICON } from '../../../styles/metrics';
 import { GREY } from '../../../styles/colors';
 import { formatIdentity } from '../../../core/helpers/utils';
 
@@ -61,7 +61,7 @@ const TraineeFollowUp = ({ route, navigation }: TraineeFollowUpProps) => {
   </>;
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={['top']}>
+    <SafeAreaView style={styles.safeArea} edges={EDGES}>
       <View style={styles.header}>
         <FeatherButton name='arrow-left' onPress={() => navigation.goBack()} size={ICON.MD} color={GREY[600]} />
       </View>

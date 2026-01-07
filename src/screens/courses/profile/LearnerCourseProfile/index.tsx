@@ -1,5 +1,3 @@
-/* eslint-env browser */
-
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   View,
@@ -10,13 +8,15 @@ import {
   ActivityIndicator,
   FlatList,
   RefreshControl,
+  Linking,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useIsFocused, CompositeScreenProps } from '@react-navigation/native';
 import get from 'lodash/get';
 import has from 'lodash/has';
 import isEqual from 'lodash/isEqual';
-import * as FileSystem from 'expo-file-system';
+import { File, Paths } from 'expo-file-system';
+import * as FileSystemLegacy from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
 import * as IntentLauncher from 'expo-intent-launcher';
 import { Buffer } from 'buffer';
@@ -26,7 +26,7 @@ import { RootStackParamList, RootBottomTabParamList } from '../../../../types/Na
 import Courses from '../../../../api/courses';
 import Questionnaires from '../../../../api/questionnaires';
 import { WHITE, GREY } from '../../../../styles/colors';
-import { HIT_SLOP, ICON } from '../../../../styles/metrics';
+import { EDGES, HIT_SLOP, ICON } from '../../../../styles/metrics';
 import commonStyles from '../../../../styles/common';
 import { CourseType, BlendedCourseType, ELearningProgramType } from '../../../../types/CourseTypes';
 import styles from '../styles';
@@ -142,6 +142,11 @@ const LearnerCourseProfile = ({ route, navigation }: LearnerCourseProfileProps) 
     return `attestation_${c.subProgram.program.name}${misc}`.replace(/[^a-zA-Zà-üÀ-Ü0-9-+]{1,}/g, '_');
   };
 
+  const shareWithTimeout = async (uri: string, timeout = 5000) => Promise.race([
+    Sharing.shareAsync(uri),
+    new Promise<void>((resolve) => { setTimeout(resolve, timeout); }),
+  ]);
+
   const downloadCompletionCertificate = async () => {
     if (!course) return;
 
@@ -149,21 +154,22 @@ const LearnerCourseProfile = ({ route, navigation }: LearnerCourseProfileProps) 
     const data = await Courses.downloadCertificate(course._id);
 
     const buffer = Buffer.from(data, 'base64');
-    const pdf = buffer.toString('base64');
     const pdfName = getPdfName(course as BlendedCourseType);
 
     if (!IS_WEB) {
-      const fileUri = `${FileSystem.documentDirectory}${encodeURI(pdfName)}.pdf`;
-      await FileSystem.writeAsStringAsync(fileUri, pdf, { encoding: FileSystem.EncodingType.Base64 });
+      const fileName = `${encodeURI(pdfName)}.pdf`;
 
       if (IS_IOS) {
-        await Sharing.shareAsync(fileUri);
+        const pdf = buffer.toString('base64');
+        const fileUri = `${FileSystemLegacy.documentDirectory}${encodeURI(pdfName)}.pdf`;
+        await FileSystemLegacy.writeAsStringAsync(fileUri, pdf, { encoding: FileSystemLegacy.EncodingType.Base64 });
+        await shareWithTimeout(fileUri);
       } else {
-        FileSystem.getContentUriAsync(fileUri).then((cUri) => {
-          IntentLauncher.startActivityAsync('android.intent.action.VIEW' as IntentLauncher.ActivityAction, {
-            data: cUri,
-            flags: 1,
-          });
+        const pdfFile = new File(Paths.document, fileName);
+        pdfFile.write(buffer);
+        IntentLauncher.startActivityAsync('android.intent.action.VIEW' as IntentLauncher.ActivityAction, {
+          data: pdfFile.contentUri,
+          flags: 1,
         });
       }
     } else if (typeof document !== 'undefined') {
@@ -199,6 +205,11 @@ const LearnerCourseProfile = ({ route, navigation }: LearnerCourseProfileProps) 
     navigation.navigate('TraineeFollowUp', { courseId: course._id, trainee: course.trainees![0] as string });
   };
 
+  const goToTraineeFile = (gSheetId: string) => {
+    const url = `https://docs.google.com/spreadsheets/d/${gSheetId}`;
+    Linking.openURL(url);
+  };
+
   const renderHeader = () => course && has(course, 'subProgram.program') && <>
     <CourseProfileHeader source={source} goBack={goBack} title={title} />
     <View style={styles.buttonsContainer}>
@@ -216,10 +227,16 @@ const LearnerCourseProfile = ({ route, navigation }: LearnerCourseProfileProps) 
       </View>
       <Text style={styles.progressBarText}>{(getCourseProgress(course) * 100).toFixed(0)}%</Text>
     </View>}
-    {mode === TUTOR && <TouchableOpacity hitSlop={HIT_SLOP} onPress={goToTraineeProgress}
-      style={styles.traineeProgressContainer}>
-      <Text style={styles.traineeProgress}>Accéder à la progression de l&apos;apprenant</Text>
-    </TouchableOpacity>}
+    {mode === TUTOR && <View>
+      <TouchableOpacity hitSlop={HIT_SLOP} onPress={goToTraineeProgress}
+        style={styles.traineeProgressContainer}>
+        <Text style={styles.traineeProgress}>Accéder à la progression de l&apos;apprenant</Text>
+      </TouchableOpacity>
+      {(course as BlendedCourseType).gSheetId && <TouchableOpacity hitSlop={HIT_SLOP}
+        onPress={() => goToTraineeFile((course as BlendedCourseType).gSheetId!)} style={styles.fileLinkContainer}>
+        <Text style={styles.traineeProgress}>Accéder au fichier de suivi de l&apos;apprenant</Text>
+      </TouchableOpacity>}
+    </View>}
   </>;
 
   const renderFooter = () => <View style={styles.buttonContainer}>
@@ -243,7 +260,7 @@ const LearnerCourseProfile = ({ route, navigation }: LearnerCourseProfileProps) 
   const renderRefreshControl = <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />;
 
   return course && has(course, 'subProgram.program') ? (
-    <SafeAreaView style={commonStyles.container} edges={['top']}>
+    <SafeAreaView style={commonStyles.container} edges={EDGES}>
       <FlatList data={course.subProgram.steps} keyExtractor={item => item._id} ListHeaderComponent={renderHeader}
         renderItem={({ item, index }) => renderStepList(mode, route, item, index)} ListFooterComponent={renderFooter}
         showsVerticalScrollIndicator={IS_WEB} refreshControl={renderRefreshControl} />

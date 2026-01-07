@@ -4,6 +4,7 @@ import get from 'lodash/get';
 import escapeRegExp from 'lodash/escapeRegExp';
 import { removeDiacritics, sortStrings } from '../../core/helpers/utils';
 import { GREY, TRANSPARENT_GRADIENT, WHITE } from '../../styles/colors';
+import commonStyle from '../../styles/common';
 import { CompanyType } from '../../types/CompanyType';
 import { INPUT_HEIGHT } from '../../styles/metrics';
 import BottomModal from '../BottomModal';
@@ -50,7 +51,8 @@ const CompanySearchModal = ({ onRequestClose, visible, companyOptions }: Company
   return (
     <BottomModal onRequestClose={resetModal} visible={visible}>
       <TextInput placeholder="Choisir une structure" value={answer} onChangeText={setAnswer}
-        style={!answer ? [styles.input, styles.placeholder] : styles.input} placeholderTextColor={GREY[600]} />
+        style={!answer ? [commonStyle.searchInput, commonStyle.placeholder] : commonStyle.searchInput}
+        placeholderTextColor={GREY[600]} />
       <FlatList keyExtractor={item => `${item._id}`} data={getDisplayedCompanies()}
         renderItem={({ item }) => renderCompany(item)} />
       <FooterGradient colors={[TRANSPARENT_GRADIENT, WHITE]} bottomPosition={0} height={INPUT_HEIGHT}/>

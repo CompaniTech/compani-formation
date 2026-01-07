@@ -16,6 +16,7 @@ import {
   useIncGoodAnswersCount,
 } from '../../../../store/cards/hooks';
 import { GREEN, GREY, ORANGE, PINK } from '../../../../styles/colors';
+import { EDGES } from '../../../../styles/metrics';
 import cardsStyle from '../../../../styles/cards';
 import { footerColorsType, MultipleChoiceQuestionType, StoreAnswerType } from '../../../../types/CardType';
 import styles from './styles';
@@ -102,7 +103,7 @@ const MultipleChoiceQuestionCard = ({ isLoading, setIsRightSwipeEnabled }: Multi
   const style = styles(footerColors.background);
 
   return (
-    <SafeAreaView style={style.safeArea} edges={['top']}>
+    <SafeAreaView style={style.safeArea} edges={EDGES}>
       <CardHeader />
       <ScrollView contentContainerStyle={style.scrollView} showsVerticalScrollIndicator={false}>
         <Text style={cardsStyle.question}>{card.question}</Text>

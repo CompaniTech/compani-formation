@@ -16,6 +16,7 @@ interface sourceProps {
   link: string,
   type: string,
   hasSlots: boolean
+  hasTrainee: boolean,
 }
 
 interface ImagePreviewProps {
@@ -29,7 +30,9 @@ const ImagePreview = ({ source, deleteFile, onRequestClose, showButton = true }:
   const [zoomImage, setZoomImage] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [confirmationModal, setConfirmationModal] = useState<boolean>(false);
-  const { link, type, hasSlots } = source;
+  const { link, type, hasSlots, hasTrainee } = source;
+  const contentText = 'Voulez-vous également supprimer les émargements associés à la feuille d\'émargement'
+    + `${!hasTrainee ? ' (absences comprises)' : ''} ?`;
 
   const unmount = useCallback(() => {
     setIsLoading(false);
@@ -68,8 +71,7 @@ const ImagePreview = ({ source, deleteFile, onRequestClose, showButton = true }:
       <View style={styles.container}>
         <ConfirmationModal onPressConfirmButton={() => onDeleteFile(true)} visible={confirmationModal}
           title={'Supprimer les émargements'} onPressCancelButton={() => onDeleteFile(false)}
-          contentText={'Voulez-vous également supprimer les émargements associés à la feuille d\'émargement ?'}
-          cancelButton={'Non'} validateButton={'Oui'} />
+          contentText={contentText} cancelButton={'Non'} validateButton={'Oui'} />
         {type === IMAGE
           ? <View style={styles.imageContainer}>
             <NiImage source={{ uri: link }} imgHeight={SCREEN_HEIGHT / 2} onPress={() => setZoomImage(true)} />

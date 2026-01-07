@@ -76,7 +76,7 @@ const DeletionConfirmationModal = ({
           <FeatherButton name="x" onPress={onRequestClose} size={ICON.MD} color={GREY[600]} />
         </View>
         <View style={styles.warningMessage}>
-          <AntDesign name="exclamationcircleo" color={ORANGE[700]} size={ICON.MD} />
+          <AntDesign name="exclamation-circle" color={ORANGE[700]} size={ICON.MD} />
           <Text style={styles.warningText}>
             Votre historique de formation sera supprimé. Cette action est irréversible.
           </Text>

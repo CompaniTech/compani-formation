@@ -69,6 +69,7 @@ export type SlotType = {
   meetingLink?: string,
   step: { _id: string, type: string },
   missingAttendances?: { trainee: string }[]
+  trainees?: string[]
 }
 
 export type SlotToPlanType = {
@@ -122,7 +123,8 @@ export type BlendedCourseType = BaseCourseType & {
   trainees?: TraineeType[],
   companies?: CompanyType[],
   tutors?: TutorType[],
-  attendanceSheets?: AttendanceSheetType[]
+  attendanceSheets?: AttendanceSheetType[],
+  gSheetId?: string
 }
 
 export type CourseModeType = typeof LEARNER | typeof TESTER | typeof TRAINER | typeof TUTOR;

@@ -19,6 +19,7 @@ import {
   useIncGoodAnswersCount,
 } from '../../../../store/cards/hooks';
 import { PINK, GREY, GREEN, ORANGE } from '../../../../styles/colors';
+import { EDGES } from '../../../../styles/metrics';
 import { FillTheGapType, footerColorsType, StoreAnswerType } from '../../../../types/CardType';
 import styles from './styles';
 
@@ -143,13 +144,14 @@ const FillTheGapCard = ({ isLoading, setIsRightSwipeEnabled }: FillTheGap) => {
 
     const webAnswer = { dragged: { payload: item._id, dragTranslationRatio: { x: 0, y: 0 } } };
 
+    const setAnswerOnClick = () => setAnswersAndPropositions(webAnswer as DraxDragWithReceiverEventData);
+
     return IS_WEB
-      ? <TouchableOpacity style={style.answerContainer}
-        onPress={() => setAnswersAndPropositions(webAnswer as DraxDragWithReceiverEventData)}>
+      ? <TouchableOpacity style={style.answerContainer} onPress={setAnswerOnClick}>
         {proposition}
       </TouchableOpacity>
       : <DraxView style={style.answerContainer} draggingStyle={{ opacity: 0 }} dragPayload={item._id}
-        longPressDelay={0}>
+        longPressDelay={0} onTouchEnd={setAnswerOnClick}>
         {proposition}
       </DraxView>;
   };
@@ -192,7 +194,7 @@ const FillTheGapCard = ({ isLoading, setIsRightSwipeEnabled }: FillTheGap) => {
   };
 
   return (
-    <SafeAreaView style={style.safeArea} edges={['top']}>
+    <SafeAreaView style={style.safeArea} edges={EDGES}>
       <CardHeader />
       <ScrollView contentContainerStyle={style.container} showsVerticalScrollIndicator={false}>
         {IS_WEB

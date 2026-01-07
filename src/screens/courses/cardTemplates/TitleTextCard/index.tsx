@@ -5,6 +5,7 @@ import Markdown from 'react-native-markdown-display';
 import CardHeader from '../../../../components/cards/CardHeader';
 import CardFooter from '../../../../components/cards/CardFooter';
 import { useGetCard, useGetCardIndex } from '../../../../store/cards/hooks';
+import { EDGES } from '../../../../styles/metrics';
 import cardsStyle from '../../../../styles/cards';
 import { markdownStyle } from '../../../../styles/common';
 import { TitleTextMediaType } from '../../../../types/CardType';
@@ -23,7 +24,7 @@ const TitleTextCard = ({ isLoading, setIsRightSwipeEnabled }: TitleTextCardProps
   if (isLoading) return null;
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={['top']}>
+    <SafeAreaView style={styles.safeArea} edges={EDGES}>
       <CardHeader />
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
         <Text style={cardsStyle.title}>{card.title}</Text>

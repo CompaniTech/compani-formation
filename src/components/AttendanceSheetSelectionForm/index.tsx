@@ -7,7 +7,7 @@ import NiPrimaryButton from '../form/PrimaryButton';
 import NiErrorMessage from '../ErrorMessage';
 import { ErrorActionType, ErrorStateType, SET_ERROR } from '../../reducers/error';
 import FeatherButton from '../icons/FeatherButton';
-import { ICON } from '../../styles/metrics';
+import { EDGES, ICON } from '../../styles/metrics';
 import { GREY } from '../../styles/colors';
 import {
   ATTENDANCE_SIGNATURE,
@@ -91,7 +91,7 @@ const AttendanceSheetSelectionForm = ({
     } else navigation.navigate(nextScreenName);
   };
 
-  return <SafeAreaView style={styles.safeArea} edges={['top']}>
+  return <SafeAreaView style={styles.safeArea} edges={EDGES}>
     <View style={styles.header}>
       <FeatherButton name='arrow-left' onPress={() => navigation.goBack()} size={ICON.MD} color={GREY[600]} />
     </View>

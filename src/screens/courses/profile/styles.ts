@@ -58,6 +58,10 @@ const styles = StyleSheet.create({
     ...FIRA_SANS_REGULAR.SM,
     color: PINK[500],
   },
+  fileLinkContainer: {
+    marginTop: MARGIN.MD,
+    alignItems: 'center',
+  },
 });
 
 export default styles;

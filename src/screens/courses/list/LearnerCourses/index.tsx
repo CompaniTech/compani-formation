@@ -128,7 +128,7 @@ const LearnerCourses = ({ navigation }: LearnerCoursesProps) => {
   const renderRefreshControl = <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />;
 
   return (
-    <SafeAreaView style={commonStyles.container} edges={['top']}>
+    <SafeAreaView style={commonStyles.container} edges={[]}>
       <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={IS_WEB}
         refreshControl={renderRefreshControl}>
         <Text style={commonStyles.title} testID='header'>Mes formations</Text>

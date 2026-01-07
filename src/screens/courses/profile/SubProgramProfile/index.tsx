@@ -17,7 +17,7 @@ import isEqual from 'lodash/isEqual';
 import { LinearGradient } from 'expo-linear-gradient';
 import SubPrograms from '../../../../api/subPrograms';
 import { GREY, WHITE } from '../../../../styles/colors';
-import { ICON } from '../../../../styles/metrics';
+import { EDGES, ICON } from '../../../../styles/metrics';
 import FeatherButton from '../../../../components/icons/FeatherButton';
 import { TESTER } from '../../../../core/data/constants';
 import commonStyles from '../../../../styles/common';
@@ -25,7 +25,7 @@ import styles from './styles';
 import { useSetStatusBarVisible } from '../../../../store/main/hooks';
 import { RootStackParamList, RootBottomTabParamList } from '../../../../types/NavigationType';
 import { SubProgramType } from '../../../../types/CourseTypes';
-import { renderStepList } from '../helper';
+import { renderFooter, renderStepList } from '../helper';
 
 interface SubProgramProfileProps extends CompositeScreenProps<
 StackScreenProps<RootStackParamList, 'SubProgramProfile'>,
@@ -105,9 +105,9 @@ const SubProgramProfile = ({ route, navigation }: SubProgramProfileProps) => {
   const renderRefreshControl = <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />;
 
   return subProgram && subProgram.steps ? (
-    <SafeAreaView style={commonStyles.container} edges={['top']}>
+    <SafeAreaView style={commonStyles.container} edges={EDGES}>
       <FlatList data={subProgram.steps} keyExtractor={item => item._id} ListHeaderComponent={renderHeader}
-        renderItem={({ item, index }) => renderStepList(TESTER, route, item, index)}
+        renderItem={({ item, index }) => renderStepList(TESTER, route, item, index)} ListFooterComponent={renderFooter}
         showsVerticalScrollIndicator={false} refreshControl={renderRefreshControl} />
     </SafeAreaView>
   )

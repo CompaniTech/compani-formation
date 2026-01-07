@@ -14,6 +14,7 @@ import {
   useRemoveQuestionnaireAnswer,
 } from '../../../../store/cards/hooks';
 import cardsStyle from '../../../../styles/cards';
+import { EDGES } from '../../../../styles/metrics';
 import { GREY, PINK } from '../../../../styles/colors';
 import styles from './styles';
 
@@ -72,7 +73,7 @@ const QuestionAnswerCard = ({ isLoading, setIsRightSwipeEnabled }: QuestionAnswe
     item={item.text} isSelected={item.isSelected} index={index} />;
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={['top']}>
+    <SafeAreaView style={styles.safeArea} edges={EDGES}>
       <CardHeader />
       <ScrollView contentContainerStyle={styles.scrollView} showsVerticalScrollIndicator={false}>
         <Text style={cardsStyle.question}>{card.question}</Text>

@@ -12,6 +12,7 @@ import {
   useRemoveQuestionnaireAnswer,
 } from '../../../../store/cards/hooks';
 import { GREY, PINK } from '../../../../styles/colors';
+import { EDGES } from '../../../../styles/metrics';
 import { SurveyType } from '../../../../types/CardType';
 import styles from './styles';
 
@@ -48,7 +49,7 @@ const SurveyCard = ({ isLoading, setIsRightSwipeEnabled }: SurveyCardProps) => {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={['top']}>
+    <SafeAreaView style={styles.safeArea} edges={EDGES}>
       <CardHeader />
       <ScrollView contentContainerStyle={styles.container}>
         <Text style={styles.question}>{card.question}</Text>
