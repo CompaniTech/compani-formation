@@ -1,5 +1,5 @@
-import { createRef, useEffect, useReducer, useState } from 'react';
-import { Text, View, TextInput, Keyboard, TextInputKeyPressEventData, ScrollView } from 'react-native';
+import { useEffect, useReducer, useRef, useState } from 'react';
+import { Text, View, TextInput, Keyboard, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import get from 'lodash/get';
 import BottomModal from '../BottomModal';
@@ -23,28 +23,20 @@ const ForgotPasswordModal = ({ visible, email, setForgotPasswordModal }: ForgotP
   const [isKeyboardOpen, setIsKeyboardOpen] = useState<boolean>(false);
   const [isValidationAttempted, setIsValidationAttempted] = useState<boolean>(false);
   const [error, dispatchError] = useReducer(errorReducer, initialErrorState);
-  const inputRefs: any[] = [
-    createRef(),
-    createRef(),
-    createRef(),
-    createRef(),
-  ];
+  const inputRefs = useRef<TextInput[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const navigation = useNavigation();
   const [codeRecipient, setCodeRecipient] = useState<string>('');
   const [chosenMethod, setChosenMethod] = useState<string>('');
 
-  const keyboardDidHide = () => setIsKeyboardOpen(false);
-  const keyboardDidShow = () => setIsKeyboardOpen(true);
-
   useEffect(() => {
-    const hideListener = Keyboard.addListener('keyboardDidHide', keyboardDidHide);
-    const showListener = Keyboard.addListener('keyboardDidShow', keyboardDidShow);
+    const hideListener = Keyboard.addListener('keyboardDidHide', () => setIsKeyboardOpen(false));
+    const showListener = Keyboard.addListener('keyboardDidShow', () => setIsKeyboardOpen(true));
     return () => {
       hideListener.remove();
       showListener.remove();
     };
-  });
+  }, []);
 
   useEffect(() => {
     const isCodeInvalid = !(code.every(char => char !== '' && Number.isInteger(Number(char))));
@@ -54,28 +46,42 @@ const ForgotPasswordModal = ({ visible, email, setForgotPasswordModal }: ForgotP
     } else { dispatchError({ type: RESET_ERROR }); }
   }, [code, isValidationAttempted]);
 
-  const onChangeText = (char: string, index: number) => {
-    setCode(code.map((c, i) => (i === index ? char : c)));
-    if (!!char && index + 1 < 4) inputRefs[index + 1].focus();
-  };
+  const onChangeText = (text: string, index: number) => {
+    if (text.length > 1) {
+      const chars = text.split('').slice(0, 4);
+      setCode((prev) => {
+        const next = [...prev];
+        chars.forEach((c, i) => { next[i] = c; });
+        return next;
+      });
+      global.requestAnimationFrame(() => {
+        inputRefs.current[index - 1]?.focus();
+      });
+      return;
+    }
 
-  const goPreviousAfterEdit = (index: number) => {
-    inputRefs[index].focus();
-    if (code[index] !== '') onChangeText('', index);
-  };
+    setCode((prev) => {
+      const next = [...prev];
+      next[index] = text;
+      return next;
+    });
 
-  const checkKeyValue = (key: TextInputKeyPressEventData['key'], idx: number) => {
-    if (key === 'Backspace') {
-      if (!idx && code[idx] === '') return;
+    if (text && index < inputRefs.current.length) {
+      global.requestAnimationFrame(() => {
+        inputRefs.current[index + 1]?.focus();
+      });
+    }
 
-      if (code[idx] === '') goPreviousAfterEdit(idx - 1);
-      else onChangeText('', idx);
+    if (!text && index > 0) {
+      global.requestAnimationFrame(() => {
+        inputRefs.current[index - 1]?.focus();
+      });
     }
   };
 
   const formatCode = () => {
     Keyboard.dismiss();
-    const formattedCode = `${code[0]}${code[1]}${code[2]}${code[3]}`;
+    const formattedCode = code.join('');
     setIsValidationAttempted(true);
     if (!error.value) sendCode(formattedCode);
   };
@@ -114,7 +120,7 @@ const ForgotPasswordModal = ({ visible, email, setForgotPasswordModal }: ForgotP
       setCodeRecipient(email);
       dispatchError({ type: RESET_ERROR });
     } catch (e: any) {
-      const payload = e.response.status === 404
+      const payload = e.response?.status === 404
         ? 'Oops, on ne reconnaît pas cet e-mail'
         : 'Oops, erreur lors de la transmission de l\'e-mail';
       dispatchError({ type: SET_ERROR, payload });
@@ -131,7 +137,7 @@ const ForgotPasswordModal = ({ visible, email, setForgotPasswordModal }: ForgotP
       setCodeRecipient(get(sms, 'phone') ? `${formatPhone(sms!)}` : '');
       dispatchError({ type: RESET_ERROR });
     } catch (e: any) {
-      const payload = e.response.status === 409
+      const payload = e.response?.status === 409
         ? 'Oops, nous n\'avons pas trouvé de numéro de téléphone associé à votre compte'
         : 'Oops, erreur lors de la transmission du numéro de téléphone';
       dispatchError({ type: SET_ERROR, payload });
@@ -169,13 +175,13 @@ const ForgotPasswordModal = ({ visible, email, setForgotPasswordModal }: ForgotP
           <Text style={styles.afterCodeSentText}>Saisie du code temporaire</Text>
         </>}
       <View style={styles.inputContainer}>
-        {inputRefs.map((k, idx) => (
-          <TextInput ref={(r) => { inputRefs[idx] = r; }} key={`${k}${idx}`} value={code[idx]}
+        {[0, 1, 2, 3].map(idx => (
+          <TextInput ref={(r) => { inputRefs.current[idx] = r!; }} key={idx} value={code[idx]}
             onChangeText={char => onChangeText(char, idx)} style={styles.input} placeholder={'_'}
-            onKeyPress={({ nativeEvent }) => checkKeyValue(nativeEvent.key, idx)} placeholderTextColor={GREY[600]}
-            maxLength={1} keyboardType={'number-pad'} autoFocus={idx === 0} />))}
+            placeholderTextColor={GREY[600]} maxLength={1} keyboardType={'number-pad'}
+            autoCorrect={false} autoComplete="off" selectTextOnFocus />))}
       </View>
-      <NiPrimaryButton caption='Valider' customStyle={styles.button} onPress={() => formatCode()} loading={isLoading} />
+      <NiPrimaryButton caption='Valider' customStyle={styles.button} onPress={formatCode} loading={isLoading} />
       {error.value && <Text style={styles.unvalid}>{error.message}</Text>}
     </>
   );
