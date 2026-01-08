@@ -74,7 +74,7 @@ const EmailForm = ({ route, navigation }: EmailFormProps) => {
 
   const goBack = () => {
     if (exitConfirmationModal) setExitConfirmationModal(false);
-    navigation.navigate('Authentication');
+    navigation.goBack();
   };
 
   const enterEmail = (text: string) => setEmail(text.trim());
