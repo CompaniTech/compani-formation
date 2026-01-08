@@ -100,11 +100,11 @@ const ForgotPasswordModal = ({ visible, email, setForgotPasswordModal }: ForgotP
     try {
       setIsLoading(true);
       const checkToken = await Authentication.passwordToken({ email }, formattedCode);
-      navigation.navigate(
+      await navigation.navigate(
         'PasswordReset',
         { userId: checkToken.user._id, email, token: checkToken.token, mobileConnectionMode: IDENTITY_VERIFICATION }
       );
-      setTimeout(onRequestClose, 200);
+      onRequestClose();
     } catch (_) {
       dispatchError({ type: SET_ERROR, payload: 'Oops, le code n\'est pas valide' });
     } finally {
