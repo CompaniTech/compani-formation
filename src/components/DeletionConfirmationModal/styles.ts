@@ -8,7 +8,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginTop: MARGIN.SM,
-    paddingHorizontal: PADDING.MD,
+    paddingHorizontal: PADDING.LG,
   },
   title: {
     ...FIRA_SANS_BOLD.LG,
