@@ -79,11 +79,11 @@ const ForgotPasswordModal = ({ visible, email, setForgotPasswordModal }: ForgotP
     }
   };
 
-  const formatCode = () => {
+  const formatCode = async () => {
     Keyboard.dismiss();
     const formattedCode = code.join('');
     setIsValidationAttempted(true);
-    if (!error.value) sendCode(formattedCode);
+    if (!error.value) await sendCode(formattedCode);
   };
 
   const onRequestClose = () => {
@@ -100,11 +100,11 @@ const ForgotPasswordModal = ({ visible, email, setForgotPasswordModal }: ForgotP
     try {
       setIsLoading(true);
       const checkToken = await Authentication.passwordToken({ email }, formattedCode);
-      onRequestClose();
       navigation.navigate(
         'PasswordReset',
         { userId: checkToken.user._id, email, token: checkToken.token, mobileConnectionMode: IDENTITY_VERIFICATION }
       );
+      setTimeout(onRequestClose, 200);
     } catch (_) {
       dispatchError({ type: SET_ERROR, payload: 'Oops, le code n\'est pas valide' });
     } finally {
