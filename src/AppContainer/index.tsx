@@ -19,6 +19,7 @@ import {
   handleNotificationResponse,
   handleExpoToken,
 } from '../core/helpers/notifications';
+import CompaniDate from '../core/helpers/dates/companiDates';
 import { ACTIVE_STATE, IS_WEB } from '../core/data/constants';
 import UpdateAppModal from '../components/UpdateAppModal';
 import MaintenanceModal from '../components/MaintenanceModal';
@@ -182,10 +183,9 @@ const AppContainer = ({ onLayout }: AppContainerProps) => {
   }, [companiToken, setLoggedUser, signOut]);
 
   const shouldUpdate = useCallback(async (nextState) => {
-    if (nextState !== ACTIVE_STATE) return;
-    if (!isForeground()) return;
+    if (nextState !== ACTIVE_STATE || !isForeground()) return;
 
-    const now = Date.now();
+    const now = CompaniDate().toMillis();
     if (now - lastCheckRef.current < 3000) return;
     lastCheckRef.current = now;
 
