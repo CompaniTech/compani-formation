@@ -13,9 +13,13 @@ import { initializeAssets } from '../core/helpers/assets';
 
 Sentry.init({ dsn: Environment.getSentryKey(), debug: false });
 
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({ shouldShowBanner: true, shouldPlaySound: false, shouldSetBadge: true }),
-});
+try {
+  Notifications.setNotificationHandler({
+    handleNotification: async () => ({ shouldShowBanner: true, shouldPlaySound: false, shouldSetBadge: true }),
+  });
+} catch (e) {
+  console.error('Failed to set notification handler:', e);
+}
 
 // Keep the splash screen visible while we fetch resources
 SplashScreen.preventAutoHideAsync();

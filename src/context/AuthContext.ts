@@ -1,11 +1,22 @@
 import { Dispatch } from 'react';
+import { AppState } from 'react-native';
 import Authentication from '../api/authentication';
 import asyncStorage from '../core/helpers/asyncStorage';
 import { createDataContext } from './createDataContext';
 import Users from '../api/users';
-import { BEFORE_SIGNIN, SIGNIN, SIGNIN_ERROR, RESET_ERROR, SIGNOUT, RENDER } from '../core/data/constants';
+import {
+  BEFORE_SIGNIN,
+  SIGNIN,
+  SIGNIN_ERROR,
+  RESET_ERROR,
+  SIGNOUT,
+  RENDER,
+  ACTIVE_STATE,
+} from '../core/data/constants';
 import { ActionType, BoundActionsType, CreateDataContextType } from './types';
 import { AuthenticationPayloadType } from '../types/AuthenticationTypes';
+
+const isForeground = () => AppState.currentState === ACTIVE_STATE;
 
 export interface AuthContextStateType {
   companiToken: string | null,
@@ -71,12 +82,20 @@ const signIn = (dispatch: Dispatch<ActionType>) =>
   };
 
 const signOut = (dispatch: Dispatch<ActionType>) => async (removeExpoToken: boolean = false) => {
-  await Authentication.logOut();
+  try {
+    await Authentication.logOut();
+  } catch (e) {
+    console.error('Logout failed:', e);
+  }
 
   const expoToken = await asyncStorage.getExpoToken();
   const userId = await asyncStorage.getUserId();
 
-  if (removeExpoToken && expoToken && userId) await Users.removeExpoToken(userId, expoToken);
+  try {
+    if (removeExpoToken && expoToken && userId) await Users.removeExpoToken(userId, expoToken);
+  } catch (e) {
+    console.error('Remove expo token failed:', e);
+  }
 
   await asyncStorage.removeCompaniToken();
   await asyncStorage.removeRefreshToken();
@@ -96,7 +115,7 @@ const refreshCompaniToken = (dispatch: Dispatch<ActionType>) => async (refreshTo
 
     dispatch({ type: SIGNIN, payload: token.token });
   } catch (_) {
-    signOut(dispatch)();
+    if (isForeground()) setTimeout(() => signOut(dispatch)(), 0);
   }
 };
 
@@ -119,7 +138,8 @@ const tryLocalSignIn = (dispatch: Dispatch<ActionType>) => async () => {
   }
 
   dispatch({ type: RENDER });
-  return signOut(dispatch)();
+  if (isForeground()) setTimeout(() => signOut(dispatch)(), 0);
+  return undefined;
 };
 
 const resetError = (dispatch: Dispatch<ActionType>) => () => {

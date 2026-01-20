@@ -26,6 +26,8 @@ import ToastMessage from '../components/ToastMessage';
 import { WHITE } from '../styles/colors';
 import styles from './styles';
 
+const isForeground = () => AppState.currentState === ACTIVE_STATE;
+
 type AppContainerProps = {
   onLayout: () => void;
 };
@@ -54,14 +56,18 @@ const AppContainer = ({ onLayout }: AppContainerProps) => {
   const axiosLoggedRequestInterceptorId = useRef<number | null>(null);
   const axiosLoggedResponseInterceptorId = useRef<number | null>(null);
   const axiosNotLoggedResponseInterceptorId = useRef<number | null>(null);
+  const didRegisterPush = useRef(false);
+  const lastCheckRef = useRef(0);
   const [triggerToastMessage, setTriggerToastMessage] = useState<boolean>(false);
 
   useEffect(() => {
     if (!IS_WEB) {
-      registerForPushNotificationsAsync().then(async (data) => {
-        if (!companiToken) return;
-        await handleExpoToken(data);
-      });
+      if (companiToken && !didRegisterPush.current) {
+        didRegisterPush.current = true;
+        registerForPushNotificationsAsync().then(async (data) => {
+          await handleExpoToken(data);
+        });
+      } else if (!companiToken) didRegisterPush.current = false;
     }
   }, [companiToken]);
 
@@ -74,7 +80,7 @@ const AppContainer = ({ onLayout }: AppContainerProps) => {
         if (isValidNotification) handleNotificationResponse(response);
       });
     }
-    return () => subscription.remove();
+    return () => (subscription ? subscription.remove() : null);
   }, []);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -119,7 +125,7 @@ const AppContainer = ({ onLayout }: AppContainerProps) => {
       }
     }
 
-    await signOut();
+    if (isForeground()) setTimeout(() => signOut(), 0);
     return Promise.reject(error.response);
   }, [signOut, refreshCompaniToken]);
 
@@ -175,16 +181,21 @@ const AppContainer = ({ onLayout }: AppContainerProps) => {
     if (companiToken) setUser();
   }, [companiToken, setLoggedUser, signOut]);
 
-  const shouldUpdate = async (nextState) => {
+  const shouldUpdate = useCallback(async (nextState) => {
+    if (nextState !== ACTIVE_STATE) return;
+    if (!isForeground()) return;
+
+    const now = Date.now();
+    if (now - lastCheckRef.current < 3000) return;
+    lastCheckRef.current = now;
+
     try {
-      if (nextState === ACTIVE_STATE) {
-        const { mustUpdate } = await Version.shouldUpdate();
-        setUpdateModaleVisible(mustUpdate);
-      }
+      const { mustUpdate } = await Version.shouldUpdate();
+      setUpdateModaleVisible(mustUpdate);
     } catch (error) {
       console.error(error);
     }
-  };
+  }, [setUpdateModaleVisible]);
 
   useEffect(() => {
     initializeAxiosNotLogged();
@@ -192,7 +203,7 @@ const AppContainer = ({ onLayout }: AppContainerProps) => {
     const { remove } = AppState.addEventListener('change', shouldUpdate);
 
     return () => { remove(); };
-  }, []);
+  }, [shouldUpdate]);
 
   if (!appIsReady) return null;
 
