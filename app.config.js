@@ -135,7 +135,7 @@ export default {
       'expo-asset',
       'expo-video',
       'expo-audio',
-      'expo-notifications',
+      ['expo-notifications', { autoRegistration: false }],
     ],
   },
 };
