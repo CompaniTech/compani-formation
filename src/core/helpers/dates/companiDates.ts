@@ -13,6 +13,7 @@ export type CompaniDateType = {
   format: (str: string) => string,
   toDate: () => Date,
   toISO: () => string,
+  toMillis: () => number,
   isSame: (miscTypeOtherDate: DateTypes, unit: DateTimeUnit) => boolean,
   isBefore: (date: DateTypes, unit?: DateTimeUnit) => boolean,
   isAfter: (date: DateTypes, unit?: DateTimeUnit) => boolean,
@@ -47,6 +48,10 @@ const CompaniDateFactory = (inputDate: DateTime): CompaniDateType => {
 
     toISO() {
       return _date.toUTC().toISO() || '';
+    },
+
+    toMillis() {
+      return _date.toMillis();
     },
 
     // QUERY
