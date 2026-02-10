@@ -4,19 +4,20 @@ import styles from './styles';
 
 type pickerOptionType = {label: string, inputLabel: string, value: string}
 
-interface NiPickerProps {
+interface PickerProps {
   value: string,
   options: pickerOptionType[],
   onValueChange: (value: string) => void,
 }
 
-const NiPicker: React.FC<NiPickerProps> = ({ value, options, onValueChange }) => {
+const Picker = ({ value, options, onValueChange }: PickerProps) => {
   const [modalVisible, setModalVisible] = useState(false);
 
   const selectedItem = options.find(c => c.value === value);
 
   const selectValue = (newValue: string) => {
-    onValueChange(newValue); setModalVisible(false);
+    onValueChange(newValue);
+    setModalVisible(false);
   };
 
   const itemModal = (item: pickerOptionType) => (
@@ -26,7 +27,7 @@ const NiPicker: React.FC<NiPickerProps> = ({ value, options, onValueChange }) =>
   );
 
   return (
-    <View>
+    <>
       <TouchableOpacity style={styles.selectedContainer} onPress={() => setModalVisible(true)}>
         <Text style={styles.selectedText}>{selectedItem?.inputLabel || ''}</Text>
       </TouchableOpacity>
@@ -37,8 +38,8 @@ const NiPicker: React.FC<NiPickerProps> = ({ value, options, onValueChange }) =>
           </View>
         </TouchableOpacity>
       </Modal>
-    </View>
+    </>
   );
 };
 
-export default NiPicker;
+export default Picker;
