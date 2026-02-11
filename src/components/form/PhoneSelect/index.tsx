@@ -1,6 +1,6 @@
 import { Text, View } from 'react-native';
 import countryCodes from '../../../core/data/countryCodes';
-import Picker from '../Picker';
+import NiPicker from '../Picker';
 import NiInput from '../Input';
 import styles from './styles';
 
@@ -15,7 +15,7 @@ const PhoneSelect = ({ contact, setContact, validationMessage = '' }: PhoneSelec
     <Text style={styles.caption}>Téléphone</Text>
     <View style={styles.container}>
       <View>
-        <Picker value={contact.countryCode} options={countryCodes}
+        <NiPicker value={contact.countryCode} options={countryCodes}
           onValueChange={value => setContact(value, 'countryCode')} />
       </View>
       <View style={styles.input}>

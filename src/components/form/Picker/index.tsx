@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Modal, FlatList } from 'react-native';
 import styles from './styles';
 
-type pickerOptionType = {label: string, inputLabel: string, value: string}
+type pickerOptionType = { label: string, inputLabel: string, value: string }
 
 interface PickerProps {
   value: string,
