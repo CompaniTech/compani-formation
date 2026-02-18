@@ -9,7 +9,7 @@ type BaseAttendanceSheetType = {
   _id: string,
   course: string,
   file: { publicId: string, link: string },
-  trainer: TrainerType,
+  trainer: TrainerType | string,
   slots?: (SlotType & SignaturesType)[]
 }
 

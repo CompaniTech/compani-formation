@@ -13,7 +13,7 @@ import { GREY } from '../../../styles/colors';
 import styles from './styles';
 import { useGetLoggedUserId } from '../../../store/main/hooks';
 import { useGetCourse, useSetGroupedSlotsToBeSigned } from '../../../store/attendanceSheets/hooks';
-import { SlotType } from '../../../types/CourseTypes';
+import { SlotType, TrainerType } from '../../../types/CourseTypes';
 
 interface AttendanceSheetCellProps {
   attendanceSheet: AttendanceSheetType,
@@ -48,7 +48,7 @@ const AttendanceSheetCell = ({ attendanceSheet }: AttendanceSheetCellProps) => {
     }, {});
 
     setGroupedSlotsToBeSigned(groupedSlotsToBeSigned!);
-    const trainerName = formatIdentity(attendanceSheet.trainer.identity, LONG_FIRSTNAME_LONG_LASTNAME);
+    const trainerName = formatIdentity((attendanceSheet.trainer as TrainerType).identity, LONG_FIRSTNAME_LONG_LASTNAME);
     navigation.navigate('UpdateAttendanceSheet', { attendanceSheetId: attendanceSheet._id, trainerName });
   };
   return (
