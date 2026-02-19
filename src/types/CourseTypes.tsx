@@ -70,6 +70,7 @@ export type SlotType = {
   step: { _id: string, type: string },
   missingAttendances?: { trainee: string }[]
   trainees?: string[]
+  trainers?: string[]
 }
 
 export type SlotToPlanType = {

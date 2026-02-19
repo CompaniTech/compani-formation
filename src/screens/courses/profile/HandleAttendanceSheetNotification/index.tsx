@@ -4,7 +4,7 @@ import { StackScreenProps } from '@react-navigation/stack';
 import { useSetGroupedSlotsToBeSigned } from '../../../../store/attendanceSheets/hooks';
 import Courses from '../../../../api/courses';
 import { RootStackParamList } from '../../../../types/NavigationType';
-import { BlendedCourseType, SlotType } from '../../../../types/CourseTypes';
+import { BlendedCourseType, SlotType, TrainerType } from '../../../../types/CourseTypes';
 import { INTER_B2B, LONG_FIRSTNAME_LONG_LASTNAME, SINGLE } from '../../../../core/data/constants';
 import { formatIdentity } from '../../../../core/helpers/utils';
 import { useGetLoggedUserId } from '../../../../store/main/hooks';
@@ -42,7 +42,10 @@ const HandleAttendanceSheetNotification = ({ route, navigation }: HandleAttendan
         }
         setGroupedSlotsToBeSigned(groupedSlotsToBeSigned);
 
-        const trainerName = formatIdentity(attendanceSheet!.trainer.identity, LONG_FIRSTNAME_LONG_LASTNAME);
+        const trainerName = formatIdentity(
+          (attendanceSheet!.trainer as TrainerType).identity,
+          LONG_FIRSTNAME_LONG_LASTNAME
+        );
         navigation.replace('UpdateAttendanceSheet', { attendanceSheetId, trainerName });
       } catch (error) {
         console.error(error);
