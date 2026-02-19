@@ -149,7 +149,7 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
       // Only check slots that are in the past
       if (!TODAY.isAfter(slot.startDate)) return false;
 
-      if (slot.trainers && !slot.trainers.includes(loggedUserId!)) return false;
+      if (!slot.trainers?.includes(loggedUserId!)) return false;
 
       return course.trainees!.some((trainee) => {
         // Check if trainee already has attendance sheet for this slot
