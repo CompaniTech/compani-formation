@@ -1,6 +1,6 @@
-import RNPickerSelect from 'react-native-picker-select';
 import { Text, View } from 'react-native';
 import countryCodes from '../../../core/data/countryCodes';
+import NiPicker from '../Picker';
 import NiInput from '../Input';
 import styles from './styles';
 
@@ -15,9 +15,8 @@ const PhoneSelect = ({ contact, setContact, validationMessage = '' }: PhoneSelec
     <Text style={styles.caption}>Téléphone</Text>
     <View style={styles.container}>
       <View>
-        <RNPickerSelect fixAndroidTouchableBug useNativeAndroidPickerStyle={false} style={styles}
-          onValueChange={value => setContact(value, 'countryCode')} items={countryCodes} placeholder={{}}
-          value={contact.countryCode} />
+        <NiPicker value={contact.countryCode} options={countryCodes}
+          onValueChange={value => setContact(value, 'countryCode')} />
       </View>
       <View style={styles.input}>
         <NiInput value={contact.phone} onChangeText={value => setContact(value, 'phone')} type="phone" />

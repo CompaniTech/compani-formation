@@ -68,6 +68,7 @@ import {
   useGetShouldRefreshSheets,
   useSetShouldRefreshSheets,
 } from '../../../../store/attendanceSheets/hooks';
+import { useGetLoggedUserId } from '../../../../store/main/hooks';
 
 interface AdminCourseProfileProps extends StackScreenProps<RootStackParamList, 'TrainerCourseProfile'> {}
 
@@ -120,6 +121,7 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
   const resetCourseData = useResetCourseData();
   const shouldRefreshSheets = useGetShouldRefreshSheets();
   const setShouldRefreshSheets = useSetShouldRefreshSheets();
+  const loggedUserId = useGetLoggedUserId();
   const [savedAttendanceSheets, setSavedAttendanceSheets] = useState<AttendanceSheetType[]>([]);
   const [completedAttendanceSheets, setCompletedAttendanceSheets] = useState<AttendanceSheetType[]>([]);
   const [firstSlot, setFirstSlot] = useState<SlotType | null>(null);
@@ -146,6 +148,8 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
     const slotList = course.slots.filter((slot) => {
       // Only check slots that are in the past
       if (!TODAY.isAfter(slot.startDate)) return false;
+
+      if (!slot.trainers?.includes(loggedUserId!)) return false;
 
       return course.trainees!.some((trainee) => {
         // Check if trainee already has attendance sheet for this slot
@@ -178,7 +182,7 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
       if (groupedSlots[step._id]) acc[step.name] = groupedSlots[step._id];
       return acc;
     }, {});
-  }, [course, attendanceSheetMaps, missingAttendanceMaps, isSingle, savedAttendanceSheets]);
+  }, [course, attendanceSheetMaps, missingAttendanceMaps, isSingle, savedAttendanceSheets, loggedUserId]);
 
   // Memoize flattened slots to avoid repeated Object.values().flat() calls
   const flatGroupedSlots = useMemo(() => Object.values(groupedSlotsToBeSigned).flat(), [groupedSlotsToBeSigned]);
@@ -262,8 +266,10 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
   const refreshAttendanceSheets = useCallback(async (courseId: string) => {
     const fetchedAttendanceSheets = await AttendanceSheets.getAttendanceSheetList({ course: courseId });
     setSavedAttendanceSheets(fetchedAttendanceSheets);
-    setCompletedAttendanceSheets(fetchedAttendanceSheets.filter(as => as.file));
-  }, []);
+    setCompletedAttendanceSheets(
+      fetchedAttendanceSheets.filter(as => as.file && ((as.trainer as string) === loggedUserId))
+    );
+  }, [loggedUserId]);
 
   const getQuestionnaireQRCode = async (courseId: string) => {
     try {
