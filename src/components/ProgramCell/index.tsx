@@ -47,17 +47,21 @@ const ProgramCell = ({
             </View>}
         </ImageBackground>
       </View>
-      <Text style={styles.title} lineBreakMode={'tail'} numberOfLines={2}>
-        {programName}{misc ? ` - ${misc}` : ''}
-      </Text>
-      <Text style={styles.description} lineBreakMode={'tail'} numberOfLines={4}>{programDescription}</Text>
-      {!CompaniDuration(theoreticalDuration).isEquivalentTo(PT0S) &&
+      <View style={styles.courseContent}>
+        <>
+          <Text style={styles.title} lineBreakMode={'tail'} numberOfLines={2}>
+            {programName}{misc ? ` - ${misc}` : ''}
+          </Text>
+          <Text style={styles.description} lineBreakMode={'tail'} numberOfLines={3}>{programDescription}</Text>
+        </>
+        {!CompaniDuration(theoreticalDuration).isEquivalentTo(PT0S) &&
         <View>
           <Text style={styles.eLearning}>E-LEARNING</Text>
           <Text style={styles.theoreticalDuration}>
             {CompaniDuration(theoreticalDuration).format(LONG_DURATION_H_MM)}
           </Text>
         </View>}
+      </View>
     </TouchableOpacity>
   );
 };
