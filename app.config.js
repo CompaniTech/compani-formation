@@ -136,6 +136,8 @@ export default {
       'expo-video',
       'expo-audio',
       ['expo-notifications', { autoRegistration: false }],
+      '@sentry/react-native',
+      'expo-sharing',
     ],
   },
 };
