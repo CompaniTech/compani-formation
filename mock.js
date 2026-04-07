@@ -11,3 +11,4 @@ jest.mock('react-native-gesture-handler', () => ({
 }));
 jest.mock('expo-audio', () => {});
 jest.mock('expo-video', () => {});
+jest.mock('react-native-drax', () => {});

@@ -4,7 +4,7 @@ import tsPlugin from '@typescript-eslint/eslint-plugin';
 import reactPlugin from 'eslint-plugin-react';
 import reactHooksPlugin from 'eslint-plugin-react-hooks';
 import importPlugin from 'eslint-plugin-import';
-import globals from "globals";
+import globals from 'globals';
 
 
 export default [
@@ -22,6 +22,7 @@ export default [
         JSX: true,
         ...globals.browser,
         ...globals.node,
+        ...globals.jest,
       },
     },
     plugins: {

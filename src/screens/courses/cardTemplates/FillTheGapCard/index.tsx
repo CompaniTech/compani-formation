@@ -97,7 +97,7 @@ const FillTheGapCard = ({ isLoading, setIsRightSwipeEnabled }: FillTheGap) => {
   const style = styles(footerColors.background);
 
   const setAnswersAndPropositions = (event: DraxDragWithReceiverEventData, gapIndex?: number) => {
-    const { payload: movedProp } = event.dragged;
+    const movedProp = event.dragged.payload as string;
     const newPropositions = [...propositions];
     const selectedPropIdx = newPropositions.map(prop => prop._id).indexOf(movedProp);
     const isActionClick = Math.abs(event.dragged.dragTranslationRatio.x) < 0.1 &&
