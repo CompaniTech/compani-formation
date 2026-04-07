@@ -26,7 +26,7 @@
       "<rootDir>/node_modules/"
     ],
     "transformIgnorePatterns": [
-      "node_modules/(?!(jest-)?react-native|@react-native|react-clone-referenced-element|@react-native-community|@react-native-async-storage|expo(nent)?|@expo(nent)?/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|native-base|@sentry/.*|react-redux|mime|immer)"
+      "node_modules/(?!(jest-)?react-native|@react-native|react-clone-referenced-element|@react-native-community|@react-native-async-storage|expo(nent)?|@expo(nent)?/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|native-base|@sentry/.*|react-redux|mime|immer|@formatjs)"
     ],
     "cacheDirectory": ".jest/cache",
     "setupFiles": [
@@ -35,11 +35,11 @@
   },
   "dependencies": {
     "@expo/metro-runtime": "~55.0.7",
-    "@formatjs/intl-datetimeformat": "~6.18.0",
-    "@formatjs/intl-getcanonicallocales": "~2.5.4",
-    "@formatjs/intl-locale": "~4.2.11",
-    "@formatjs/intl-numberformat": "~8.15.3",
-    "@formatjs/intl-pluralrules": "~5.4.3",
+    "@formatjs/intl-datetimeformat": "~7.3.1",
+    "@formatjs/intl-getcanonicallocales": "~3.2.2",
+    "@formatjs/intl-locale": "~5.3.1",
+    "@formatjs/intl-numberformat": "~9.3.1",
+    "@formatjs/intl-pluralrules": "~6.3.1",
     "@react-native-async-storage/async-storage": "2.2.0",
     "@react-native-community/masked-view": "~0.1.11",
     "@react-native-community/slider": "5.1.2",
