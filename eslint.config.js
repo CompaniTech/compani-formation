@@ -34,6 +34,12 @@ module.exports = [
         Platform: true,
         JSX: true,
         FormData: true,
+        jest: true,
+        describe: true,
+        test: true,
+        expect: true,
+        beforeEach: true,
+        afterEach: true,
       },
     },
     plugins: {
@@ -81,7 +87,7 @@ module.exports = [
       'operator-linebreak': ['error', 'before', { overrides: { '&&': 'after', '||': 'after', '=': 'after' } }],
       'arrow-parens': [2, 'as-needed', { requireForBlockBody: true }],
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', caughtErrorsIgnorePattern: '^_' }],
-      'no-unused-vars': 'off', // Pour ne pas avoir l'erreur en doublon
+      'no-unused-vars': 'off',
       'prefer-destructuring': ['error', { VariableDeclarator: { object: true, array: false } }],
       'function-paren-newline': ['error', 'consistent'],
       'react/jsx-uses-react': 'off',
