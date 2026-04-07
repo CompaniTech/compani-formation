@@ -7,7 +7,6 @@ jest.mock('react-native-safe-area-context', () => mockSafeAreaContext);
 jest.mock('react-native-webview', () => {});
 jest.mock('react-native-gesture-handler', () => ({
   ...jest.requireActual('react-native-gesture-handler'),
-  // eslint-disable-next-line react/prop-types
   GestureHandlerRootView: ({ children }) => <>{children}</>,
 }));
 jest.mock('expo-audio', () => {});
