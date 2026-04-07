@@ -1920,23 +1920,14 @@
     use-latest-callback "^0.2.4"
     use-sync-external-store "^1.5.0"
 
-"@react-navigation/elements@^2.9.5":
-  version "2.9.5"
-  resolved "https://registry.yarnpkg.com/@react-navigation/elements/-/elements-2.9.5.tgz#29f68c4975351724dcfe1d3bdc76c4d6dc65fc33"
-  integrity sha512-iHZU8rRN1014Upz73AqNVXDvSMZDh5/ktQ1CMe21rdgnOY79RWtHHBp9qOS3VtqlUVYGkuX5GEw5mDt4tKdl0g==
+"@react-navigation/material-top-tabs@~7.4.23":
+  version "7.4.23"
+  resolved "https://registry.yarnpkg.com/@react-navigation/material-top-tabs/-/material-top-tabs-7.4.23.tgz#f3f79836d6b4d95af45a266fa845241fba346f3d"
+  integrity sha512-yIU2ne7w+LBjhhiHLwhLIuzjnY44GK6OXqls1112StR4afd5bYYUBL6WopZkBmXD/3sRooimp8iy5Cih+8Mr8w==
   dependencies:
+    "@react-navigation/elements" "^2.9.14"
     color "^4.2.3"
-    use-latest-callback "^0.2.4"
-    use-sync-external-store "^1.5.0"
-
-"@react-navigation/material-top-tabs@~7.4.9":
-  version "7.4.13"
-  resolved "https://registry.yarnpkg.com/@react-navigation/material-top-tabs/-/material-top-tabs-7.4.13.tgz#6a2ccb1bc7b044e11716d5ec9f74deff8c619e36"
-  integrity sha512-evQPmk8bDdY4yksV2Onko+g5z9BwuBdjZEtypuEeshXXTcj+G4Vw6zDIHaeY8jg1JMEFp1I4fPaAeEzSms5tBw==
-  dependencies:
-    "@react-navigation/elements" "^2.9.5"
-    color "^4.2.3"
-    react-native-tab-view "^4.2.2"
+    react-native-tab-view "^4.3.0"
 
 "@react-navigation/native@~7.2.2":
   version "7.2.2"
@@ -7356,14 +7347,7 @@ react-native-svg@15.15.3:
     css-tree "^1.1.3"
     warn-once "0.1.1"
 
-react-native-tab-view@^4.2.2:
-  version "4.2.2"
-  resolved "https://registry.yarnpkg.com/react-native-tab-view/-/react-native-tab-view-4.2.2.tgz#303accb4ddb2f5856d62bb323dd202724275e6a2"
-  integrity sha512-NXtrG6OchvbGjsvbySJGVocXxo4Y2vA17ph4rAaWtA2jh+AasD8OyikKBRg2SmllEfeQ+GEhcKe8kulHv8BhTg==
-  dependencies:
-    use-latest-callback "^0.2.4"
-
-react-native-tab-view@~4.3.0:
+react-native-tab-view@^4.3.0, react-native-tab-view@~4.3.0:
   version "4.3.0"
   resolved "https://registry.yarnpkg.com/react-native-tab-view/-/react-native-tab-view-4.3.0.tgz#016414c63ed2c877f6fe6754c1252bf7842bff96"
   integrity sha512-qPMF75uz/7+MuVG2g+YETdGMzlWZnhC6iI4h/7EBbwIBwNBIBi2z4OA6KhY3IOOBwGHXEIz5IyA6doDqifYBHg==
