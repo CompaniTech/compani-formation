@@ -43,8 +43,8 @@
     "@formatjs/intl-numberformat": "~9.3.1",
     "@formatjs/intl-pluralrules": "~6.3.1",
     "@react-native-async-storage/async-storage": "2.2.0",
-    "@react-native-masked-view/masked-view": "~0.3.2",
     "@react-native-community/slider": "5.1.2",
+    "@react-native-masked-view/masked-view": "~0.3.2",
     "@react-navigation/bottom-tabs": "~7.8.12",
     "@react-navigation/material-top-tabs": "~7.4.9",
     "@react-navigation/native": "~7.1.14",
@@ -105,7 +105,7 @@
     "react-redux": "~9.2.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.26.0",
+    "@babel/core": "~7.29.0",
     "@babel/plugin-proposal-nullish-coalescing-operator": "~7.18.6",
     "@babel/plugin-proposal-optional-chaining": "~7.21.0",
     "@testing-library/react-native": "~13.3.3",
