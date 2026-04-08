@@ -42,7 +42,7 @@ export default {
     const baseURL = await Environment.getBaseUrl();
     await axiosLogged.post(`${baseURL}/courses/${courseId}/register-e-learning`);
   },
-  downloadCertificate: async (courseId: string) : Promise<string> => {
+  downloadCertificate: async (courseId: string) : Promise<ArrayBuffer> => {
     const baseURL = await Environment.getBaseUrl();
     const headers = new AxiosHeaders({ Accept: 'application/pdf' });
     const response: PdfResponseType = await axiosLogged.get(
