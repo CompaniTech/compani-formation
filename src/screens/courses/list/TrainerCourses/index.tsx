@@ -26,6 +26,7 @@ import {
   OPERATIONS,
   TRAINER,
 } from '../../../../core/data/constants';
+import CompaniDate from '../../../../core/helpers/dates/companiDates';
 import styles from '../styles';
 import { getElearningSteps, getCourseStatus } from '../helper';
 import { CourseDisplayType } from '../types';
@@ -36,8 +37,9 @@ const formatCoursesDiplaysContent = (courses: BlendedCourseType[]) => {
   const forthcomingCourses: BlendedCourseType[] = [];
   const completedCourses: BlendedCourseType[] = [];
 
+  const TODAY = CompaniDate();
   courses.forEach((course) => {
-    const status = getCourseStatus(course);
+    const status = getCourseStatus(course, TODAY);
     switch (status) {
       case FORTHCOMING:
         forthcomingCourses.push(course);
