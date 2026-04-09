@@ -8,7 +8,7 @@ import { ICON } from '../../styles/metrics';
 import { PINK, PURPLE, WHITE } from '../../styles/colors';
 import Shadow from '../design/Shadow';
 import ProgressPieChart from '../ProgressPieChart';
-import { TRAINER, DAY_OF_WEEK_SHORT, DAY_OF_MONTH, MONTH_SHORT, TODAY, DAY } from '../../core/data/constants';
+import { TRAINER, DAY_OF_WEEK_SHORT, DAY_OF_MONTH, MONTH_SHORT, DAY } from '../../core/data/constants';
 import styles from './styles';
 
 interface CalendarIconProps {
@@ -18,6 +18,7 @@ interface CalendarIconProps {
 }
 
 const CalendarIcon = ({ slots, progress = 0, mode }: CalendarIconProps) => {
+  const TODAY = CompaniDate();
   const [dayOfWeek, setDayOfWeek] = useState<string>('');
   const [dayOfMonth, setDayOfMonth] = useState<string>('');
   const [month, setMonth] = useState<string>('');
@@ -28,7 +29,7 @@ const CalendarIcon = ({ slots, progress = 0, mode }: CalendarIconProps) => {
     if (TODAY.isBefore(slots[0])) return slots[0];
     if (TODAY.isAfter(slots[slots.length - 1])) return null;
     return slots.find(slot => TODAY.isBefore(slot));
-  }, [slots]);
+  }, [slots, TODAY]);
 
   useEffect(() => {
     if (slots.length) {

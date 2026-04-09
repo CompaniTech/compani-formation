@@ -42,7 +42,6 @@ import {
   END_OF_COURSE,
   START_COURSE,
   END_COURSE,
-  TODAY,
   SINGLE,
 } from '../../../../core/data/constants';
 import CompaniDate from '../../../../core/helpers/dates/companiDates';
@@ -114,6 +113,7 @@ const buildMissingAttendanceMaps = (slots: SlotType[]) => {
 };
 
 const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
+  const TODAY = CompaniDate();
   const course = useGetCourse();
   const setCourse = useSetCourse();
   const setMissingAttendanceSheet = useSetMissingAttendanceSheets();
@@ -182,7 +182,7 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
       if (groupedSlots[step._id]) acc[step.name] = groupedSlots[step._id];
       return acc;
     }, {});
-  }, [course, attendanceSheetMaps, missingAttendanceMaps, isSingle, savedAttendanceSheets, loggedUserId]);
+  }, [course, attendanceSheetMaps, missingAttendanceMaps, isSingle, savedAttendanceSheets, loggedUserId, TODAY]);
 
   // Memoize flattened slots to avoid repeated Object.values().flat() calls
   const flatGroupedSlots = useMemo(() => Object.values(groupedSlotsToBeSigned).flat(), [groupedSlotsToBeSigned]);
@@ -261,6 +261,7 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
     missingAttendanceMaps,
     savedAttendanceSheets,
     flatGroupedSlots,
+    TODAY,
   ]);
 
   const refreshAttendanceSheets = useCallback(async (courseId: string) => {
@@ -345,7 +346,7 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
     } else if (savedAttendanceSheets.length && !completedAttendanceSheets.length) {
       setNoAttendancesMessage('Toutes les feuilles d\'émargement sont en attente de signature du stagiaire.');
     }
-  }, [completedAttendanceSheets, course, firstSlot, savedAttendanceSheets]);
+  }, [TODAY, completedAttendanceSheets, course, firstSlot, savedAttendanceSheets]);
 
   const goBack = useCallback(() => navigation.goBack(), [navigation]);
 
