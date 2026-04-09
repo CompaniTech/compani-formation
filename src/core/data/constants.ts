@@ -1,5 +1,4 @@
 import { Platform } from 'react-native';
-import CompaniDate, { CompaniDateType } from '../helpers/dates/companiDates';
 
 export const APP_NAME = 'formation';
 export const LOCAL = 'local';
@@ -8,8 +7,6 @@ export const STAGING = 'staging';
 export const PRODUCTION = 'production';
 export const IS_IOS = Platform.OS === 'ios';
 export const IS_WEB = Platform.OS === 'web';
-
-export const TODAY : CompaniDateType = CompaniDate();
 
 export const LONG_FIRSTNAME_LONG_LASTNAME = 'FL';
 export const SHORT_FIRSTNAME_LONG_LASTNAME = 'fL';
