@@ -151,13 +151,6 @@ const LearnerCourseProfile = ({ route, navigation }: LearnerCourseProfileProps) 
     setIsLoading(true);
     const data = await Courses.downloadCertificate(course._id);
     const uint8Array = new Uint8Array(data);
-    let binary = '';
-    const chunkSize = 0x8000;
-    for (let i = 0; i < uint8Array.length; i += chunkSize) {
-      const subarray = uint8Array.subarray(i, i + chunkSize);
-      binary += String.fromCharCode(...subarray);
-    }
-    const base64 = btoa(binary);
 
 
     const pdfName = getPdfName(course as BlendedCourseType);
