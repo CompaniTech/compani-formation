@@ -1,5 +1,4 @@
 import { AudioSource, createAudioPlayer } from 'expo-audio';
-import BigNumber from 'bignumber.js';
 import has from 'lodash/has';
 import CompaniDuration from '../helpers/dates/companiDurations';
 import {
@@ -83,8 +82,6 @@ export const getCourseProgress = (course: CourseType) => {
 
   return course.progress.blended || 0;
 };
-
-export const add = (...nums: number[]) => nums.reduce((acc, n) => new BigNumber(acc).plus(n).toNumber(), 0);
 
 export const getTheoreticalDuration = (steps: ELearningStepType[]) : string => (
   steps.length

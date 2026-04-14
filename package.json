@@ -54,7 +54,6 @@
     "array-flat-polyfill": "~1.0.1",
     "axios": "~1.13.6",
     "babel-jest": "~30.3.0",
-    "bignumber.js": "~10.0.2",
     "eslint-config-airbnb-base": "~15.0.0",
     "eslint-plugin-import": "~2.32.0",
     "eslint-plugin-jest": "~29.15.1",
