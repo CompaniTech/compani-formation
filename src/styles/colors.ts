@@ -1,4 +1,3 @@
-/* eslint-disable quote-props */
 // Yellow
 export const YELLOW = {
   '100': '#FFFBE5',

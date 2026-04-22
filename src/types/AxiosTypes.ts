@@ -40,7 +40,7 @@ export type PedagogyCourseListResponseType = {
 }
 export type OperationsCourseListResponseType = {courses: BlendedCourseType[], nextSteps: NextSlotsStepType[]}
 export type CourseResponseType = { message: string, data: { course: CourseType } }
-export type PdfResponseType = { data: string }
+export type PdfResponseType = { data: ArrayBuffer }
 export type FollowUpType = {
   trainee: UserType & { progress: { blended: number, eLearning: number}, steps: StepType[] }
 }

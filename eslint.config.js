@@ -1,23 +1,14 @@
-const { FlatCompat } = require('@eslint/eslintrc');
-const js = require('@eslint/js');
-const tsParser = require('@typescript-eslint/parser');
-const tsPlugin = require('@typescript-eslint/eslint-plugin');
-const reactPlugin = require('eslint-plugin-react');
-const reactHooksPlugin = require('eslint-plugin-react-hooks');
+import js from '@eslint/js';
+import tsParser from '@typescript-eslint/parser';
+import tsPlugin from '@typescript-eslint/eslint-plugin';
+import reactPlugin from 'eslint-plugin-react';
+import reactHooksPlugin from 'eslint-plugin-react-hooks';
+import importPlugin from 'eslint-plugin-import';
+import globals from 'globals';
 
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-  recommendedConfig: js.configs.recommended,
-  allConfig: js.configs.all,
-});
 
-module.exports = [
-  ...compat.extends(
-    'airbnb-base',
-    'eslint:recommended',
-    'plugin:react/recommended',
-    'plugin:react-hooks/recommended'
-  ),
+export default [
+  js.configs.recommended,
   {
     files: ['**/*.{js,jsx,ts,tsx}'],
     languageOptions: {
@@ -28,18 +19,17 @@ module.exports = [
         ecmaFeatures: { jsx: true },
       },
       globals: {
-        window: true,
-        document: true,
-        __DEV__: true,
-        Platform: true,
         JSX: true,
-        FormData: true,
+        ...globals.browser,
+        ...globals.node,
+        ...globals.jest,
       },
     },
     plugins: {
       react: reactPlugin,
       'react-hooks': reactHooksPlugin,
       '@typescript-eslint': tsPlugin,
+      import: importPlugin,
     },
     settings: {
       react: {
@@ -51,8 +41,6 @@ module.exports = [
       semi: ['error', 'always'],
       indent: ['error', 2, { SwitchCase: 1 }],
       'linebreak-style': ['error', 'unix'],
-      'react/display-name': 'off',
-      'react/hook-use-state': 'error',
       'max-len': ['error', { code: 120, tabWidth: 2 }],
       'react-hooks/rules-of-hooks': 'error',
       'react-hooks/exhaustive-deps': 'error',
@@ -81,7 +69,7 @@ module.exports = [
       'operator-linebreak': ['error', 'before', { overrides: { '&&': 'after', '||': 'after', '=': 'after' } }],
       'arrow-parens': [2, 'as-needed', { requireForBlockBody: true }],
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', caughtErrorsIgnorePattern: '^_' }],
-      'no-unused-vars': 'off', // Pour ne pas avoir l'erreur en doublon
+      'no-unused-vars': 'off',
       'prefer-destructuring': ['error', { VariableDeclarator: { object: true, array: false } }],
       'function-paren-newline': ['error', 'consistent'],
       'react/jsx-uses-react': 'off',

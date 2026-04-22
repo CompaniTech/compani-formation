@@ -16,10 +16,8 @@ import get from 'lodash/get';
 import has from 'lodash/has';
 import isEqual from 'lodash/isEqual';
 import { File, Paths } from 'expo-file-system';
-import * as FileSystemLegacy from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
 import * as IntentLauncher from 'expo-intent-launcher';
-import { Buffer } from 'buffer';
 import { Feather } from '@expo/vector-icons';
 import { StackScreenProps } from '@react-navigation/stack';
 import { RootStackParamList, RootBottomTabParamList } from '../../../../types/NavigationType';
@@ -152,28 +150,27 @@ const LearnerCourseProfile = ({ route, navigation }: LearnerCourseProfileProps) 
 
     setIsLoading(true);
     const data = await Courses.downloadCertificate(course._id);
+    const uint8Array = new Uint8Array(data);
 
-    const buffer = Buffer.from(data, 'base64');
+
     const pdfName = getPdfName(course as BlendedCourseType);
-
     if (!IS_WEB) {
       const fileName = `${encodeURI(pdfName)}.pdf`;
-
+      const file = new File(Paths.cache, fileName);
+      file.create({overwrite: true});
+      file.write(uint8Array);
       if (IS_IOS) {
-        const pdf = buffer.toString('base64');
-        const fileUri = `${FileSystemLegacy.documentDirectory}${encodeURI(pdfName)}.pdf`;
-        await FileSystemLegacy.writeAsStringAsync(fileUri, pdf, { encoding: FileSystemLegacy.EncodingType.Base64 });
-        await shareWithTimeout(fileUri);
+        await shareWithTimeout(file.uri);
       } else {
-        const pdfFile = new File(Paths.document, fileName);
-        pdfFile.write(buffer);
-        IntentLauncher.startActivityAsync('android.intent.action.VIEW' as IntentLauncher.ActivityAction, {
-          data: pdfFile.contentUri,
+        await IntentLauncher.startActivityAsync('android.intent.action.VIEW', {
+          data: file.contentUri,
+          type: 'application/pdf',
           flags: 1,
         });
       }
+      
     } else if (typeof document !== 'undefined') {
-      const blob = new Blob([buffer], { type: 'application/pdf' });
+      const blob = new Blob([uint8Array], { type: 'application/pdf' });
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
