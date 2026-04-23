@@ -112,6 +112,7 @@ export const GRANTED = 'granted';
 export const BLENDED_COURSE_REGISTRATION = 'blended_course_registration';
 export const NEW_ELEARNING_COURSE = 'new_elearning_course';
 export const ATTENDANCE_SHEET_SIGNATURE_REQUEST = 'attendance_sheet_signature_request';
+export const TRAINER_ATTENDANCE_REMINDER = 'trainer_attendance_reminder';
 
 // CONTEXT
 export const BEFORE_SIGNIN = 'beforeSignin';

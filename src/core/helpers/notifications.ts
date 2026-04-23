@@ -9,6 +9,7 @@ import {
   PEDAGOGY,
   LEARNER,
   ATTENDANCE_SHEET_SIGNATURE_REQUEST,
+  TRAINER_ATTENDANCE_REMINDER,
 } from '../data/constants';
 import { navigationRef } from '../../navigationRef';
 import asyncStorage from './asyncStorage';
@@ -55,7 +56,8 @@ export const registerForPushNotificationsAsync = async (): Promise<ExpoTokenAndS
 };
 
 type NotificationRequestDataType = {
-  type: typeof BLENDED_COURSE_REGISTRATION | typeof NEW_ELEARNING_COURSE | typeof ATTENDANCE_SHEET_SIGNATURE_REQUEST,
+  type: typeof BLENDED_COURSE_REGISTRATION | typeof NEW_ELEARNING_COURSE | typeof ATTENDANCE_SHEET_SIGNATURE_REQUEST 
+    | typeof TRAINER_ATTENDANCE_REMINDER,
   _id: string,
   courseId: string,
 };
@@ -76,6 +78,9 @@ export const handleNotificationResponse = async (response: Notifications.Notific
     }
     case ATTENDANCE_SHEET_SIGNATURE_REQUEST: {
       return navigationRef.current?.navigate('HandleAttendanceSheetNotification', { attendanceSheetId: _id, courseId });
+    }
+    case TRAINER_ATTENDANCE_REMINDER: {
+      return navigationRef.current?.navigate('AdminCourseProfile', { courseId });
     }
     default:
       return null;
