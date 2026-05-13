@@ -124,7 +124,7 @@ const TrainerCourses = ({ navigation }: TrainerCoursesProps) => {
         courses: section.courses.filter((course) => {
           const courseName = escapeRegExp(
             removeDiacritics(
-              `${course.subProgram.program.name?.toLowerCase()}${course.misc ? ` - ${course.misc.toLowerCase()}` : ''}`
+              `${course.tradeName?.toLowerCase()}${course.misc ? ` - ${course.misc.toLowerCase()}` : ''}`
             )
           );
 
@@ -160,9 +160,10 @@ const TrainerCourses = ({ navigation }: TrainerCoursesProps) => {
     navigation.navigate('TrainerCourseProfile', { courseId: id });
   };
 
-  const renderItem = (course: BlendedCourseType) => <ProgramCell program={get(course, 'subProgram.program') || {}}
-    misc={course.misc} theoreticalDuration={getTheoreticalDuration(getElearningSteps(get(course, 'subProgram.steps')))}
-    onPress={() => goToCourse(course._id)} />;
+  const renderItem = (course: BlendedCourseType) => <ProgramCell  misc={course.misc}
+    program={ {...get(course, 'subProgram.program'), name: course.tradeName}} onPress={() => goToCourse(course._id)}
+    theoreticalDuration={getTheoreticalDuration(getElearningSteps(get(course, 'subProgram.steps')))} />;
+
 
   useEffect(() => {
     if (isFocused) {

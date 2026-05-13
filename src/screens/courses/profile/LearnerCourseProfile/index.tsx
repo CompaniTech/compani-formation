@@ -137,7 +137,7 @@ const LearnerCourseProfile = ({ route, navigation }: LearnerCourseProfileProps) 
   const getPdfName = (c: BlendedCourseType) => {
     const misc = c.misc ? `_${c.misc}` : '';
 
-    return `attestation_${c.subProgram.program.name}${misc}`.replace(/[^a-zA-Zà-üÀ-Ü0-9-+]{1,}/g, '_');
+    return `attestation_${c.tradeName}${misc}`.replace(/[^a-zA-Zà-üÀ-Ü0-9-+]{1,}/g, '_');
   };
 
   const shareWithTimeout = async (uri: string, timeout = 5000) => Promise.race([
