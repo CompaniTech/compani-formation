@@ -18,7 +18,7 @@ interface BlendedAboutProps extends StackScreenProps<RootStackParamList, 'Blende
 
 const BlendedAbout = ({ route, navigation }: BlendedAboutProps) => {
   const { course, mode } = route.params;
-  const program = course.subProgram?.program || null;
+  const program = { ...course.subProgram?.program, name: course.tradeName };
   const [isModalOpened, setIsModalOpened] = useState<boolean>(false);
 
   const goToCourse = () => {

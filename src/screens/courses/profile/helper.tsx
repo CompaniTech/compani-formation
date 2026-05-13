@@ -1,7 +1,6 @@
 // @ts-nocheck
 
 import { View } from 'react-native';
-import get from 'lodash/get';
 import { E_LEARNING, IS_WEB, ON_SITE, REMOTE, TESTER } from '../../../core/data/constants';
 import LiveCell from '../../../components/steps/LiveCell';
 import ELearningCell from '../../../components/ELearningCell';
@@ -36,7 +35,7 @@ export const renderFooter = () => <View style={styles.buttonContainer} />;
 
 export const getTitle = (course) => {
   if (!course) return '';
-  const programName = get(course, 'subProgram.program.name') || '';
+  const programName = course.tradeName || '';
   if (course?.subProgram.isStrictlyELearning) return programName;
 
   const { misc } = (course as BlendedCourseType);

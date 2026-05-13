@@ -107,14 +107,15 @@ const LearnerCourses = ({ navigation }: LearnerCoursesProps) => {
     }
   };
 
-  const renderCourseItem = (course: CourseType) => <ProgramCell program={get(course, 'subProgram.program') || {}}
-    progress={getCourseProgress(course)} onPress={() => onPressProgramCell(course._id, true)} misc={get(course, 'misc')}
+  const renderCourseItem = (course: CourseType) => <ProgramCell  misc={get(course, 'misc')}
+    program={{...get(course, 'subProgram.program'), name: course.tradeName}}
+    progress={getCourseProgress(course)} onPress={() => onPressProgramCell(course._id, true)}
     theoreticalDuration={getTheoreticalDuration(getElearningSteps(get(course, 'subProgram.steps')))}/>;
 
-  const renderTutorCourseItem = (course: CourseType) => <ProgramCell program={get(course, 'subProgram.program') || {}}
+  const renderTutorCourseItem = (course: CourseType) => <ProgramCell misc={get(course, 'misc')}
+    program={{...get(course, 'subProgram.program'), name: course.tradeName}}
     theoreticalDuration={getTheoreticalDuration(getElearningSteps(get(course, 'subProgram.steps')))}
-    onPress={() => navigation.navigate('LearnerCourseProfile', { courseId: course._id, mode: TUTOR })}
-    misc={get(course, 'misc')} />;
+    onPress={() => navigation.navigate('LearnerCourseProfile', { courseId: course._id, mode: TUTOR })} />;
 
   const renderSubProgramItem = (subProgram: SubProgramWithProgramType) => <ProgramCell program={subProgram.program}
     theoreticalDuration={getTheoreticalDuration(getElearningSteps(subProgram.steps))}
