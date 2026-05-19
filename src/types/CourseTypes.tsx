@@ -86,6 +86,7 @@ type BaseCourseType = {
   subProgram: SubProgramType & { program: ProgramType },
   areLastSlotAttendancesValidated?: boolean,
   type: string,
+  tradeName: string,
   format: typeof STRICTLY_E_LEARNING | typeof BLENDED,
 };
 
