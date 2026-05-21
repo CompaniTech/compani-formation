@@ -139,6 +139,7 @@ export type QuestionAnswerType = {
   question: string,
   qcAnswers: AnswerFromAPIType[],
   isMandatory: boolean,
+  allowOtherAnswer: boolean,
 }
 
 export type footerColorsType = {
