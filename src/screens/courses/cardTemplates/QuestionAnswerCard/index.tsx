@@ -102,7 +102,7 @@ const QuestionAnswerCard = ({ isLoading, setIsRightSwipeEnabled }: QuestionAnswe
               : <Text style={cardsStyle.informativeText}>Une seule réponse est possible</Text>
             }
             {selectedAnswers.map((item, index) => <View key={index}>{renderItem(item, index)}</View>)}
-            {card.allowOtherAnswer && <View style={style.answerContainer}>
+            {card.allowOtherAnswer && <View style={style.otherAnswerContainer}>
               <TextInput placeholder="Autre réponse" value={otherAnswer}  clearButtonMode='always'
                 style={style.otherAnswerInput} placeholderTextColor={GREY[600]} onChangeText={setOtherAnswer}
                 onFocus={() => scrollRef.current?.scrollToEnd({ animated: true })} />

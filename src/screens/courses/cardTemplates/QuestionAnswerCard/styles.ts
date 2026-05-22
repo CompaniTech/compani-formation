@@ -23,7 +23,7 @@ const styles = (isSelected: boolean) => StyleSheet.create({
   footerContainer: {
     backgroundColor: GREY[100],
   },
-  answerContainer: {
+  otherAnswerContainer: {
     marginBottom: MARGIN.LG,
   },
   otherAnswerInput: {
