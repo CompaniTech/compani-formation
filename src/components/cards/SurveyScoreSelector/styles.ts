@@ -4,9 +4,6 @@ import { FIRA_SANS_REGULAR } from '../../../styles/fonts';
 import { BORDER_WIDTH, ICON, PADDING } from '../../../styles/metrics';
 
 const styles = StyleSheet.create({
-  container: {
-    paddingHorizontal: PADDING.LG,
-  },
   line: {
     position: 'relative',
     borderWidth: BORDER_WIDTH,

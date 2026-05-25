@@ -28,12 +28,14 @@ const SurveyCard = ({ isLoading, setIsRightSwipeEnabled }: SurveyCardProps) => {
   const addQuestionnaireAnswer = useAddQuestionnaireAnswer();
   const removeQuestionnaireAnswer = useRemoveQuestionnaireAnswer();
   const [selectedScore, setSelectedScore] = useState<string>('');
+  const [maxLabel, setMaxLabel] = useState<number>(0);
 
   useEffect(() => setIsRightSwipeEnabled(false));
 
   useEffect(() => {
     setSelectedScore(questionnaireAnswer ? questionnaireAnswer.answerList[0] : '');
-  }, [questionnaireAnswer]);
+    if (card.labels) setMaxLabel(Math.max(...Object.keys(card.labels).map(Number)));
+  }, [card.labels, questionnaireAnswer]);
 
   if (isLoading) return null;
 
@@ -54,7 +56,7 @@ const SurveyCard = ({ isLoading, setIsRightSwipeEnabled }: SurveyCardProps) => {
       <ScrollView contentContainerStyle={styles.container}>
         <Text style={styles.question}>{card.question}</Text>
         <View style={styles.surveyScoreContainer}>
-          <SurveyScoreSelector onPressScore={onPressScore} selectedScore={selectedScore} />
+          <SurveyScoreSelector onPressScore={onPressScore} selectedScore={selectedScore} labelCount={maxLabel} />
           <View style={styles.labelContainer}>
             {card.labels && Object.keys(card.labels).length &&
               Object.keys(card.labels)
