@@ -56,7 +56,7 @@ const SurveyCard = ({ isLoading, setIsRightSwipeEnabled }: SurveyCardProps) => {
       <ScrollView contentContainerStyle={styles.container}>
         <Text style={styles.question}>{card.question}</Text>
         <View style={styles.surveyScoreContainer}>
-          <SurveyScoreSelector onPressScore={onPressScore} selectedScore={selectedScore} labelCount={maxLabel} />
+          <SurveyScoreSelector onPressScore={onPressScore} selectedScore={selectedScore} maxLabel={maxLabel} />
           <View style={styles.labelContainer}>
             {card.labels && Object.keys(card.labels).length &&
               Object.keys(card.labels)

@@ -4,11 +4,11 @@ import styles from './styles';
 interface SurveyScoreSelectorProps {
   onPressScore: (score: string) => void,
   selectedScore: string,
-  labelCount: number,
+  maxLabel: number,
 }
 
-const SurveyScoreSelector = ({ onPressScore, selectedScore, labelCount }: SurveyScoreSelectorProps) => {
-  const scores = Array.from({ length: labelCount }, (_, i) => `${i + 1}`);
+const SurveyScoreSelector = ({ onPressScore, selectedScore, maxLabel }: SurveyScoreSelectorProps) => {
+  const scores = Array.from({ length: maxLabel }, (_, i) => `${i + 1}`);
 
   const scoreItem = (score: string) => (
     <TouchableOpacity key={score} style={styles.buttonContainer} onPress={() => onPressScore(score)}
