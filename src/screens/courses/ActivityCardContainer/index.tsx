@@ -134,7 +134,7 @@ const ActivityCardContainer = ({ route, navigation }: ActivityCardContainerProps
 
   return isActive
     ? <SafeAreaView style={commonStyles.container} edges={[]}>
-      <Tab.Navigator tabBar={() => <></>} screenOptions={{ swipeEnabled: false }}>
+      <Tab.Navigator tabBar={() => <></>} screenOptions={{ swipeEnabled: false, animationEnabled: false }}>
         <Tab.Screen key={0} name={'startCard'} options={{ title: activity?.name || tabsNames.ActivityCardContainer }}>
           {() => <StartCard title={activity?.name || ''} goBack={goBack} isLoading={!(cards.length > 0 && activity)}
             startTimer={startTimer} />}
