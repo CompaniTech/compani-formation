@@ -2,6 +2,8 @@ import { Dispatch } from 'react';
 import { AppState } from 'react-native';
 import Authentication from '../api/authentication';
 import asyncStorage from '../core/helpers/asyncStorage';
+
+let signingOut = false;
 import { createDataContext } from './createDataContext';
 import Users from '../api/users';
 import {
@@ -82,6 +84,9 @@ const signIn = (dispatch: Dispatch<ActionType>) =>
   };
 
 const signOut = (dispatch: Dispatch<ActionType>) => async (removeExpoToken: boolean = false) => {
+  if (signingOut) return;
+  signingOut = true;
+
   try {
     await Authentication.logOut();
   } catch (e) {
@@ -103,6 +108,7 @@ const signOut = (dispatch: Dispatch<ActionType>) => async (removeExpoToken: bool
   await asyncStorage.removeExpoToken();
 
   dispatch({ type: SIGNOUT });
+  signingOut = false;
 };
 
 const refreshCompaniToken = (dispatch: Dispatch<ActionType>) => async (refreshToken: string) => {

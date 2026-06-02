@@ -65,10 +65,10 @@ const OpenQuestionCard = ({ isLoading, setIsRightSwipeEnabled }: OpenQuestionCar
               onSelect={setIsSelected} answer={answer}/>
           </View>
         </ScrollView>
-        <QuestionCardFooter index={index} buttonColor={isValidationDisabled ? GREY[300] : PINK[500]}
-          arrowColor={PINK[500]} buttonCaption='Valider' buttonDisabled={isValidationDisabled}
-          onPressArrow={() => setIsSelected(false)} validateCard={validateQuestionnaireAnswer} />
       </KeyboardAvoidingView>
+      <QuestionCardFooter index={index} buttonColor={isValidationDisabled ? GREY[300] : PINK[500]}
+        arrowColor={PINK[500]} buttonCaption='Valider' buttonDisabled={isValidationDisabled}
+        onPressArrow={() => setIsSelected(false)} validateCard={validateQuestionnaireAnswer} />
     </SafeAreaView>
   );
 };
