@@ -34,8 +34,8 @@ const SurveyCard = ({ isLoading, setIsRightSwipeEnabled }: SurveyCardProps) => {
 
   useEffect(() => {
     setSelectedScore(questionnaireAnswer ? questionnaireAnswer.answerList[0] : '');
-    if (card.labels) setMaxLabel(Math.max(...Object.keys(card.labels).map(Number)));
-  }, [card.labels, questionnaireAnswer]);
+    if (card && card.labels) setMaxLabel(Math.max(...Object.keys(card.labels).map(Number)));
+  }, [card, questionnaireAnswer]);
 
   if (isLoading) return null;
 

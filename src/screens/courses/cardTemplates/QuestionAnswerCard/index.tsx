@@ -55,7 +55,7 @@ const QuestionAnswerCard = ({ isLoading, setIsRightSwipeEnabled }: QuestionAnswe
     if (otherAnswer && !card.isQuestionAnswerMultipleChoiced) {
       setSelectedAnswers(array => array.map(a => ({ ...a, isSelected: false })));
     }
-  }, [otherAnswer, card.isQuestionAnswerMultipleChoiced]);
+  }, [otherAnswer, card]);
 
   if (isLoading) return null;
 
