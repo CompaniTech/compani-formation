@@ -27,18 +27,21 @@ interface PasswordFormProps {
   email?: string,
 }
 
+const keyboardDidHide = () => Keyboard.dismiss();
+
 const PasswordForm = ({ onPress, goBack, email = '' }: PasswordFormProps) => {
   const [exitConfirmationModal, setExitConfirmationModal] = useState<boolean>(false);
   const [password, setPassword] =
     useState<{ newPassword: string, confirmedPassword: string }>({ newPassword: '', confirmedPassword: '' });
-  const [unvalid, setUnvalid] = useState({ newPassword: false, confirmedPassword: false });
-  const [isValid, setIsValid] = useState<boolean>(false);
+  const unvalid = {
+    newPassword: password.newPassword.length < 6,
+    confirmedPassword: password.confirmedPassword !== password.newPassword,
+  };
+  const isValid = unvalid.newPassword || unvalid.confirmedPassword;
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, dispatchError] = useReducer(errorReducer, initialErrorState);
   const [isValidationAttempted, setIsValidationAttempted] = useState<boolean>(false);
   const scrollRef = useRef<ScrollView>(null);
-
-  const keyboardDidHide = () => Keyboard.dismiss();
 
   useEffect(() => {
     const hideListener = Keyboard.addListener('keyboardDidHide', keyboardDidHide);
@@ -55,18 +58,6 @@ const PasswordForm = ({ onPress, goBack, email = '' }: PasswordFormProps) => {
 
     return () => { subscription.remove(); };
   }, []);
-
-  useEffect(() => {
-    setUnvalid({
-      newPassword: password.newPassword.length < 6,
-      confirmedPassword: password.confirmedPassword !== password.newPassword,
-    });
-  }, [password]);
-
-  useEffect(() => {
-    const { newPassword, confirmedPassword } = unvalid;
-    setIsValid(!(newPassword || confirmedPassword));
-  }, [unvalid]);
 
   const toggleModal = () => {
     if (exitConfirmationModal) setExitConfirmationModal(false);

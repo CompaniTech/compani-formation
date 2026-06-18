@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useMemo } from 'react';
 import { View } from 'react-native';
 import {
   useDisplayProgressBar,
@@ -26,11 +26,10 @@ const CardHeader = ({ color = GREY[600], icon = 'x-circle', onPress }: CardHeade
   const progress = useGetProgress();
   const setExitConfirmationModal = useSetExitConfirmationModal();
   const iconButtonOnPress = onPress || (() => setExitConfirmationModal(true));
-  const [progressPercentage, setProgressPercentage] = useState<number>(0);
-
-  useEffect(() => {
-    setProgressPercentage(maxProgress ? (progress / maxProgress) * 100 : 0);
-  }, [progress, maxProgress]);
+  const progressPercentage = useMemo(
+    () => (maxProgress ? (progress / maxProgress) * 100 : 0),
+    [progress, maxProgress]
+  );
 
   return (
     <View style={styles.container}>

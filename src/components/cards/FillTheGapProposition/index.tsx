@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react';
 import { View, Text } from 'react-native';
 import { GREY, GREEN, ORANGE } from '../../../styles/colors';
 import Shadow from '../../design/Shadow';
@@ -13,13 +12,11 @@ interface FillTheGapPropositionProps {
 }
 
 const FillTheGapProposition = ({ item, isGoodAnswer, isValidated, isSelected }: FillTheGapPropositionProps) => {
-  const [color, setColor] = useState<string>(GREY[200]);
-
-  useEffect(() => {
-    if (isGoodAnswer && isValidated) return setColor(GREEN[600]);
-    if (isSelected && isValidated) return setColor(ORANGE[600]);
-    return undefined;
-  }, [isGoodAnswer, isSelected, isValidated]);
+  const color = (() => {
+    if (isGoodAnswer && isValidated) return GREEN[600];
+    if (isSelected && isValidated) return ORANGE[600];
+    return GREY[200];
+  })();
 
   const style = styles({ color, isGoodAnswer, isSelected, isValidated });
 

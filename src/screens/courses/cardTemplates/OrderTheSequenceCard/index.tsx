@@ -39,13 +39,18 @@ const OrderTheSequenceCard = ({ isLoading, setIsRightSwipeEnabled }: OrderTheSeq
   const [isValidated, setIsValidated] = useState<boolean>(false);
   const [isOrderedCorrectly, setIsOrderedCorrectly] = useState<boolean>(false);
   const [propsHeight, setPropsHeight] = useState<number[]>([]);
-  const [allowedOffsetYList, setAllowedOffsetYList] = useState<number[][][]>([]);
-  const [sumOtherHeightsList, setSumOtherHeightsList] = useState<number[]>([]);
-  const [footerColors, setFooterColors] = useState<footerColorsType>({
-    buttons: PINK[500],
-    text: GREY[100],
-    background: GREY[100],
-  });
+  const sumOtherHeightsList = propsHeight.map((_, index) =>
+    propsHeight.filter((_, i) => i !== index).reduce((a, b) => a + b, 0));
+  const allowedOffsetYList = [
+    [[0], [propsHeight[1], propsHeight[2]], [sumOtherHeightsList[0]]],
+    [[-propsHeight[0]], [propsHeight[2] - propsHeight[0], 0], [propsHeight[2]]],
+    [[-sumOtherHeightsList[2]], [-propsHeight[1], -propsHeight[0]], [0]],
+  ];
+  const footerColors: footerColorsType = !isValidated
+    ? { buttons: PINK[500], text: GREY[100], background: GREY[100] }
+    : isOrderedCorrectly
+      ? { buttons: GREEN[600], text: GREEN[600], background: GREEN[100] }
+      : { buttons: ORANGE[600], text: ORANGE[600], background: ORANGE[100] };
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -64,31 +69,6 @@ const OrderTheSequenceCard = ({ isLoading, setIsRightSwipeEnabled }: OrderTheSeq
     }
     setIsRightSwipeEnabled(isValidated || false);
   }, [card, isValidated, isLoading, setIsRightSwipeEnabled, quizzAnswer]);
-
-  useEffect(() => {
-    if (!isValidated) {
-      return setFooterColors({ buttons: PINK[500], text: GREY[100], background: GREY[100] });
-    }
-
-    if (isOrderedCorrectly) {
-      return setFooterColors({ buttons: GREEN[600], text: GREEN[600], background: GREEN[100] });
-    }
-
-    return setFooterColors({ buttons: ORANGE[600], text: ORANGE[600], background: ORANGE[100] });
-  }, [isValidated, answers, isOrderedCorrectly]);
-
-  useEffect(() => {
-    const tempSumOtherHeightsList = propsHeight.map((height, index) =>
-      propsHeight.filter((_, i) => i !== index).reduce((a, b) => a + b, 0));
-    setSumOtherHeightsList(tempSumOtherHeightsList);
-
-    const tempAllowedOffsetYList = [
-      [[0], [propsHeight[1], propsHeight[2]], [tempSumOtherHeightsList[0]]],
-      [[-propsHeight[0]], [propsHeight[2] - propsHeight[0], 0], [propsHeight[2]]],
-      [[-tempSumOtherHeightsList[2]], [-propsHeight[1], -propsHeight[0]], [0]],
-    ];
-    setAllowedOffsetYList(tempAllowedOffsetYList);
-  }, [propsHeight]);
 
   const onPressFooterButton = () => {
     if (!isValidated) {

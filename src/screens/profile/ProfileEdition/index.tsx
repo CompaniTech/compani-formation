@@ -43,6 +43,8 @@ StackScreenProps<RootBottomTabParamList>
 const FIRSTNAME = 'firstname';
 const LASTNAME = 'lastname';
 
+const keyboardDidHide = () => Keyboard.dismiss();
+
 const ProfileEdition = ({ navigation }: ProfileEditionProps) => {
   const setLoggedUser = useSetLoggedUser();
   const loggedUser = useGetLoggedUser();
@@ -56,8 +58,13 @@ const ProfileEdition = ({ navigation }: ProfileEditionProps) => {
     contact: { phone: loggedUser.contact?.phone || '', countryCode: loggedUser.contact?.countryCode || '+33' },
     local: { email: loggedUser.local.email },
   });
-  const [unvalid, setUnvalid] = useState({ lastName: false, phone: false, email: false, emptyEmail: false });
-  const [isValid, setIsValid] = useState<boolean>(false);
+  const unvalid = {
+    lastName: editedUser.identity.lastname === '',
+    phone: !editedUser.contact.phone.match(PHONE_REGEX) && editedUser.contact.phone.length > 0,
+    email: !editedUser.local.email.match(EMAIL_REGEX) && editedUser.local.email.length > 0,
+    emptyEmail: editedUser.local.email === '',
+  };
+  const isValid = !(unvalid.lastName || unvalid.phone || unvalid.email || unvalid.emptyEmail);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, dispatchError] = useReducer(errorReducer, initialErrorState);
   const [source, setSource] = useState(require('../../../../assets/images/default_avatar.webp'));
@@ -66,8 +73,6 @@ const ProfileEdition = ({ navigation }: ProfileEditionProps) => {
   const [isValidationAttempted, setIsValidationAttempted] = useState<boolean>(false);
   const [type, setType] = useState<string>('');
   const [imagePickerManager, setImagePickerManager] = useState<boolean>(false);
-
-  const keyboardDidHide = () => Keyboard.dismiss();
 
   useEffect(() => {
     const hideListener = Keyboard.addListener('keyboardDidHide', keyboardDidHide);
@@ -86,22 +91,6 @@ const ProfileEdition = ({ navigation }: ProfileEditionProps) => {
 
     return () => { subscription.remove(); };
   }, []);
-
-  useEffect(() => {
-    setUnvalid({
-      lastName: editedUser.identity.lastname === '',
-      phone: !editedUser.contact.phone.match(PHONE_REGEX) && editedUser.contact.phone.length > 0,
-      email: !editedUser.local.email.match(EMAIL_REGEX) && editedUser.local.email.length > 0,
-      emptyEmail: editedUser.local.email === '',
-    });
-  }, [editedUser]);
-
-  useEffect(() => {
-    const { lastName, phone, email, emptyEmail } = unvalid;
-    if (lastName || phone || email || emptyEmail) {
-      setIsValid(false);
-    } else setIsValid(true);
-  }, [unvalid]);
 
   useEffect(() => {
     if (loggedUser?.picture?.link) {

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback } from 'react';
 import { Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import CompaniDate from '../../core/helpers/dates/companiDates';
@@ -19,10 +19,6 @@ interface CalendarIconProps {
 
 const CalendarIcon = ({ slots, progress = 0, mode }: CalendarIconProps) => {
   const TODAY = CompaniDate();
-  const [dayOfWeek, setDayOfWeek] = useState<string>('');
-  const [dayOfMonth, setDayOfMonth] = useState<string>('');
-  const [month, setMonth] = useState<string>('');
-  const [hasSeveralDates, setHasSeveralDates] = useState<boolean>(false);
   const style = styles(mode === TRAINER ? PURPLE[800] : PINK[500]);
 
   const getNextSlot = useCallback(() => {
@@ -31,17 +27,12 @@ const CalendarIcon = ({ slots, progress = 0, mode }: CalendarIconProps) => {
     return slots.find(slot => TODAY.isBefore(slot));
   }, [slots, TODAY]);
 
-  useEffect(() => {
-    if (slots.length) {
-      setHasSeveralDates(!!slots.length && slots.some(date => !CompaniDate(date).isSame(slots[0], DAY)));
-      const nextSlot = getNextSlot();
-      const date = nextSlot ? CompaniDate(nextSlot) : CompaniDate(slots[0]);
-
-      setDayOfWeek(capitalize(date.format(DAY_OF_WEEK_SHORT)));
-      setDayOfMonth(capitalize(date.format(DAY_OF_MONTH)));
-      setMonth(capitalize(date.format(MONTH_SHORT)));
-    }
-  }, [slots, getNextSlot]);
+  const hasSeveralDates = !!slots.length && slots.some(date => !CompaniDate(date).isSame(slots[0], DAY));
+  const nextSlot = slots.length ? getNextSlot() : null;
+  const date = slots.length ? (nextSlot ? CompaniDate(nextSlot) : CompaniDate(slots[0])) : null;
+  const dayOfWeek = date ? capitalize(date.format(DAY_OF_WEEK_SHORT)) : '';
+  const dayOfMonth = date ? capitalize(date.format(DAY_OF_MONTH)) : '';
+  const month = date ? capitalize(date.format(MONTH_SHORT)) : '';
 
   const renderProgress = () => {
     if (!progress && !hasSeveralDates) return null;
