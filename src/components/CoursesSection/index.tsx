@@ -19,6 +19,8 @@ type CoursesSectionProps = {
   renderEmptyState?: () => JSX.Element,
 }
 
+const renderSeparator = () => <View style={styles.separator} />;
+
 const CoursesSection = ({
   items,
   title,
@@ -27,7 +29,6 @@ const CoursesSection = ({
   renderItem,
   renderEmptyState = () => <></>,
 }: CoursesSectionProps) => {
-  const renderSeparator = () => <View style={styles.separator} />;
 
   return (
     <>

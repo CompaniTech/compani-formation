@@ -12,9 +12,10 @@ interface AnswerQuestionProps {
   scrollTo: (number: number) => void,
 }
 
+const keyboardDidHide = () => Keyboard.dismiss();
+
 const AnswerTextArea = ({ onChangeText, onSelect, scrollTo, answer }: AnswerQuestionProps) => {
   const [isSelected, setIsSelected] = useState<boolean>(false);
-  const keyboardDidHide = () => Keyboard.dismiss();
 
   const style = styles(isSelected);
 

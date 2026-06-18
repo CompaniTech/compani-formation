@@ -10,12 +10,12 @@ type ActivityListProps = {
   mode: CourseModeType,
 }
 
+const renderSeparator = () => <View style={styles.separator} />;
+
 const ActivityList = ({ activities, profileId, mode }: ActivityListProps) => {
   const renderActivityCell = (activity: ActivityType) => (
     <ActivityCell activity={activity} profileId={profileId} mode={mode} />
   );
-
-  const renderSeparator = () => <View style={styles.separator} />;
 
   return (
     <FlatList horizontal data={activities} keyExtractor={item => item._id}

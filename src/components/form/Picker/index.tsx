@@ -21,7 +21,7 @@ const Picker = ({ value, options, onValueChange }: PickerProps) => {
   };
 
   const itemModal = (item: pickerOptionType) => (
-    <TouchableOpacity style={styles.itemContainer} onPress={() => selectValue(item.value)} >
+    <TouchableOpacity style={styles.itemContainer} onPress={() => selectValue(item.value)}>
       <Text style={styles.itemText}>{item.label}</Text>
     </TouchableOpacity>
   );
@@ -32,7 +32,7 @@ const Picker = ({ value, options, onValueChange }: PickerProps) => {
         <Text style={styles.selectedText}>{selectedItem?.inputLabel || ''}</Text>
       </TouchableOpacity>
       <Modal visible={modalVisible} transparent onRequestClose={() => setModalVisible(false)} >
-        <TouchableOpacity style={styles.modalOverlay} activeOpacity={1} onPressOut={() => setModalVisible(false)} >
+        <TouchableOpacity style={styles.modalOverlay} activeOpacity={1} onPressOut={() => setModalVisible(false)}>
           <View style={styles.modalContent}>
             <FlatList data={options} keyExtractor={item => item.value} renderItem={({ item }) => itemModal(item)} />
           </View>
