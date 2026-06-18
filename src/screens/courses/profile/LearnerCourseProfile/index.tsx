@@ -45,6 +45,21 @@ StackScreenProps<RootStackParamList, 'LearnerCourseProfile'>,
 StackScreenProps<RootBottomTabParamList>
 >{}
 
+const getPdfName = (c: BlendedCourseType) => {
+  const misc = c.misc ? `_${c.misc}` : '';
+  return `attestation_${c.tradeName}${misc}`.replace(/[^a-zA-Zà-üÀ-Ü0-9-+]{1,}/g, '_');
+};
+
+const shareWithTimeout = async (uri: string, timeout = 5000) => Promise.race([
+  Sharing.shareAsync(uri),
+  new Promise<void>((resolve) => { setTimeout(resolve, timeout); }),
+]);
+
+const goToTraineeFile = (gSheetId: string) => {
+  const url = `https://docs.google.com/spreadsheets/d/${gSheetId}`;
+  Linking.openURL(url);
+};
+
 const LearnerCourseProfile = ({ route, navigation }: LearnerCourseProfileProps) => {
   const { mode = LEARNER, endedActivity } = route.params;
   const setStatusBarVisible = useSetStatusBarVisible();
@@ -134,17 +149,6 @@ const LearnerCourseProfile = ({ route, navigation }: LearnerCourseProfileProps) 
     return () => { subscription.remove(); };
   }, [hardwareBackPress]);
 
-  const getPdfName = (c: BlendedCourseType) => {
-    const misc = c.misc ? `_${c.misc}` : '';
-
-    return `attestation_${c.tradeName}${misc}`.replace(/[^a-zA-Zà-üÀ-Ü0-9-+]{1,}/g, '_');
-  };
-
-  const shareWithTimeout = async (uri: string, timeout = 5000) => Promise.race([
-    Sharing.shareAsync(uri),
-    new Promise<void>((resolve) => { setTimeout(resolve, timeout); }),
-  ]);
-
   const downloadCompletionCertificate = async () => {
     if (!course) return;
 
@@ -202,11 +206,6 @@ const LearnerCourseProfile = ({ route, navigation }: LearnerCourseProfileProps) 
     navigation.navigate('TraineeFollowUp', { courseId: course._id, trainee: course.trainees![0] as string });
   };
 
-  const goToTraineeFile = (gSheetId: string) => {
-    const url = `https://docs.google.com/spreadsheets/d/${gSheetId}`;
-    Linking.openURL(url);
-  };
-
   const renderHeader = () => course && has(course, 'subProgram.program') && <>
     <CourseProfileHeader source={source} goBack={goBack} title={title} />
     <View style={styles.buttonsContainer}>
@@ -225,8 +224,7 @@ const LearnerCourseProfile = ({ route, navigation }: LearnerCourseProfileProps) 
       <Text style={styles.progressBarText}>{(getCourseProgress(course) * 100).toFixed(0)}%</Text>
     </View>}
     {mode === TUTOR && <View>
-      <TouchableOpacity hitSlop={HIT_SLOP} onPress={goToTraineeProgress}
-        style={styles.traineeProgressContainer}>
+      <TouchableOpacity hitSlop={HIT_SLOP} onPress={goToTraineeProgress} style={styles.traineeProgressContainer}>
         <Text style={styles.traineeProgress}>Accéder à la progression de l&apos;apprenant</Text>
       </TouchableOpacity>
       {(course as BlendedCourseType).gSheetId && <TouchableOpacity hitSlop={HIT_SLOP}
@@ -238,8 +236,7 @@ const LearnerCourseProfile = ({ route, navigation }: LearnerCourseProfileProps) 
 
   const renderFooter = () => <View style={styles.buttonContainer}>
     {course?.areLastSlotAttendancesValidated &&
-    <TouchableOpacity style={styles.buttonContent} onPress={downloadCompletionCertificate}
-      disabled={isLoading}>
+    <TouchableOpacity style={styles.buttonContent} onPress={downloadCompletionCertificate} disabled={isLoading}>
       {isLoading
         ? <ActivityIndicator color={WHITE} size="small" />
         : <View style={styles.certificateContent}>

@@ -35,6 +35,11 @@ import { PEDAGOGY, TRAINER } from '../../../../core/data/constants';
 const ADMIN_SCREEN = 'AdminCourseProfile';
 const ABOUT_SCREEN = 'BlendedAbout';
 
+const goToTraineeFile = (gSheetId: string) => {
+  const url = `https://docs.google.com/spreadsheets/d/${gSheetId}`;
+  Linking.openURL(url);
+};
+
 interface TrainerCourseProfileProps extends CompositeScreenProps<
 StackScreenProps<RootStackParamList, 'TrainerCourseProfile'>,
 StackScreenProps<RootBottomTabParamList>
@@ -61,7 +66,7 @@ const TrainerCourseProfile = ({
       const fetchedCourse = await Courses.getCourse(route.params.courseId, PEDAGOGY);
       const programImage = get(fetchedCourse, 'subProgram.program.image.link') || '';
 
-      if (!isEqual(fetchedCourse, course)) setCourse(fetchedCourse);
+      setCourse(prev => isEqual(fetchedCourse, prev) ? prev : fetchedCourse);
       setTitle(getTitle(fetchedCourse));
       if (programImage) setSource({ uri: programImage });
       setRefreshing(false);
@@ -70,7 +75,7 @@ const TrainerCourseProfile = ({
       console.error(e);
       setCourse(null);
     }
-  }, [course, route.params.courseId]);
+  }, [route.params.courseId]);
 
   useEffect(() => {
     if (isFocused) {
@@ -92,18 +97,13 @@ const TrainerCourseProfile = ({
     const subscription = BackHandler.addEventListener('hardwareBackPress', hardwareBackPress);
 
     return () => { subscription.remove(); };
-  }, [hardwareBackPress, isFocused]);
+  }, [hardwareBackPress]);
 
   const goTo = (screen: typeof ABOUT_SCREEN | typeof ADMIN_SCREEN) => {
     if (!course) return;
 
     if (screen === ABOUT_SCREEN) navigation.navigate(screen, { course: course as BlendedCourseType, mode: TRAINER });
     else navigation.navigate(screen, { courseId: course._id });
-  };
-
-  const goToTraineeFile = (gSheetId: string) => {
-    const url = `https://docs.google.com/spreadsheets/d/${gSheetId}`;
-    Linking.openURL(url);
   };
 
   const renderHeader = () => <>
@@ -113,8 +113,8 @@ const TrainerCourseProfile = ({
         customStyle={styles.adminButton} borderColor={GREY[200]} bgColor={GREY[200]} font={FIRA_SANS_MEDIUM.LG} />
       <NiSecondaryButton caption='A propos' onPress={() => goTo(ABOUT_SCREEN)} icon='info' borderColor={GREY[200]}
         bgColor={WHITE} font={FIRA_SANS_MEDIUM.LG} />
-      {course.gSheetId && <TouchableOpacity hitSlop={HIT_SLOP}
-        onPress={() => goToTraineeFile(course.gSheetId)} style={styles.fileLinkContainer}>
+      {course.gSheetId && <TouchableOpacity hitSlop={HIT_SLOP} onPress={() => goToTraineeFile(course.gSheetId)}
+        style={styles.fileLinkContainer}>
         <Text style={styles.traineeProgress}>Accéder au fichier de suivi de l&apos;apprenant</Text>
       </TouchableOpacity>}
     </View>

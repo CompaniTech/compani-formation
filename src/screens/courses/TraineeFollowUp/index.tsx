@@ -14,6 +14,18 @@ import { GREY } from '../../../styles/colors';
 import { formatIdentity } from '../../../core/helpers/utils';
 
 interface TraineeFollowUpProps extends StackScreenProps<RootStackParamList, 'TraineeFollowUp'> {}
+
+const renderStep = (step: StepType) => <>
+  <View style={styles.stepContainer}>
+    <Text style={styles.stepTitle}>{step.name}</Text>
+    <View style={commonStyles.progressBarContainer}>
+      <ProgressBar progress={step.progress.eLearning * 100} />
+    </View>
+    <Text style={styles.progressBarText}>{Math.round(step.progress.eLearning * 100)}%</Text>
+  </View>
+  <View style={commonStyles.sectionDelimiter} />
+</>;
+
 const TraineeFollowUp = ({ route, navigation }: TraineeFollowUpProps) => {
   const { courseId, trainee } = route.params;
   const [steps, setSteps] = useState<StepType[]>([]);
@@ -48,17 +60,6 @@ const TraineeFollowUp = ({ route, navigation }: TraineeFollowUpProps) => {
 
     return () => { subscription.remove(); };
   }, [hardwareBackPress]);
-
-  const renderStep = (step: StepType) => <>
-    <View style={styles.stepContainer}>
-      <Text style={styles.stepTitle}>{step.name}</Text>
-      <View style={commonStyles.progressBarContainer}>
-        <ProgressBar progress={step.progress.eLearning * 100} />
-      </View>
-      <Text style={styles.progressBarText}>{Math.round(step.progress.eLearning * 100)}%</Text>
-    </View>
-    <View style={commonStyles.sectionDelimiter} />
-  </>;
 
   return (
     <SafeAreaView style={styles.safeArea} edges={EDGES}>

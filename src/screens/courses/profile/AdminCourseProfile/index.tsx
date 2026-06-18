@@ -125,7 +125,6 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
   const [savedAttendanceSheets, setSavedAttendanceSheets] = useState<AttendanceSheetType[]>([]);
   const [completedAttendanceSheets, setCompletedAttendanceSheets] = useState<AttendanceSheetType[]>([]);
   const [firstSlot, setFirstSlot] = useState<SlotType | null>(null);
-  const [noAttendancesMessage, setNoAttendancesMessage] = useState<string>('');
   const [imagePreview, setImagePreview] =
     useState<imagePreviewProps>({ visible: false, id: '', link: '', type: '', hasSlots: false, hasTrainee: false });
   const [questionnaireQRCodes, setQuestionnaireQRCodes] = useState<QRCodeType[]>([]);
@@ -336,17 +335,18 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
     }, [course, shouldRefreshSheets, setShouldRefreshSheets, refreshAttendanceSheets])
   );
 
-  useEffect(() => {
-    if (!firstSlot) {
-      setNoAttendancesMessage('Veuillez ajouter des créneaux pour téléverser des feuilles d\'émargement.');
-    } else if (TODAY.isBefore(firstSlot.startDate)) {
-      setNoAttendancesMessage('L\'émargement sera disponible une fois le premier créneau passé.');
-    } else if (course?.type === INTER_B2B && !course?.trainees?.length) {
-      setNoAttendancesMessage('Veuillez ajouter des stagiaires pour émarger la formation.');
-    } else if (savedAttendanceSheets.length && !completedAttendanceSheets.length) {
-      setNoAttendancesMessage('Toutes les feuilles d\'émargement sont en attente de signature du stagiaire.');
+  const noAttendancesMessage = (() => {
+    if (!firstSlot) return 'Veuillez ajouter des créneaux pour téléverser des feuilles d\'émargement.';
+    if (TODAY.isBefore(firstSlot.startDate)) return 'L\'émargement sera disponible une fois le premier créneau passé.';
+    if (course?.type === INTER_B2B && !course?.trainees?.length) {
+      return 'Veuillez ajouter des stagiaires pour émarger la formation.';
     }
-  }, [TODAY, completedAttendanceSheets, course, firstSlot, savedAttendanceSheets]);
+    const trainerSavedAttendannceSheets = savedAttendanceSheets.filter(as => (as.trainer as string) === loggedUserId);
+    if ( trainerSavedAttendannceSheets.length && !completedAttendanceSheets.length) {
+      return 'Toutes les feuilles d\'émargement sont en attente de signature du stagiaire.';
+    }
+    return '';
+  })();
 
   const goBack = useCallback(() => navigation.goBack(), [navigation]);
 
@@ -435,12 +435,13 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
 
   const hasCompletedSheets = !!completedAttendanceSheets.length;
   const hasMissingSheets = !!missingAttendanceSheets.length;
+  const displayAttendanceSection = noAttendancesMessage || hasMissingSheets || hasCompletedSheets;
 
   return course && has(course, 'subProgram.program') ? (
     <SafeAreaView style={commonStyles.container} edges={EDGES}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <CourseAboutHeader screenTitle="ESPACE INTERVENANT" courseTitle={title} goBack={goBack} />
-        <View style={styles.attendancesContainer}>
+        {displayAttendanceSection && <View style={styles.attendancesContainer}>
           <View style={styles.titleContainer}>
             <Text style={styles.sectionTitle}>Emargements</Text>
             {!hasMissingSheets && !hasCompletedSheets && <Text style={styles.italicText}>{noAttendancesMessage}</Text>}
@@ -469,7 +470,7 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
               showsHorizontalScrollIndicator={false} renderItem={({ item }) => renderSavedAttendanceSheets(item)}
               horizontal />
           )}
-        </View>
+        </View>}
         <View style={styles.sectionContainer}>
           <View style={commonStyles.sectionDelimiter} />
           <Text style={styles.sectionTitle}>Stagiaires</Text>
