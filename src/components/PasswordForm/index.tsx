@@ -37,7 +37,7 @@ const PasswordForm = ({ onPress, goBack, email = '' }: PasswordFormProps) => {
     newPassword: password.newPassword.length < 6,
     confirmedPassword: password.confirmedPassword !== password.newPassword,
   };
-  const isValid = unvalid.newPassword || unvalid.confirmedPassword;
+  const isValid = !(unvalid.newPassword || unvalid.confirmedPassword);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, dispatchError] = useReducer(errorReducer, initialErrorState);
   const [isValidationAttempted, setIsValidationAttempted] = useState<boolean>(false);
