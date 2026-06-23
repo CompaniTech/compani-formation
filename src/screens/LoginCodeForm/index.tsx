@@ -133,14 +133,18 @@ const LoginCodeForm = ({ navigation }: LoginCodeFormProps) => {
 
   useEffect(() => {
     async function getCompanies() {
-      const fetchCompanies = await Companies.listNotLogged({ action: DIRECTORY });
-      setCompanyOptions(
-        fetchCompanies.map(c => ({
-          ...c,
-          noDiacriticName: removeDiacritics(c.name),
-          ...c.holding && { holding: { ...c.holding, noDiacriticName: removeDiacritics(c.holding.name) } },
-        }))
-      );
+      try {
+        const fetchCompanies = await Companies.listNotLogged({ action: DIRECTORY });
+        setCompanyOptions(
+          fetchCompanies.map(c => ({
+            ...c,
+            noDiacriticName: removeDiacritics(c.name),
+            ...c.holding && { holding: { ...c.holding, noDiacriticName: removeDiacritics(c.holding.name) } },
+          }))
+        );
+      } catch (e) {
+        console.error(e);
+      }
     }
     getCompanies();
   }, []);

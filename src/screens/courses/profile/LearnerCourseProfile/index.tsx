@@ -152,39 +152,42 @@ const LearnerCourseProfile = ({ route, navigation }: LearnerCourseProfileProps) 
   const downloadCompletionCertificate = async () => {
     if (!course) return;
 
-    setIsLoading(true);
-    const data = await Courses.downloadCertificate(course._id);
-    const uint8Array = new Uint8Array(data);
+    try {
+      setIsLoading(true);
+      const data = await Courses.downloadCertificate(course._id);
+      const uint8Array = new Uint8Array(data);
 
-
-    const pdfName = getPdfName(course as BlendedCourseType);
-    if (!IS_WEB) {
-      const fileName = `${encodeURI(pdfName)}.pdf`;
-      const file = new File(Paths.cache, fileName);
-      file.create({overwrite: true});
-      file.write(uint8Array);
-      if (IS_IOS) {
-        await shareWithTimeout(file.uri);
-      } else {
-        await IntentLauncher.startActivityAsync('android.intent.action.VIEW', {
-          data: file.contentUri,
-          type: 'application/pdf',
-          flags: 1,
-        });
+      const pdfName = getPdfName(course as BlendedCourseType);
+      if (!IS_WEB) {
+        const fileName = `${encodeURI(pdfName)}.pdf`;
+        const file = new File(Paths.cache, fileName);
+        file.create({overwrite: true});
+        file.write(uint8Array);
+        if (IS_IOS) {
+          await shareWithTimeout(file.uri);
+        } else {
+          await IntentLauncher.startActivityAsync('android.intent.action.VIEW', {
+            data: file.contentUri,
+            type: 'application/pdf',
+            flags: 1,
+          });
+        }
+      } else if (typeof document !== 'undefined') {
+        const blob = new Blob([uint8Array], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = pdfName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
       }
-      
-    } else if (typeof document !== 'undefined') {
-      const blob = new Blob([uint8Array], { type: 'application/pdf' });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = pdfName;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   const goToAbout = () => {

@@ -264,11 +264,15 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
   ]);
 
   const refreshAttendanceSheets = useCallback(async (courseId: string) => {
-    const fetchedAttendanceSheets = await AttendanceSheets.getAttendanceSheetList({ course: courseId });
-    setSavedAttendanceSheets(fetchedAttendanceSheets);
-    setCompletedAttendanceSheets(
-      fetchedAttendanceSheets.filter(as => as.file && ((as.trainer as string) === loggedUserId))
-    );
+    try {
+      const fetchedAttendanceSheets = await AttendanceSheets.getAttendanceSheetList({ course: courseId });
+      setSavedAttendanceSheets(fetchedAttendanceSheets);
+      setCompletedAttendanceSheets(
+        fetchedAttendanceSheets.filter(as => as.file && ((as.trainer as string) === loggedUserId))
+      );
+    } catch (e) {
+      console.error(e);
+    }
   }, [loggedUserId]);
 
   const getQuestionnaireQRCode = async (courseId: string) => {

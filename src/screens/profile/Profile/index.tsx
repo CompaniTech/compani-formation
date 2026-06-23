@@ -157,23 +157,31 @@ const Profile = ({ navigation }: ProfileProps) => {
   };
 
   const savePicture = async (picture: ImagePickerAsset) => {
-    const { firstname, lastname } = loggedUser.identity;
-    const fileName = `photo_${firstname}_${lastname}`;
-    const file = await formatImage(picture, fileName);
-    const data = formatPayload({ file, fileName });
+    try {
+      const { firstname, lastname } = loggedUser.identity;
+      const fileName = `photo_${firstname}_${lastname}`;
+      const file = await formatImage(picture, fileName);
+      const data = formatPayload({ file, fileName });
 
-    if (loggedUser.picture?.link) await Users.deleteImage(loggedUser._id);
-    await Users.uploadImage(loggedUser._id, data);
+      if (loggedUser.picture?.link) await Users.deleteImage(loggedUser._id);
+      await Users.uploadImage(loggedUser._id, data);
 
-    const user = await Users.getById(loggedUser._id);
-    setLoggedUser(user);
+      const user = await Users.getById(loggedUser._id);
+      setLoggedUser(user);
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const deletePicture = async () => {
-    await Users.deleteImage(loggedUser._id);
-    const user = await Users.getById(loggedUser._id);
-    setLoggedUser(user);
-    setPictureModal(false);
+    try {
+      await Users.deleteImage(loggedUser._id);
+      const user = await Users.getById(loggedUser._id);
+      setLoggedUser(user);
+      setPictureModal(false);
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   return (
