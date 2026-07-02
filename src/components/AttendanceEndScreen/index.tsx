@@ -16,6 +16,13 @@ interface AttendanceEndScreenProps {
   mode?: string
 }
 
+const renderFailMessage = (text: string) =>
+  <ScrollView contentContainerStyle={styles.errorContainer} showsVerticalScrollIndicator={IS_WEB}>
+    <Text style={styles.title}>{text}</Text>
+    <MaterialIcons style={styles.icon} size={200} name={'warning'} color={PINK[500]} />
+    <Text style={styles.text}>Veuillez réitérer votre demande</Text>
+  </ScrollView>;
+
 const AttendanceEndScreen = ({ target, failUpload, goToNextScreen, mode = TRAINER }: AttendanceEndScreenProps) => {
   useFocusEffect(
     useCallback(() => {
@@ -29,13 +36,6 @@ const AttendanceEndScreen = ({ target, failUpload, goToNextScreen, mode = TRAINE
       return () => subscription.remove();
     }, [goToNextScreen])
   );
-
-  const renderFailMessage = (text: string) =>
-    <ScrollView contentContainerStyle={styles.errorContainer} showsVerticalScrollIndicator={IS_WEB}>
-      <Text style={styles.title}>{text}</Text>
-      <MaterialIcons style={styles.icon} size={200} name={'warning'} color={PINK[500]} />
-      <Text style={styles.text}>Veuillez réitérer votre demande</Text>
-    </ScrollView>;
 
   return (
     <SafeAreaView style={styles.safeArea} edges={EDGES}>

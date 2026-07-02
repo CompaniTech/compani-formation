@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react';
 import { View, TouchableOpacity, Text } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { GREY, GREEN, ORANGE, PINK } from '../../../styles/colors';
@@ -22,14 +21,12 @@ const QuizProposition = ({
   isSelected,
   onPress,
 }: QuizPropositionProps) => {
-  const [color, setColor] = useState<string>(GREY[200]);
-
-  useEffect(() => {
-    if (isSelected && isGoodAnswer && isValidated) return setColor(GREEN[600]);
-    if (isSelected && isValidated) return setColor(ORANGE[600]);
-    if (isSelected) return setColor(PINK[500]);
-    return setColor(GREY[500]);
-  }, [isGoodAnswer, isSelected, isValidated]);
+  const color = (() => {
+    if (isSelected && isGoodAnswer && isValidated) return GREEN[600];
+    if (isSelected && isValidated) return ORANGE[600];
+    if (isSelected) return PINK[500];
+    return GREY[500];
+  })();
 
   const setColorOnPress = () => {
     if (!isValidated) onPress(index);

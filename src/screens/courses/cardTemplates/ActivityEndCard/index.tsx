@@ -76,7 +76,11 @@ const ActivityEndCard = ({ mode, activity, finalTimer, goBack, stopTimer }: Acti
         }),
       };
 
-      await ActivityHistories.createActivityHistories(payload);
+      try {
+        await ActivityHistories.createActivityHistories(payload);
+      } catch (e) {
+        console.error(e);
+      }
     },
     [activity._id]
   );

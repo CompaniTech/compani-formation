@@ -27,29 +27,32 @@ interface TextMediaCardProps {
 const TextMediaCard = ({ isLoading, setIsRightSwipeEnabled, setIsLeftSwipeEnabled }: TextMediaCardProps) => {
   const card: TextMediaType = useGetCard();
   const index = useGetCardIndex();
-
+  const mediaType = card?.media?.type || '';
+  const mediaSource = card?.media?.link
+    ? { uri: card.media.link, ...(card?.media?.type === IMAGE && { cache: 'force-cache' as CacheType }) }
+    : undefined;
   const [mediaHeight, setMediaHeight] = useState<number>(CARD_MEDIA_MAX_HEIGHT);
-  const [mediaType, setMediaType] = useState<string>('');
-  const [mediaSource, setMediaSource] = useState<{ uri: string, cache?: CacheType } | undefined>();
   const [zoomImage, setZoomImage] = useState<boolean>(false);
 
-  useEffect(() => setIsRightSwipeEnabled(true));
-  useEffect(() => {
-    setIsRightSwipeEnabled(!zoomImage);
-    setIsLeftSwipeEnabled(!zoomImage);
-  }, [zoomImage, setIsRightSwipeEnabled, setIsLeftSwipeEnabled]);
+  useEffect(() => { setIsRightSwipeEnabled(true); }, [setIsRightSwipeEnabled]);
+
+  const openZoom = () => { 
+    setZoomImage(true); 
+    setIsRightSwipeEnabled(false); 
+    setIsLeftSwipeEnabled(false);
+  };
+
+  const closeZoom = () => { 
+    setZoomImage(false); 
+    setIsRightSwipeEnabled(true); 
+    setIsLeftSwipeEnabled(true); 
+  };
 
   useEffect(() => {
-    if (!isLoading) {
-      if (card?.media?.link && card?.media?.type === IMAGE) {
-        Image.getSize(card.media?.link || '', (width, height) => {
-          setMediaHeight(Math.min(height, CARD_MEDIA_MAX_HEIGHT));
-        });
-      }
-      setMediaType(card?.media?.type);
-      setMediaSource(card.media?.link
-        ? { uri: card.media.link, ...(card?.media?.type === IMAGE && { cache: 'force-cache' }) }
-        : undefined);
+    if (!isLoading && card?.media?.link && card?.media?.type === IMAGE) {
+      Image.getSize(card.media?.link || '', (width, height) => {
+        setMediaHeight(Math.min(height, CARD_MEDIA_MAX_HEIGHT));
+      });
     }
   }, [card, isLoading]);
 
@@ -61,14 +64,14 @@ const TextMediaCard = ({ isLoading, setIsRightSwipeEnabled, setIsLeftSwipeEnable
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
         <Markdown style={markdownStyle(cardsStyle.text)}>{card.text}</Markdown>
         {mediaType === IMAGE && !!mediaSource &&
-          <NiImage onPress={() => setZoomImage(true)} source={mediaSource} imgHeight={mediaHeight} />}
+          <NiImage onPress={openZoom} source={mediaSource} imgHeight={mediaHeight} />}
         {mediaType === VIDEO && !!mediaSource && <NiVideo mediaSource={mediaSource} />}
         {mediaType === AUDIO && !!mediaSource && <NiAudio mediaSource={mediaSource} />}
       </ScrollView>
       <FooterGradient />
       <CardFooter index={index} />
       {zoomImage && mediaSource &&
-        <ZoomImage image={mediaSource} setZoomImage={setZoomImage} />}
+        <ZoomImage image={mediaSource} setZoomImage={closeZoom} />}
     </SafeAreaView>
   );
 };

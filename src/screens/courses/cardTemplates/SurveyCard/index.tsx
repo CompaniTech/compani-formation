@@ -30,7 +30,7 @@ const SurveyCard = ({ isLoading, setIsRightSwipeEnabled }: SurveyCardProps) => {
   const [selectedScore, setSelectedScore] = useState<string>('');
   const [maxLabel, setMaxLabel] = useState<number>(0);
 
-  useEffect(() => setIsRightSwipeEnabled(false));
+  useEffect(() => setIsRightSwipeEnabled(false), [setIsRightSwipeEnabled]);
 
   useEffect(() => {
     setSelectedScore(questionnaireAnswer ? questionnaireAnswer.answerList[0] : '');

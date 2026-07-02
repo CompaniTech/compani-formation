@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import {useCallback, useEffect } from 'react';
 import { Image, Text, View, ScrollView, BackHandler, ImageSourcePropType } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Markdown from 'react-native-markdown-display';
@@ -22,15 +22,11 @@ type AboutProps = {
 }
 
 const About = ({ program, buttonCaption = 'Continuer', children, onPress }: AboutProps) => {
-  const [source, setSource] =
-    useState<ImageSourcePropType>(require('../../../assets/images/authentication_background_image.webp'));
+  const programImage = get(program, 'image.link') || '';
+  const source: ImageSourcePropType = programImage
+    ? { uri: programImage }
+    : require('../../../assets/images/authentication_background_image.webp');
   const navigation = useNavigation();
-
-  useEffect(() => {
-    const programImage = get(program, 'image.link') || '';
-    if (programImage) setSource({ uri: programImage });
-    else setSource(require('../../../assets/images/authentication_background_image.webp'));
-  }, [program]);
 
   const hardwareBackPress = useCallback(() => {
     navigation.goBack();

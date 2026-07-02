@@ -76,7 +76,7 @@ const signIn = (dispatch: Dispatch<ActionType>) =>
     } catch (e: any) {
       dispatch({
         type: SIGNIN_ERROR,
-        payload: e.response.status === 401
+        payload: e.response?.status === 401
           ? 'L\'e-mail et/ou le mot de passe est incorrect.'
           : 'Impossible de se connecter',
       });

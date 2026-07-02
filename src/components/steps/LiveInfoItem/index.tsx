@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { View, Text, FlatList, Linking, TouchableOpacity } from 'react-native';
 import get from 'lodash/get';
 import { SlotType } from '../../../types/CourseTypes';
@@ -14,13 +13,9 @@ type LiveInfoItemProps = {
 const hoursItem = (slot: SlotType) => <LiveHoursDisplay startDate={slot.startDate} endDate={slot.endDate} />;
 
 const LiveInfoItem = ({ slots }: LiveInfoItemProps) => {
-  const [location, setLocation] = useState<string>('');
-
-  useEffect(() => {
-    setLocation(slots[0].step.type === ON_SITE
-      ? (get(slots[0], 'address.fullAddress') || '')
-      : (get(slots[0], 'meetingLink') || ''));
-  }, [slots]);
+  const location = slots[0].step.type === ON_SITE
+    ? (get(slots[0], 'address.fullAddress') || '')
+    : (get(slots[0], 'meetingLink') || '');
 
   const openUrl = async (add: string) => (slots[0].step.type === ON_SITE
     ? Linking.openURL(`https://www.google.com/maps/search/?api=1&query=${add}`)

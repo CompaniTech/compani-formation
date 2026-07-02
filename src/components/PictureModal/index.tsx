@@ -17,6 +17,15 @@ interface PictureModalProps {
   deletePicture?: () => void,
 }
 
+const alert = (component: string) => {
+  Alert.alert(
+    'Accès refusé',
+    `Vérifiez que l'application a bien l'autorisation d'accéder à ${component}`,
+    [{ text: 'OK' }],
+    { cancelable: false }
+  );
+};
+
 const PictureModal = ({
   visible,
   canDelete = false,
@@ -27,15 +36,6 @@ const PictureModal = ({
 }: PictureModalProps) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [, requestPermission] = ImagePicker.useCameraPermissions();
-
-  const alert = (component: string) => {
-    Alert.alert(
-      'Accès refusé',
-      `Vérifiez que l'application a bien l'autorisation d'accéder à ${component}`,
-      [{ text: 'OK' }],
-      { cancelable: false }
-    );
-  };
 
   const takePicture = async () => {
     closePictureModal();

@@ -50,7 +50,11 @@ const CreateAttendanceSheet = ({ route, navigation }: CreateAttendanceSheetProps
   const missingAttendanceSheets = useGetMissingAttendanceSheets();
   const groupedSlotsToBeSigned = useGetGroupedSlotsToBeSigned();
   const loggedUserId = useGetLoggedUserId();
-  const [dataSelectionTitle, setDataSelectionTitle] = useState<string>('');
+  const dataSelectionTitle = course?.type === INTER_B2B
+    ? 'Pour quels stagiaires souhaitez-vous charger une feuille d\'émargement ?'
+    : isSingle
+      ? 'Pour quel stagiaire souhaitez-vous charger une feuille d\'émargement ?'
+      : 'Pour quelle date souhaitez-vous charger une feuille d\'émargement ?';
   const [slotSelectionTitle, setSlotSelectionTitle] = useState<string>('');
   const [traineesAttendanceTitles, setTraineesAttendanceTitles] = useState<string[]>([]);
   const [attendanceSheetToAdd, setAttendanceSheetToAdd] = useState<string[]>([]);
@@ -81,17 +85,6 @@ const CreateAttendanceSheet = ({ route, navigation }: CreateAttendanceSheetProps
           ...slot.missingAttendances && { missingAttendances: slot.missingAttendances },
         }))),
   [groupedSlotsToBeSigned]);
-
-  useEffect(() => {
-    let title = 'Pour quelle date souhaitez-vous charger une feuille d\'émargement ?';
-    if (isSingle) {
-      title = 'Pour quel stagiaire souhaitez-vous charger une feuille d\'émargement ?';
-    }
-    if (course?.type === INTER_B2B) {
-      title = 'Pour quels stagiaires souhaitez-vous charger une feuille d\'émargement ?';
-    }
-    setDataSelectionTitle(title);
-  }, [course, isSingle]);
 
   const setDataOption = useCallback((options: string[]) => {
     if (course?.type !== SINGLE || options.length) {
@@ -231,8 +224,11 @@ const CreateAttendanceSheet = ({ route, navigation }: CreateAttendanceSheetProps
     </AttendanceSheetSelectionForm>
   );
 
-  const endScreenGoBack = () => {
+  useEffect(() => navigation.addListener('beforeRemove', () => {
     setShouldRefreshSheets(true);
+  }), [navigation, setShouldRefreshSheets]);
+
+  const endScreenGoBack = () => {
     navigation.goBack();
   };
 

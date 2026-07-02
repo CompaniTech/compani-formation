@@ -29,15 +29,15 @@ import styles from './styles';
 
 const isForeground = () => AppState.currentState === ACTIVE_STATE;
 
-type AppContainerProps = {
-  onLayout: () => void;
-};
-
 const getAxiosLoggedConfig = (config: AxiosRequestConfig, token: string) => {
   const axiosLoggedConfig = { ...config };
   if (axiosLoggedConfig.headers) axiosLoggedConfig.headers.set({ 'x-access-token': token });
 
   return axiosLoggedConfig;
+};
+
+type AppContainerProps = {
+  onLayout: () => void;
 };
 
 const AppContainer = ({ onLayout }: AppContainerProps) => {
@@ -54,12 +54,15 @@ const AppContainer = ({ onLayout }: AppContainerProps) => {
 
   const [updateModaleVisible, setUpdateModaleVisible] = useState<boolean>(false);
   const [maintenanceModalVisible, setMaintenanceModalVisible] = useState<boolean>(false);
+  const [triggerToastMessage, setTriggerToastMessage] = useState<boolean>(false);
   const axiosLoggedRequestInterceptorId = useRef<number | null>(null);
   const axiosLoggedResponseInterceptorId = useRef<number | null>(null);
   const axiosNotLoggedResponseInterceptorId = useRef<number | null>(null);
   const didRegisterPush = useRef(false);
   const lastCheckRef = useRef(0);
-  const [triggerToastMessage, setTriggerToastMessage] = useState<boolean>(false);
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { tryLocalSignIn(); }, []);
 
   useEffect(() => {
     if (!IS_WEB) {
@@ -83,9 +86,6 @@ const AppContainer = ({ onLayout }: AppContainerProps) => {
     }
     return () => (subscription ? subscription.remove() : null);
   }, []);
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => { tryLocalSignIn(); }, []);
 
   const initializeAxiosNotLogged = () => {
     if (axiosNotLoggedResponseInterceptorId.current !== null) {
@@ -160,6 +160,7 @@ const AppContainer = ({ onLayout }: AppContainerProps) => {
   }, [handleUnauthorizedRequest]);
 
   useEffect(() => {
+    initializeAxiosNotLogged();
     // If companiToken is null (at logout), reset axioslogged
     initializeAxiosLogged(companiToken);
   }, [companiToken, initializeAxiosLogged]);
@@ -195,10 +196,9 @@ const AppContainer = ({ onLayout }: AppContainerProps) => {
     } catch (error) {
       console.error(error);
     }
-  }, [setUpdateModaleVisible]);
+  }, []);
 
   useEffect(() => {
-    initializeAxiosNotLogged();
     shouldUpdate(ACTIVE_STATE);
     const { remove } = AppState.addEventListener('change', shouldUpdate);
 

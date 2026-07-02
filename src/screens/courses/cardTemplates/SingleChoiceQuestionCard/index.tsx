@@ -34,11 +34,12 @@ const SingleChoiceQuestionCard = ({ isLoading, setIsRightSwipeEnabled }: SingleC
   const [isPressed, setIsPressed] = useState<boolean>(false);
   const [isAnsweredCorrectly, setIsAnsweredCorrectly] = useState<boolean>(false);
   const [answers, setAnswers] = useState<StoreAnswerType[]>([]);
-  const [footerColors, setFooterColors] = useState<footerColorsType>({
-    buttons: PINK[500],
-    text: GREY[100],
-    background: GREY[100],
-  });
+
+  const footerColors: footerColorsType = !isPressed
+    ? { buttons: PINK[500], text: GREY[100], background: GREY[100] }
+    : isAnsweredCorrectly
+      ? { buttons: GREEN[600], text: GREEN[600], background: GREEN[100] }
+      : { buttons: ORANGE[600], text: ORANGE[600], background: ORANGE[100] };
 
   useEffect(() => {
     if (!isLoading && !isPressed) {
@@ -52,18 +53,6 @@ const SingleChoiceQuestionCard = ({ isLoading, setIsRightSwipeEnabled }: SingleC
     }
     setIsRightSwipeEnabled(isPressed);
   }, [isLoading, card, isPressed, setIsRightSwipeEnabled, quizzAnswer]);
-
-  useEffect(() => {
-    if (!isPressed) {
-      return setFooterColors({ buttons: PINK[500], text: GREY[100], background: GREY[100] });
-    }
-
-    if (isAnsweredCorrectly) {
-      return setFooterColors({ buttons: GREEN[600], text: GREEN[600], background: GREEN[100] });
-    }
-
-    return setFooterColors({ buttons: ORANGE[600], text: ORANGE[600], background: ORANGE[100] });
-  }, [answers, isAnsweredCorrectly, isPressed]);
 
   if (isLoading) return null;
 

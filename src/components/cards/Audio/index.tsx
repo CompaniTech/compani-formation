@@ -13,6 +13,12 @@ interface NiAudioProps {
   mediaSource: { uri: string } | undefined,
 }
 
+const convertSeconds = (seconds: number) => {
+  const minutes = Math.floor(seconds / 60);
+  const secondsRemaining = seconds % 60;
+  return `${minutes}:${secondsRemaining.toString().padStart(2, '0')}`;
+};
+
 const NiAudio = ({ mediaSource }: NiAudioProps) => {
   const player = useAudioPlayer(mediaSource);
   const status = useAudioPlayerStatus(player);
@@ -33,12 +39,6 @@ const NiAudio = ({ mediaSource }: NiAudioProps) => {
     <IoniconsButton name={status.playing ? 'pause' : 'play'} size={iconSize} onPress={playOrPauseAudio}
       color={GREY[800]} style={styles.icon} />
   );
-
-  const convertSeconds = (seconds: number) => {
-    const minutes = Math.floor(seconds / 60);
-    const secondsRemaining = seconds % 60;
-    return `${minutes}:${secondsRemaining.toString().padStart(2, '0')}`;
-  };
 
   return (
     IS_WEB

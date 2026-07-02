@@ -27,29 +27,31 @@ interface TitleTextMediaCardProps {
 const TitleTextMediaCard = ({ isLoading, setIsRightSwipeEnabled, setIsLeftSwipeEnabled }: TitleTextMediaCardProps) => {
   const card: TitleTextMediaType = useGetCard();
   const index = useGetCardIndex();
+  const mediaType = card?.media?.type || '';
+  const mediaSource = card?.media?.link
+    ? { uri: card.media.link, ...(card?.media?.type === IMAGE && { cache: 'force-cache' as CacheType }) }
+    : undefined;
   const [mediaHeight, setMediaHeight] = useState<number>(CARD_MEDIA_MAX_HEIGHT);
-  const [mediaType, setMediaType] = useState<string>('');
-  const [mediaSource, setMediaSource] = useState<{ uri: string, cache?: CacheType } | undefined>();
   const [zoomImage, setZoomImage] = useState<boolean>(false);
-
   useEffect(() => { setIsRightSwipeEnabled(true); }, [setIsRightSwipeEnabled]);
 
-  useEffect(() => {
-    setIsRightSwipeEnabled(!zoomImage);
-    setIsLeftSwipeEnabled(!zoomImage);
-  }, [zoomImage, setIsRightSwipeEnabled, setIsLeftSwipeEnabled]);
+  const openZoom = () => { 
+    setZoomImage(true); 
+    setIsRightSwipeEnabled(false); 
+    setIsLeftSwipeEnabled(false); 
+  };
+
+  const closeZoom = () => { 
+    setZoomImage(false); 
+    setIsRightSwipeEnabled(true); 
+    setIsLeftSwipeEnabled(true);
+  };
 
   useEffect(() => {
-    if (!isLoading) {
-      if (card?.media?.link && card?.media?.type === IMAGE) {
-        Image.getSize(card.media?.link || '', (width, height) => {
-          setMediaHeight(Math.min(height, CARD_MEDIA_MAX_HEIGHT));
-        });
-      }
-      setMediaType(card?.media?.type);
-      setMediaSource(card.media?.link
-        ? { uri: card.media.link, ...(card?.media?.type === IMAGE && { cache: 'force-cache' }) }
-        : undefined);
+    if (!isLoading && card?.media?.link && card?.media?.type === IMAGE) {
+      Image.getSize(card.media?.link || '', (width, height) => {
+        setMediaHeight(Math.min(height, CARD_MEDIA_MAX_HEIGHT));
+      });
     }
   }, [card, isLoading]);
 
@@ -62,14 +64,14 @@ const TitleTextMediaCard = ({ isLoading, setIsRightSwipeEnabled, setIsLeftSwipeE
         <Text style={cardsStyle.title}>{card.title}</Text>
         <Markdown style={markdownStyle(cardsStyle.text)}>{card.text}</Markdown>
         {mediaType === IMAGE && !!mediaSource &&
-          <NiImage onPress={() => setZoomImage(true)} source={mediaSource} imgHeight={mediaHeight} />}
+          <NiImage onPress={openZoom} source={mediaSource} imgHeight={mediaHeight} />}
         {mediaType === VIDEO && !!mediaSource && <NiVideo mediaSource={mediaSource} />}
         {mediaType === AUDIO && !!mediaSource && <NiAudio mediaSource={mediaSource}/>}
       </ScrollView>
       <FooterGradient />
       <CardFooter index={index} />
       {zoomImage && mediaSource &&
-        <ZoomImage image={mediaSource} setZoomImage={setZoomImage} />}
+        <ZoomImage image={mediaSource} setZoomImage={closeZoom} />}
     </SafeAreaView>
   );
 };

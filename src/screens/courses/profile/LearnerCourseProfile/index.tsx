@@ -45,6 +45,21 @@ StackScreenProps<RootStackParamList, 'LearnerCourseProfile'>,
 StackScreenProps<RootBottomTabParamList>
 >{}
 
+const getPdfName = (c: BlendedCourseType) => {
+  const misc = c.misc ? `_${c.misc}` : '';
+  return `attestation_${c.tradeName}${misc}`.replace(/[^a-zA-Zà-üÀ-Ü0-9-+]{1,}/g, '_');
+};
+
+const shareWithTimeout = async (uri: string, timeout = 5000) => Promise.race([
+  Sharing.shareAsync(uri),
+  new Promise<void>((resolve) => { setTimeout(resolve, timeout); }),
+]);
+
+const goToTraineeFile = (gSheetId: string) => {
+  const url = `https://docs.google.com/spreadsheets/d/${gSheetId}`;
+  Linking.openURL(url);
+};
+
 const LearnerCourseProfile = ({ route, navigation }: LearnerCourseProfileProps) => {
   const { mode = LEARNER, endedActivity } = route.params;
   const setStatusBarVisible = useSetStatusBarVisible();
@@ -134,53 +149,45 @@ const LearnerCourseProfile = ({ route, navigation }: LearnerCourseProfileProps) 
     return () => { subscription.remove(); };
   }, [hardwareBackPress]);
 
-  const getPdfName = (c: BlendedCourseType) => {
-    const misc = c.misc ? `_${c.misc}` : '';
-
-    return `attestation_${c.tradeName}${misc}`.replace(/[^a-zA-Zà-üÀ-Ü0-9-+]{1,}/g, '_');
-  };
-
-  const shareWithTimeout = async (uri: string, timeout = 5000) => Promise.race([
-    Sharing.shareAsync(uri),
-    new Promise<void>((resolve) => { setTimeout(resolve, timeout); }),
-  ]);
-
   const downloadCompletionCertificate = async () => {
     if (!course) return;
 
-    setIsLoading(true);
-    const data = await Courses.downloadCertificate(course._id);
-    const uint8Array = new Uint8Array(data);
+    try {
+      setIsLoading(true);
+      const data = await Courses.downloadCertificate(course._id);
+      const uint8Array = new Uint8Array(data);
 
-
-    const pdfName = getPdfName(course as BlendedCourseType);
-    if (!IS_WEB) {
-      const fileName = `${encodeURI(pdfName)}.pdf`;
-      const file = new File(Paths.cache, fileName);
-      file.create({overwrite: true});
-      file.write(uint8Array);
-      if (IS_IOS) {
-        await shareWithTimeout(file.uri);
-      } else {
-        await IntentLauncher.startActivityAsync('android.intent.action.VIEW', {
-          data: file.contentUri,
-          type: 'application/pdf',
-          flags: 1,
-        });
+      const pdfName = getPdfName(course as BlendedCourseType);
+      if (!IS_WEB) {
+        const fileName = `${encodeURI(pdfName)}.pdf`;
+        const file = new File(Paths.cache, fileName);
+        file.create({overwrite: true});
+        file.write(uint8Array);
+        if (IS_IOS) {
+          await shareWithTimeout(file.uri);
+        } else {
+          await IntentLauncher.startActivityAsync('android.intent.action.VIEW', {
+            data: file.contentUri,
+            type: 'application/pdf',
+            flags: 1,
+          });
+        }
+      } else if (typeof document !== 'undefined') {
+        const blob = new Blob([uint8Array], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = pdfName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
       }
-      
-    } else if (typeof document !== 'undefined') {
-      const blob = new Blob([uint8Array], { type: 'application/pdf' });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = pdfName;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   const goToAbout = () => {
@@ -202,11 +209,6 @@ const LearnerCourseProfile = ({ route, navigation }: LearnerCourseProfileProps) 
     navigation.navigate('TraineeFollowUp', { courseId: course._id, trainee: course.trainees![0] as string });
   };
 
-  const goToTraineeFile = (gSheetId: string) => {
-    const url = `https://docs.google.com/spreadsheets/d/${gSheetId}`;
-    Linking.openURL(url);
-  };
-
   const renderHeader = () => course && has(course, 'subProgram.program') && <>
     <CourseProfileHeader source={source} goBack={goBack} title={title} />
     <View style={styles.buttonsContainer}>
@@ -225,8 +227,7 @@ const LearnerCourseProfile = ({ route, navigation }: LearnerCourseProfileProps) 
       <Text style={styles.progressBarText}>{(getCourseProgress(course) * 100).toFixed(0)}%</Text>
     </View>}
     {mode === TUTOR && <View>
-      <TouchableOpacity hitSlop={HIT_SLOP} onPress={goToTraineeProgress}
-        style={styles.traineeProgressContainer}>
+      <TouchableOpacity hitSlop={HIT_SLOP} onPress={goToTraineeProgress} style={styles.traineeProgressContainer}>
         <Text style={styles.traineeProgress}>Accéder à la progression de l&apos;apprenant</Text>
       </TouchableOpacity>
       {(course as BlendedCourseType).gSheetId && <TouchableOpacity hitSlop={HIT_SLOP}
@@ -238,8 +239,7 @@ const LearnerCourseProfile = ({ route, navigation }: LearnerCourseProfileProps) 
 
   const renderFooter = () => <View style={styles.buttonContainer}>
     {course?.areLastSlotAttendancesValidated &&
-    <TouchableOpacity style={styles.buttonContent} onPress={downloadCompletionCertificate}
-      disabled={isLoading}>
+    <TouchableOpacity style={styles.buttonContent} onPress={downloadCompletionCertificate} disabled={isLoading}>
       {isLoading
         ? <ActivityIndicator color={WHITE} size="small" />
         : <View style={styles.certificateContent}>
