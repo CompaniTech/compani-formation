@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useReducer, useState } from 'react';
+import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { createStackNavigator, StackScreenProps } from '@react-navigation/stack';
 import { CompositeScreenProps } from '@react-navigation/native';
 import AttendanceSheets from '../../../../api/attendanceSheets';
@@ -101,10 +101,19 @@ const UpdateAttendanceSheet = ({ route, navigation }: UpdateAttendanceSheetProps
       target={traineeName} options={slotsOptions} />
   );
 
-  const goBackToCourseAndRefresh = () => {
-    if (course) navigation.popTo('LearnerCourseProfile', { courseId: course!._id, endedActivity: true, mode: LEARNER });
+  const goBackToCourseAndRefresh = useCallback(() => {
+    if (course) navigation.popTo('LearnerCourseProfile', { courseId: course._id, endedActivity: true, mode: LEARNER });
     else navigation.goBack();
-  };
+  }, [course, navigation]);
+
+  const isLeavingRef = useRef(false);
+
+  useEffect(() => navigation.addListener('beforeRemove', (e) => {
+    if (isLeavingRef.current) return;
+    e.preventDefault();
+    isLeavingRef.current = true;
+    goBackToCourseAndRefresh();
+  }), [navigation, goBackToCourseAndRefresh]);
 
   const renderEndScreen = () => (
     <AttendanceEndScreen goToNextScreen={goBackToCourseAndRefresh} target={traineeName} failUpload={failUpload}

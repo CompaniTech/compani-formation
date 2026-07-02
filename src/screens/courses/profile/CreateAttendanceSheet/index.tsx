@@ -224,8 +224,11 @@ const CreateAttendanceSheet = ({ route, navigation }: CreateAttendanceSheetProps
     </AttendanceSheetSelectionForm>
   );
 
-  const endScreenGoBack = () => {
+  useEffect(() => navigation.addListener('beforeRemove', () => {
     setShouldRefreshSheets(true);
+  }), [navigation, setShouldRefreshSheets]);
+
+  const endScreenGoBack = () => {
     navigation.goBack();
   };
 
