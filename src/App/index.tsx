@@ -11,11 +11,12 @@ import AppContainer from '../AppContainer';
 import store from '../store/store';
 import Environment from '../../environment';
 import { initializeAssets } from '../core/helpers/assets';
+import { PRODUCTION } from '../core/data/constants';
 
 Sentry.init({
   dsn: Environment.getSentryKey(),
   debug: false,
-  environment: Constants.expoConfig?.extra?.PROFILE || 'production',
+  environment: Constants.expoConfig?.extra?.PROFILE || PRODUCTION,
 });
 
 try {
