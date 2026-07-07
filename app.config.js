@@ -19,8 +19,8 @@ const ENVIRONMENT_VARIABLES = {
   PLATFORM: process.env.PLATFORM,
 };
 
-const APP_VERSION = '2.43.0';
-const VERSION_CODE = 370;
+const APP_VERSION = '2.44.0';
+const VERSION_CODE = 380;
 
 const LOCAL = 'local';
 const DEVELOPMENT = 'development';
