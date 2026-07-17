@@ -21,18 +21,13 @@ type ELearningCellProps = {
 const ELearningCell = React.memo(({ step, index, profileId, mode, endedActivity = '' }: ELearningCellProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const onPressChevron = () => { setIsOpen(prevState => !prevState); };
-  const [iconButtonStyle, setIconButtonStyle] = useState<object>(styles.iconButtonContainer);
+  const iconButtonStyle =  { ...styles.iconButtonContainer, ...isOpen && {...styles.openedIconButtonContainer} };
 
   useEffect(() => {
     if (step && step.activities && endedActivity) {
       setIsOpen(step.activities.map(activity => activity._id).includes(endedActivity));
     }
   }, [endedActivity, step]);
-
-  useEffect(() => {
-    if (isOpen) setIconButtonStyle({ ...styles.iconButtonContainer, ...styles.openedIconButtonContainer });
-    else setIconButtonStyle(styles.iconButtonContainer);
-  }, [isOpen]);
 
   return (
     <View style={[styles.container, isOpen && styles.openedContainer]}>

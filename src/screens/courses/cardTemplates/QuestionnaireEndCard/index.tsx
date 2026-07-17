@@ -23,39 +23,45 @@ const QuestionnaireEndCard = ({ courseId, questionnaires, goBack }: Questionnair
 
   useEffect(() => {
     async function createQuestionnaireHistories() {
-      const userId = await asyncStorage.getUserId();
+      try {
+        const userId = await asyncStorage.getUserId();
 
-      if (!courseId || !userId || !questionnaires.length) return;
+        if (!courseId || !userId || !questionnaires.length) return;
 
-      if (questionnaires.length === 1) {
-        const payload = {
-          course: courseId,
-          user: userId,
-          questionnaire: questionnaires[0]._id,
-          ...(questionnaireAnswersList?.length && { questionnaireAnswersList }),
-        };
+        if (questionnaires.length === 1) {
+          const payload = {
+            course: courseId,
+            user: userId,
+            questionnaire: questionnaires[0]._id,
+            ...(questionnaireAnswersList?.length && { questionnaireAnswersList }),
+          };
 
-        await QuestionnaireHistories.createQuestionnaireHistories(payload);
-      } else {
-        const cardQuestionnaireList = Object
-          .fromEntries(questionnaires.map(q => q.cards.map(c => [c._id, q._id])).flat());
-        const answersGroupedByQuestionnaire: { [k: string]: QuestionnaireAnswersType[]; } = Object
-          .fromEntries(questionnaires.map(q => [q._id, []]));
+          await QuestionnaireHistories.createQuestionnaireHistories(payload);
+        } else {
+          const cardQuestionnaireList = Object
+            .fromEntries(questionnaires.map(q => q.cards.map(c => [c._id, q._id])).flat());
+          const answersGroupedByQuestionnaire: { [k: string]: QuestionnaireAnswersType[]; } = Object
+            .fromEntries(questionnaires.map(q => [q._id, []]));
 
-        questionnaireAnswersList.forEach((answer: QuestionnaireAnswersType) => {
-          answersGroupedByQuestionnaire[cardQuestionnaireList[answer.card]].push(answer);
-        });
-
-        Object.entries(answersGroupedByQuestionnaire)
-          .forEach(async ([questionnaireId, answers]: [string, QuestionnaireAnswersType[]]) => {
-            const payload = {
-              course: courseId,
-              questionnaire: questionnaireId,
-              user: userId,
-              questionnaireAnswersList: answers,
-            };
-            await QuestionnaireHistories.createQuestionnaireHistories(payload);
+          questionnaireAnswersList.forEach((answer: QuestionnaireAnswersType) => {
+            answersGroupedByQuestionnaire[cardQuestionnaireList[answer.card]].push(answer);
           });
+
+          await Promise.all(
+            Object.entries(answersGroupedByQuestionnaire)
+              .map(([questionnaireId, answers]: [string, QuestionnaireAnswersType[]]) => {
+                const payload = {
+                  course: courseId,
+                  questionnaire: questionnaireId,
+                  user: userId,
+                  questionnaireAnswersList: answers,
+                };
+                return QuestionnaireHistories.createQuestionnaireHistories(payload);
+              })
+          );
+        }
+      } catch (e) {
+        console.error(e);
       }
     }
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { View, TouchableOpacity } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import get from 'lodash/get';
@@ -19,13 +19,8 @@ type LiveCellProps = {
 
 const LiveCell = React.memo(({ step, index, mode }: LiveCellProps) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [dates, setDates] = useState<Date[]>([]);
-  const [modalTitle, setModalTitle] = useState('');
-
-  useEffect(() => {
-    setModalTitle(`Etape ${index + 1} - ${step.name}`);
-    setDates(step.slots.map(slot => slot.endDate));
-  }, [step, index]);
+  const dates = step.slots.map(slot => slot.endDate);
+  const modalTitle = `Etape ${index + 1} - ${step.name}`;
 
   const closeModal = () => setIsModalVisible(false);
   const openModal = () => { if (step.slots.length) setIsModalVisible(true); };

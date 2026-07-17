@@ -5,13 +5,19 @@ import * as Notifications from 'expo-notifications';
 import { Provider as ReduxProvider } from 'react-redux';
 import * as SplashScreen from 'expo-splash-screen';
 import * as Sentry from '@sentry/react-native';
+import Constants from 'expo-constants';
 import { Provider as AuthProvider } from '../context/AuthContext';
 import AppContainer from '../AppContainer';
 import store from '../store/store';
 import Environment from '../../environment';
 import { initializeAssets } from '../core/helpers/assets';
+import { PRODUCTION } from '../core/data/constants';
 
-Sentry.init({ dsn: Environment.getSentryKey(), debug: false });
+Sentry.init({
+  dsn: Environment.getSentryKey(),
+  debug: false,
+  environment: Constants.expoConfig?.extra?.PROFILE || PRODUCTION,
+});
 
 try {
   Notifications.setNotificationHandler({

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { ScrollView, View, Text, TextInput, KeyboardAvoidingView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AnswerFromAPIType, QuestionAnswerType } from '../../../../types/CardType';
+import { QuestionnaireAnswersType } from '../../../../types/ActivityTypes';
 import CardHeader from '../../../../components/cards/CardHeader';
 import QuestionCardFooter from '../../../../components/cards/QuestionCardFooter';
 import FooterGradient from '../../../../components/design/FooterGradient';
@@ -37,25 +38,21 @@ const QuestionAnswerCard = ({ isLoading, setIsRightSwipeEnabled }: QuestionAnswe
   const removeQuestionnaireAnswer = useRemoveQuestionnaireAnswer();
   const [selectedAnswers, setSelectedAnswers] = useState<AnswerType[]>([]);
   const [otherAnswer, setOtherAnswer] = useState<string>('');
+  const [prevCard, setPrevCard] = useState(card);
+  const [prevQuestionnaireAnswer, setPrevQuestionnaireAnswer] = 
+    useState<QuestionnaireAnswersType | null>(questionnaireAnswer);
   const scrollRef = useRef<ScrollView>(null);
 
-  useEffect(() => setIsRightSwipeEnabled(false));
+  if (!isLoading && (card !== prevCard || questionnaireAnswer !== prevQuestionnaireAnswer)) {
+    setPrevCard(card);
+    setPrevQuestionnaireAnswer(questionnaireAnswer);
+    setSelectedAnswers(card.qcAnswers.map(answer =>
+      ({ ...answer, isSelected: !!questionnaireAnswer?.answerList.includes(answer._id) })));
+    const qcAnswersIds = card.qcAnswers.map(a => a._id);
+    setOtherAnswer(questionnaireAnswer?.answerList.find(v => !qcAnswersIds.includes(v)) ?? '');
+  }
 
-  useEffect(() => {
-    if (!isLoading) {
-      setSelectedAnswers(card.qcAnswers.map(answer =>
-        ({ ...answer, isSelected: !!questionnaireAnswer?.answerList.includes(answer._id) })));
-      const qcAnswersIds = card.qcAnswers.map(a => a._id);
-      const otherAnswerFromStore = questionnaireAnswer?.answerList.find(v => !qcAnswersIds.includes(v));
-      setOtherAnswer(otherAnswerFromStore ?? '');
-    }
-  }, [card, isLoading, questionnaireAnswer]);
-
-  useEffect(() => {
-    if (otherAnswer && !card.isQuestionAnswerMultipleChoiced) {
-      setSelectedAnswers(array => array.map(a => ({ ...a, isSelected: false })));
-    }
-  }, [otherAnswer, card]);
+  useEffect(() => { setIsRightSwipeEnabled(false); }, [setIsRightSwipeEnabled]);
 
   if (isLoading) return null;
 
@@ -74,6 +71,13 @@ const QuestionAnswerCard = ({ isLoading, setIsRightSwipeEnabled }: QuestionAnswe
       array,
       { [index]: { ...array[index], isSelected: !array[index].isSelected } }
     ));
+  };
+
+  const onChangeOtherAnswer = (text: string) => {
+    setOtherAnswer(text);
+    if (text && !card.isQuestionAnswerMultipleChoiced) {
+      setSelectedAnswers(array => array.map(a => ({ ...a, isSelected: false })));
+    }
   };
 
   const validateQuestionnaireAnswer = () => {
@@ -104,7 +108,7 @@ const QuestionAnswerCard = ({ isLoading, setIsRightSwipeEnabled }: QuestionAnswe
             {selectedAnswers.map((item, index) => <View key={index}>{renderItem(item, index)}</View>)}
             {card.allowOtherAnswer && <View style={style.otherAnswerContainer}>
               <TextInput placeholder="Autre réponse" value={otherAnswer}  clearButtonMode='always'
-                style={style.otherAnswerInput} placeholderTextColor={GREY[600]} onChangeText={setOtherAnswer}
+                style={style.otherAnswerInput} placeholderTextColor={GREY[600]} onChangeText={onChangeOtherAnswer}
                 onFocus={() => scrollRef.current?.scrollToEnd({ animated: true })} />
               <Shadow customStyle={style.shadow} />
             </View>}

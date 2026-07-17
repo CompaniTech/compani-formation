@@ -25,6 +25,22 @@ interface CreateAccountFormProps {
   create: () => void,
   openUrl: () => void,
 }
+const isFieldValid = (field, value) => {
+  switch (field) {
+    case 'lastname':
+      return value[0] !== '';
+    case 'contact':
+      return !!value[0].countryCode.match(COUNTRY_CODE_REGEX) &&
+        (!!value[0].phone.match(PHONE_REGEX) || !value[0].phone);
+    case 'password':
+      return value[0].length >= 6;
+    case 'confirmedPassword':
+      return value[0] === value[1];
+    default:
+      return true;
+  }
+};
+
 const CreateAccountForm = ({
   index,
   data,
@@ -69,22 +85,6 @@ const CreateAccountForm = ({
         return dataItem;
       }), index
     );
-  };
-
-  const isFieldValid = (field, value) => {
-    switch (field) {
-      case 'lastname':
-        return value[0] !== '';
-      case 'contact':
-        return !!value[0].countryCode.match(COUNTRY_CODE_REGEX) &&
-          (!!value[0].phone.match(PHONE_REGEX) || !value[0].phone);
-      case 'password':
-        return value[0].length >= 6;
-      case 'confirmedPassword':
-        return value[0] === value[1];
-      default:
-        return true;
-    }
   };
 
   const validData = () => {

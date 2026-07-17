@@ -34,12 +34,11 @@ const FlashCard = ({ isLoading, setIsRightSwipeEnabled }: FlashCardProps) => {
   const setViewedFlashCards = useSetViewedFlashCards();
   const [timesHasBeenClicked, setTimesHasBeenClicked] = useState<ClickOnCard>(ClickOnCard.UNCLICKED_CARD);
   const animatedValue = useRef(new Animated.Value(0)).current;
-  const [hasBeenClicked, setHasBeenClicked] = useState<boolean>(false);
+  const hasBeenClicked = hasCardBeenViewed;
   let rotationValue = 0;
   animatedValue.addListener(({ value }) => { rotationValue = value; });
 
   useEffect(() => {
-    setHasBeenClicked(hasCardBeenViewed);
     setIsRightSwipeEnabled(hasCardBeenViewed);
   }, [hasCardBeenViewed, setIsRightSwipeEnabled]);
 

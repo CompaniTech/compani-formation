@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useImperativeHandle } from 'react';
+import React, { useEffect, useImperativeHandle } from 'react';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { View, TouchableOpacity, Text, LayoutChangeEvent } from 'react-native';
 import Animated, { runOnJS, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
@@ -55,13 +55,14 @@ const OrderProposition = React.forwardRef<OrderPropositionRef, OrderPropositionP
   const previousUpShift = useSharedValue(0);
   const previousDownShift = useSharedValue(0);
   const positionCount = useSharedValue(0);
-
-  const [color, setColor] = useState<string>(GREY[200]);
-  const [dragButtonColor, setDragButtonColor] = useState<string>(GREY[500]);
   const item = items[index];
-  const [isGoodPosition, setIsGoodPosition] = useState<boolean>(item.goodPosition === item.tempPosition);
+  const isGoodPosition = item.goodPosition === item.tempPosition;
 
-  useEffect(() => { setIsGoodPosition(item.goodPosition === item.tempPosition); }, [item]);
+  const color = isValidated ? isGoodPosition ? GREEN[600] : ORANGE[600] : GREY[500];
+
+  const dragButtonColor = isValidated ? isGoodPosition ? GREEN[800] : ORANGE[800] : GREY[500];
+
+
 
   useEffect(() => { // this useEffect handles a bug case where items are not positioned as they should be
     if (dragCount) {
@@ -92,19 +93,6 @@ const OrderProposition = React.forwardRef<OrderPropositionRef, OrderPropositionP
     }
   }, [allowedOffsetY, dragCount, index, item, items, globalOffsetY, propsHeight, sumOtherHeights, translateY]);
 
-  useEffect(() => {
-    if (isGoodPosition && isValidated) {
-      setDragButtonColor(GREEN[800]);
-      return setColor(GREEN[600]);
-    }
-    if (!isGoodPosition && isValidated) {
-      setDragButtonColor(ORANGE[800]);
-      return setColor(ORANGE[600]);
-    }
-
-    setDragButtonColor(GREY[500]);
-    return setColor(GREY[500]);
-  }, [isGoodPosition, isValidated]);
 
   const handleLayout = (event: LayoutChangeEvent) => {
     const { height } = event.nativeEvent.layout;

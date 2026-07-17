@@ -35,6 +35,7 @@ const AttendanceSignatureContainer = ({
   const webViewRef = useRef<WebView>(null);
   const [exitConfirmationModal, setExitConfirmationModal] = useState<boolean>(false);
   const isFocused = useIsFocused();
+  const handleIframeMessageRef = useRef<(event: MessageEvent<string>) => void>(() => {});
 
   const onMessage = (event: WebViewMessageEvent) => {
     const dataURI = event.nativeEvent.data;
@@ -42,23 +43,21 @@ const AttendanceSignatureContainer = ({
     if (dataURI) resetError();
   };
 
-  const handleIframeMessage = useCallback((event: MessageEvent<string>) => {
-    if ((event.origin !== window.location.origin && event.origin !== 'null') || !isFocused) return;
-    const dataURI = event.data;
-    setSignature(dataURI);
-    if (dataURI) resetError();
-  }, [isFocused, resetError, setSignature]);
+  useEffect(() => {
+    handleIframeMessageRef.current = (event: MessageEvent<string>) => {
+      if ((event.origin !== window.location.origin && event.origin !== 'null') || !isFocused) return;
+      const dataURI = event.data;
+      setSignature(dataURI);
+      if (dataURI) resetError();
+    };
+  });
 
   useEffect(() => {
-    if (IS_WEB) {
-      window.addEventListener('message', handleIframeMessage);
-    }
-    return () => {
-      if (IS_WEB) {
-        window.removeEventListener('message', handleIframeMessage);
-      }
-    };
-  }, [handleIframeMessage]);
+    if (!IS_WEB) return undefined;
+    const stableHandler = (event: MessageEvent<string>) => handleIframeMessageRef.current(event);
+    window.addEventListener('message', stableHandler);
+    return () => window.removeEventListener('message', stableHandler);
+  }, []);
 
   useFocusEffect(
     useCallback(() => {
@@ -70,7 +69,7 @@ const AttendanceSignatureContainer = ({
       const subscription = BackHandler.addEventListener('hardwareBackPress', onBackPress);
 
       return () => subscription.remove();
-    }, [setExitConfirmationModal])
+    }, [])
   );
 
   useEffect(() => {
@@ -127,15 +126,9 @@ const AttendanceSignatureContainer = ({
                 style={styles.iframeContent} />
             </View>
             : <View style={styles.webviewContainer}>
-              <WebView
-                ref={webViewRef}
-                source={{ html: htmlContent, baseUrl: '' }}
-                onMessage={onMessage}
-                javaScriptEnabled
-                originWhitelist={['*']}
-              />
+              <WebView ref={webViewRef} source={{ html: htmlContent, baseUrl: '' }} onMessage={onMessage}
+                javaScriptEnabled originWhitelist={['*']} />
             </View>
-
         }
         <View style={styles.buttonContainer}>
           <NiSecondaryButton customStyle={styles.button} caption="Tout effacer" onPress={clearCanvas} />

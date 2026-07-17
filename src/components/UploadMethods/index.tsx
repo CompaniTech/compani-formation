@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Alert, BackHandler, View } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -30,6 +30,15 @@ interface UploadMethodsProps {
   goToParent: () => void,
 }
 
+const alert = (component: string) => {
+  Alert.alert(
+    'Accès refusé',
+    `Vérifiez que l'application a bien l'autorisation d'accéder à ${component}`,
+    [{ text: 'OK' }],
+    { cancelable: false }
+  );
+};
+
 const UploadMethods = ({
   attendanceSheetToAdd,
   slotsToAdd = [],
@@ -41,14 +50,9 @@ const UploadMethods = ({
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [type, setType] = useState<string>('');
   const [imagePickerManager, setImagePickerManager] = useState<boolean>(false);
-  const [isSingle, setIsSingle] = useState<boolean>(false);
   const [, requestPermission] = ImagePicker.useCameraPermissions();
-  const [severalAttendanceSheetsToAdd, setSeveralAttendanceSheetsToAdd] = useState<boolean>(false);
-
-  useEffect(() => {
-    setIsSingle(course.type === SINGLE);
-    setSeveralAttendanceSheetsToAdd(attendanceSheetToAdd.length > 1);
-  }, [course, attendanceSheetToAdd]);
+  const isSingle = course.type === SINGLE;
+  const severalAttendanceSheetsToAdd = attendanceSheetToAdd.length > 1;
 
   useFocusEffect(
     useCallback(() => {
@@ -62,15 +66,6 @@ const UploadMethods = ({
       return () => subscription.remove();
     }, [navigation])
   );
-
-  const alert = (component: string) => {
-    Alert.alert(
-      'Accès refusé',
-      `Vérifiez que l'application a bien l'autorisation d'accéder à ${component}`,
-      [{ text: 'OK' }],
-      { cancelable: false }
-    );
-  };
 
   const requestPermissionsForCamera = async () => {
     try {

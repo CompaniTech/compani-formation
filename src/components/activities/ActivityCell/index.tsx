@@ -1,4 +1,4 @@
-import React, { useReducer, useEffect } from 'react';
+import React from 'react';
 import { Text, View, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
@@ -9,7 +9,6 @@ import { useSetQuestionnaireAnswersList } from '../../../store/cards/hooks';
 import { GREEN, WHITE, ORANGE, YELLOW } from '../../../styles/colors';
 import { ICON } from '../../../styles/metrics';
 import ActivityIcon from '../ActivityIcon';
-import { ColorActionType, ColorStateType } from './types';
 import styles from './styles';
 
 type ActivityCellProps = {
@@ -21,16 +20,6 @@ type ActivityCellProps = {
 export const SET_TO_GREEN = 'SET_TO_GREEN';
 export const SET_TO_ORANGE = 'SET_TO_ORANGE';
 
-const colorsReducer = (state: ColorStateType, action: ColorActionType): ColorStateType => {
-  switch (action) {
-    case SET_TO_GREEN:
-      return { border: GREEN[600], background: GREEN[300], check: GREEN[500] };
-    case SET_TO_ORANGE:
-      return { border: ORANGE[600], background: ORANGE[300], check: ORANGE[500] };
-    default:
-      return state;
-  }
-};
 
 const ActivityCell = React.memo(({ activity, profileId, mode }: ActivityCellProps) => {
   const setQuestionnaireAnswersList = useSetQuestionnaireAnswersList();
@@ -41,12 +30,11 @@ const ActivityCell = React.memo(({ activity, profileId, mode }: ActivityCellProp
   const isQuiz = activity.type === QUIZ;
   const isAboveAverage = isQuiz ? lastScore * 2 > quizCount : true;
   const navigation = useNavigation();
-  const [colors, dispatch] = useReducer(colorsReducer, { border: YELLOW[600], background: YELLOW[300] });
-
-  useEffect(() => {
-    if (isCompleted && isAboveAverage) dispatch(SET_TO_GREEN);
-    else if (isCompleted) dispatch(SET_TO_ORANGE);
-  }, [isAboveAverage, isCompleted]);
+  const colors = isCompleted && isAboveAverage
+    ? { border: GREEN[600], background: GREEN[300], check: GREEN[500] }
+    : isCompleted
+      ? { border: ORANGE[600], background: ORANGE[300], check: ORANGE[500] }
+      : { border: YELLOW[600], background: YELLOW[300], check: undefined };
 
   const coloredStyle = styles(colors.check);
 

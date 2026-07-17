@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react';
 import get from 'lodash/get';
 import { StackActions } from '@react-navigation/native';
 import { StackScreenProps } from '@react-navigation/stack';
@@ -15,19 +14,12 @@ const ElearningAbout = ({ route, navigation }: ElearningAboutProps) => {
   const loggedUserId = useGetLoggedUserId();
 
   const { program } = route.params;
-  const [hasAlreadySubscribed, setHasAlreadySubscribed] = useState(false);
-  const [courseId, setCourseId] = useState<string>('');
-
-  useEffect(() => {
-    const subProgram = program.subPrograms ? program.subPrograms[0] : null;
-    const course = subProgram?.courses ? subProgram.courses[0] : null;
-    if (course) {
-      setCourseId(course._id);
-
-      const { trainees } = course as ELearningCourseType;
-      if (loggedUserId) setHasAlreadySubscribed(trainees?.includes(loggedUserId) || false);
-    }
-  }, [loggedUserId, program]);
+  const subProgram = program.subPrograms ? program.subPrograms[0] : null;
+  const course = subProgram?.courses ? subProgram.courses[0] : null;
+  const courseId = course?._id || '';
+  const hasAlreadySubscribed = course && loggedUserId
+    ? ((course as ELearningCourseType).trainees?.includes(loggedUserId) || false)
+    : false;
 
   const goToCourse = () => navigation.popTo('LearnerCourseProfile', { courseId });
 

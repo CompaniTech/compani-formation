@@ -46,11 +46,12 @@ const FillTheGapCard = ({ isLoading, setIsRightSwipeEnabled }: FillTheGap) => {
   const [isValidated, setIsValidated] = useState<boolean>(false);
   const [isAnsweredCorrectly, setIsAnsweredCorrectly] = useState<boolean>(false);
   const areGapsFilled = !selectedAnswers.filter(answer => answer === '').length;
-  const [footerColors, setFooterColors] = useState<footerColorsType>({
-    buttons: PINK[500],
-    text: GREY[100],
-    background: GREY[100],
-  });
+  const footerColors: footerColorsType = !isValidated
+    ? { buttons: PINK[500], text: GREY[100], background: GREY[100] }
+    : isAnsweredCorrectly
+      ? { buttons: GREEN[600], text: GREEN[600], background: GREEN[100] }
+      : { buttons: ORANGE[600], text: ORANGE[600], background: ORANGE[100] };
+
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -79,18 +80,6 @@ const FillTheGapCard = ({ isLoading, setIsRightSwipeEnabled }: FillTheGap) => {
     }
     setIsRightSwipeEnabled(isValidated);
   }, [card, goodAnswers, isLoading, isValidated, quizzAnswer, setIsRightSwipeEnabled]);
-
-  useEffect(() => {
-    if (!isValidated) {
-      return setFooterColors({ buttons: PINK[500], text: GREY[100], background: GREY[100] });
-    }
-
-    if (isAnsweredCorrectly) {
-      return setFooterColors({ buttons: GREEN[600], text: GREEN[600], background: GREEN[100] });
-    }
-
-    return setFooterColors({ buttons: ORANGE[600], text: ORANGE[600], background: ORANGE[100] });
-  }, [isValidated, isAnsweredCorrectly]);
 
   if (isLoading) return null;
 

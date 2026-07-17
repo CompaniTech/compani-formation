@@ -13,25 +13,18 @@ interface QuestionnaireQRCodeCellProps {
 }
 
 const QuestionnaireQRCodeCell = ({ img, types, courseId, courseTimeline }: QuestionnaireQRCodeCellProps) => {
-  const [questionnaireTypeTitle, setQuestionnaireTypeTitle] = useState('');
-  const [qrCodePlaceHolder, setQrCodePlaceHolder] = useState('');
+  const questionnaireTypeTitle = getQuestionnaireTitle(types);
+  const qrCodePlaceHolder = `QR Code pour répondre au ${questionnaireTypeTitle}`;
   const [url, setUrl] = useState<string>('');
 
   useEffect(() => {
     const defineURL = async () => {
       const webappURL = await Environment.getWebappUrl();
-
       setUrl(`${webappURL}/ni/questionnaires?courseId=${courseId}&courseTimeline=${courseTimeline}`);
     };
-
     defineURL();
   }, [courseId, courseTimeline]);
 
-  useEffect(() => {
-    const title = getQuestionnaireTitle(types);
-    setQuestionnaireTypeTitle(title);
-    setQrCodePlaceHolder(`QR Code pour répondre au ${title}`);
-  }, [types]);
 
   return (
     <View style={styles.container}>

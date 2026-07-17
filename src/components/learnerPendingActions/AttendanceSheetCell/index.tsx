@@ -1,5 +1,5 @@
 import { Text, View, TouchableOpacity } from 'react-native';
-import { useEffect, useState } from 'react';
+import { useMemo } from 'react';
 import { Feather } from '@expo/vector-icons';
 import groupBy from 'lodash/groupBy';
 import { useNavigation } from '@react-navigation/native';
@@ -24,21 +24,16 @@ const AttendanceSheetCell = ({ attendanceSheet }: AttendanceSheetCellProps) => {
   const loggedUserId = useGetLoggedUserId();
   const course = useGetCourse();
   const setGroupedSlotsToBeSigned = useSetGroupedSlotsToBeSigned();
-  const [unsignedSlots, setUnsignedSlots] = useState<(SlotType & SignaturesType)[]>([]);
-
-  useEffect(() => {
-    setUnsignedSlots(
-      (attendanceSheet.slots || [])
-        .filter((s) => {
-          const traineeSignatureMissing = [SINGLE, INTER_B2B].includes(course!.type)
-            ? !(s.traineesSignature || [])
-              .find(signature => signature?.traineeId === loggedUserId && !!signature.signature)
-            : (s.traineesSignature || [])
-              .find(signature => signature?.traineeId === loggedUserId && !signature.signature);
-          return traineeSignatureMissing;
-        })
-    );
-  }, [attendanceSheet.slots, course, loggedUserId]);
+  const unsignedSlots = useMemo<(SlotType & SignaturesType)[]>(() =>
+    (attendanceSheet.slots || []).filter((s) => {
+      const traineeSignatureMissing = [SINGLE, INTER_B2B].includes(course!.type)
+        ? !(s.traineesSignature || [])
+          .find(signature => signature?.traineeId === loggedUserId && !!signature.signature)
+        : (s.traineesSignature || [])
+          .find(signature => signature?.traineeId === loggedUserId && !signature.signature);
+      return traineeSignatureMissing;
+    }),
+  [attendanceSheet.slots, course, loggedUserId]);
 
   const goToSignature = () => {
     const groupedSlots = groupBy(unsignedSlots, slot => slot.step);

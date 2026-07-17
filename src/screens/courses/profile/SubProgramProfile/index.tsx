@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import {
   View,
   Text,
@@ -37,19 +37,14 @@ const SubProgramProfile = ({ route, navigation }: SubProgramProfileProps) => {
   const setStatusBarVisible = useSetStatusBarVisible();
 
   const [subProgram, setSubProgram] = useState<SubProgramType | null>(null);
-  const [source, setSource] =
-    useState<ImageSourcePropType>(require('../../../../../assets/images/authentication_background_image.webp'));
-  const [programName, setProgramName] = useState<string>('');
   const [refreshing, setRefreshing] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  useEffect(() => {
-    setProgramName(get(subProgram, 'program.name') || '');
-
-    const programImage = get(subProgram, 'program.image.link') || '';
-    if (programImage) setSource({ uri: programImage });
-    else setSource(require('../../../../../assets/images/authentication_background_image.webp'));
-  }, [subProgram]);
+  const programName = get(subProgram, 'program.name') || '';
+  const programImage = get(subProgram, 'program.image.link') || '';
+  const source: ImageSourcePropType = programImage
+    ? { uri: programImage }
+    : require('../../../../../assets/images/authentication_background_image.webp');
 
   const getSubProgram = useCallback(async () => {
     try {
@@ -77,16 +72,18 @@ const SubProgramProfile = ({ route, navigation }: SubProgramProfileProps) => {
     navigation.goBack();
   }, [navigation]);
 
-  const hardwareBackPress = useCallback(() => {
-    goBack();
-    return true;
-  }, [goBack]);
+  const hardwareBackPressRef = useRef<() => boolean>(() => true);
+  useEffect(() => {
+    hardwareBackPressRef.current = () => {
+      goBack();
+      return true;
+    };
+  });
 
   useEffect(() => {
-    const subscription = BackHandler.addEventListener('hardwareBackPress', hardwareBackPress);
-
+    const subscription = BackHandler.addEventListener('hardwareBackPress', () => hardwareBackPressRef.current());
     return () => { subscription.remove(); };
-  }, [hardwareBackPress, isFocused]);
+  }, []);
 
   const renderHeader = () => <ImageBackground source={source} imageStyle={styles.image}>
     <LinearGradient colors={['transparent', 'rgba(0, 0, 0, 0.4)']} style={styles.gradient} />

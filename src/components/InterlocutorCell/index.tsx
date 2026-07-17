@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { View, Text, Image } from 'react-native';
 import { formatIdentity } from '../../core/helpers/utils';
 import { TrainerType, TutorType } from '../../types/CourseTypes';
@@ -11,13 +10,9 @@ interface InterlocutorCellProps {
 }
 
 const InterlocutorCell = ({ interlocutor }: InterlocutorCellProps) => {
-  const [interlocutorPictureSource, setInterlocutorPictureSource] = useState(
-    require('../../../assets/images/default_avatar.webp')
-  );
-
-  useEffect(() => {
-    if (interlocutor?.picture?.link) setInterlocutorPictureSource({ uri: interlocutor.picture.link });
-  }, [interlocutor?.picture?.link]);
+  const interlocutorPictureSource = interlocutor?.picture?.link
+    ? { uri: interlocutor.picture.link }
+    : require('../../../assets/images/default_avatar.webp');
 
   return (
     <>

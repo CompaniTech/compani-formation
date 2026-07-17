@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useReducer, useState } from 'react';
+import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { createStackNavigator, StackScreenProps } from '@react-navigation/stack';
 import { CompositeScreenProps } from '@react-navigation/native';
 import AttendanceSheets from '../../../../api/attendanceSheets';
@@ -38,7 +38,7 @@ const UpdateAttendanceSheet = ({ route, navigation }: UpdateAttendanceSheetProps
   const course = useGetCourse();
   const loggedUser = useGetLoggedUser();
   const groupedSlotsToBeSigned = useGetGroupedSlotsToBeSigned();
-  const [slotSelectionTitle, setSlotSelectionTitle] = useState<string>('');
+  const slotSelectionTitle = `${trainerName} vous demande d'émarger les créneaux suivants : `;
   const slotList = Object.values(groupedSlotsToBeSigned).map(group => group.map(s => s._id)).flat();
   const [signature, setSignature] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -63,10 +63,6 @@ const UpdateAttendanceSheet = ({ route, navigation }: UpdateAttendanceSheetProps
   useEffect(() => {
     if (loggedUser?.identity) setTraineeName(formatIdentity(loggedUser.identity, LONG_FIRSTNAME_LONG_LASTNAME));
   }, [loggedUser]);
-
-  useEffect(() => {
-    setSlotSelectionTitle(`${trainerName} vous demande d'émarger les créneaux suivants : `);
-  }, [trainerName]);
 
   const setConfirmationCheckbox = () => {
     setConfirmation(prevState => !prevState);
@@ -105,10 +101,19 @@ const UpdateAttendanceSheet = ({ route, navigation }: UpdateAttendanceSheetProps
       target={traineeName} options={slotsOptions} />
   );
 
-  const goBackToCourseAndRefresh = () => {
-    if (course) navigation.popTo('LearnerCourseProfile', { courseId: course!._id, endedActivity: true, mode: LEARNER });
+  const goBackToCourseAndRefresh = useCallback(() => {
+    if (course) navigation.popTo('LearnerCourseProfile', { courseId: course._id, endedActivity: true, mode: LEARNER });
     else navigation.goBack();
-  };
+  }, [course, navigation]);
+
+  const isLeavingRef = useRef(false);
+
+  useEffect(() => navigation.addListener('beforeRemove', (e) => {
+    if (isLeavingRef.current) return;
+    e.preventDefault();
+    isLeavingRef.current = true;
+    goBackToCourseAndRefresh();
+  }), [navigation, goBackToCourseAndRefresh]);
 
   const renderEndScreen = () => (
     <AttendanceEndScreen goToNextScreen={goBackToCourseAndRefresh} target={traineeName} failUpload={failUpload}

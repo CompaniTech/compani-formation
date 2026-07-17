@@ -77,15 +77,18 @@ const ActivityCardContainer = ({ route, navigation }: ActivityCardContainerProps
     interval.current = setInterval(() => { timer.current += 1; }, 1000);
   };
 
-  const handleAppStateChange = useCallback((nextAppState: AppStateStatus) => {
-    if (nextAppState === 'active') startTimer();
-    else pauseTimer();
-  }, [pauseTimer]);
+  const handleAppStateChangeRef = useRef<(nextAppState: AppStateStatus) => void>(() => {});
+  useEffect(() => {
+    handleAppStateChangeRef.current = (nextAppState: AppStateStatus) => {
+      if (nextAppState === 'active') startTimer();
+      else pauseTimer();
+    };
+  });
 
   useEffect(() => {
-    const { remove } = AppState.addEventListener('change', handleAppStateChange);
+    const { remove } = AppState.addEventListener('change', s => handleAppStateChangeRef.current(s));
     return () => { remove(); };
-  }, [handleAppStateChange]);
+  }, []);
 
   const stopTimer = useCallback(() => {
     if (interval.current) clearInterval(interval.current);
@@ -117,18 +120,21 @@ const ActivityCardContainer = ({ route, navigation }: ActivityCardContainerProps
     resetCardReducer();
   };
 
-  const hardwareBackPress = useCallback(() => {
-    if (cardIndex === null) goBack();
-    else setExitConfirmationModal(true);
+  const hardwareBackPressRef = useRef<() => boolean>(() => true);
+  useEffect(() => {
+    hardwareBackPressRef.current = () => {
+      if (cardIndex === null) goBack();
+      else setExitConfirmationModal(true);
 
-    return true;
-  }, [cardIndex, goBack, setExitConfirmationModal]);
+      return true;
+    };
+  });
 
   useEffect(() => {
-    const subscription = BackHandler.addEventListener('hardwareBackPress', hardwareBackPress);
+    const subscription = BackHandler.addEventListener('hardwareBackPress', () => hardwareBackPressRef.current());
 
     return () => { subscription.remove(); };
-  }, [hardwareBackPress]);
+  }, []);
 
   const Tab = createMaterialTopTabNavigator<RootCardParamList>();
 
