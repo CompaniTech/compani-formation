@@ -22,3 +22,6 @@ api-*
 
 #Firebase
 google-services.json
+
+# Artefacts de build EAS local
+build-*.tar.gz
