@@ -141,6 +141,15 @@ export default {
       ['expo-notifications', { autoRegistration: false }],
       '@sentry/react-native',
       'expo-sharing',
+      [
+        'expo-splash-screen',
+        {
+          backgroundColor: '#FFFFFF',
+          resizeMode: 'cover',
+          image: './assets/images/splash_ios.png',
+          android: { image: './assets/images/splash_android.png' },
+        },
+      ],
     ],
   },
 };
