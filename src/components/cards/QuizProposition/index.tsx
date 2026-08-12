@@ -1,5 +1,5 @@
 import { View, TouchableOpacity, Text } from 'react-native';
-import { Feather } from '@expo/vector-icons';
+import Feather from '@react-native-vector-icons/feather';
 import { GREY, GREEN, ORANGE, PINK } from '../../../styles/colors';
 import Shadow from '../../design/Shadow';
 import styles from './styles';

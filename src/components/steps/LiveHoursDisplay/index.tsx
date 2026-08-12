@@ -1,5 +1,5 @@
 import { Text, View } from 'react-native';
-import { Feather } from '@expo/vector-icons';
+import Feather from '@react-native-vector-icons/feather';
 import { ICON } from '../../../styles/metrics';
 import { GREY } from '../../../styles/colors';
 import CompaniDate from '../../../core/helpers/dates/companiDates';

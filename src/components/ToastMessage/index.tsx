@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { Text, View, Animated } from 'react-native';
-import { AntDesign } from '@expo/vector-icons';
+import AntDesign from '@react-native-vector-icons/ant-design';
 import { WHITE } from '../../styles/colors';
 import { IS_WEB } from '../../core/data/constants';
 import styles, { TOAST_OFFSET } from './styles';

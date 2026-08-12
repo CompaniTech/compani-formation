@@ -1,12 +1,12 @@
 import React from 'react';
 import { Text, View, TouchableOpacity } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import Ionicons from '@react-native-vector-icons/ionicons';
 import { useNavigation } from '@react-navigation/native';
 import { LEARNER, QUIZ } from '../../../core/data/constants';
 import { ActivityType } from '../../../types/ActivityTypes';
 import { CourseModeType } from '../../../types/CourseTypes';
 import { useSetQuestionnaireAnswersList } from '../../../store/cards/hooks';
-import { GREEN, WHITE, ORANGE, YELLOW } from '../../../styles/colors';
+import { GREEN, ORANGE, YELLOW } from '../../../styles/colors';
 import { ICON } from '../../../styles/metrics';
 import ActivityIcon from '../ActivityIcon';
 import styles from './styles';
@@ -58,8 +58,7 @@ const ActivityCell = React.memo(({ activity, profileId, mode }: ActivityCellProp
           <ActivityIcon activity={activity} disabled={disabled} backgroundColor={colors.background}
             borderColor={colors.border} />
           {isCompleted && !isQuiz &&
-            <Ionicons name='checkmark-circle' size={ICON.MD} color={GREEN[500]} style={coloredStyle.icon}
-              backgroundColor={WHITE} />}
+            <Ionicons name='checkmark-circle' size={ICON.MD} color={GREEN[500]} style={coloredStyle.icon} />}
           {isCompleted && isQuiz &&
             <View style={coloredStyle.scoreContainer}>
               <Text style={coloredStyle.score}>{lastScore}/{quizCount}</Text>

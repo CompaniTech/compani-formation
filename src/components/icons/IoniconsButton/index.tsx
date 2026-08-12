@@ -1,5 +1,5 @@
 import { TouchableOpacity, Insets } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import Ionicons from '@react-native-vector-icons/ionicons';
 import commonStyle from '../../../styles/common';
 import { IoniconsType } from '../../../types/IoniconsType';
 

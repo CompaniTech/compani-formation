@@ -1,5 +1,5 @@
 import React, { useEffect, useImperativeHandle } from 'react';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import MaterialCommunityIcons from '@react-native-vector-icons/material-design-icons';
 import { View, TouchableOpacity, Text, LayoutChangeEvent } from 'react-native';
 import Animated, { runOnJS, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';

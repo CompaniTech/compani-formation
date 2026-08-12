@@ -1,5 +1,5 @@
 import { TouchableOpacity, Text, ActivityIndicator } from 'react-native';
-import { Feather } from '@expo/vector-icons';
+import Feather from '@react-native-vector-icons/feather';
 import commonStyle from '../../../styles/common';
 import { ICON } from '../../../styles/metrics';
 import { FontType } from '../../../types/FontType';

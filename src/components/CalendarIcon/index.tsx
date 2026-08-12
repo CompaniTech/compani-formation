@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { Text, View } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import Ionicons from '@react-native-vector-icons/ionicons';
 import CompaniDate from '../../core/helpers/dates/companiDates';
 import { CourseModeType } from '../../types/CourseTypes';
 import { capitalize } from '../../core/helpers/utils';
@@ -41,7 +41,7 @@ const CalendarIcon = ({ slots, progress = 0, mode }: CalendarIconProps) => {
       return (
         <View style={style.datesLengthContainer}>
           <Ionicons name='calendar-sharp' size={ICON.SM} color={mode === TRAINER ? PURPLE[800] : PINK[500]}
-            backgroundColor={WHITE} />
+            style={{ backgroundColor: WHITE }} />
         </View>
       );
     }

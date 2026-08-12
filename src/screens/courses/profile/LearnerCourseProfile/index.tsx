@@ -18,7 +18,7 @@ import isEqual from 'lodash/isEqual';
 import { File, Paths } from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 import * as IntentLauncher from 'expo-intent-launcher';
-import { Feather } from '@expo/vector-icons';
+import Feather from '@react-native-vector-icons/feather';
 import { StackScreenProps } from '@react-navigation/stack';
 import { RootStackParamList, RootBottomTabParamList } from '../../../../types/NavigationType';
 import Courses from '../../../../api/courses';
