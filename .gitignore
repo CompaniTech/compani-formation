@@ -13,6 +13,8 @@ env/*
 api-*
 .idea/*
 .env
+.env.local
+!.env.local.example
 
 # macOS
 .DS_Store
