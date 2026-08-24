@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { Text, View } from 'react-native';
 import Slider from '@react-native-community/slider';
-import { Ionicons } from '@expo/vector-icons';
+import Ionicons from '@react-native-vector-icons/ionicons';
 import { useAudioPlayer, useAudioPlayerStatus } from 'expo-audio';
 import { ICON, WEB_AUDIO_ICON_SIZE } from '../../../styles/metrics';
 import IoniconsButton from '../../icons/IoniconsButton';

@@ -54,7 +54,7 @@ const ForgotPasswordModal = ({ visible, email, setForgotPasswordModal }: ForgotP
         chars.forEach((c, i) => { next[i] = c; });
         return next;
       });
-      global.requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
         inputRefs.current[index - 1]?.focus();
       });
       return;
@@ -67,13 +67,13 @@ const ForgotPasswordModal = ({ visible, email, setForgotPasswordModal }: ForgotP
     });
 
     if (text && index < inputRefs.current.length) {
-      global.requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
         inputRefs.current[index + 1]?.focus();
       });
     }
 
     if (!text && index > 0) {
-      global.requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
         inputRefs.current[index - 1]?.focus();
       });
     }

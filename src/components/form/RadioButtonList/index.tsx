@@ -1,5 +1,5 @@
 import { TouchableOpacity, Text } from 'react-native';
-import { MaterialIcons } from '@expo/vector-icons';
+import MaterialIcons from '@react-native-vector-icons/material-icons';
 import styles from './styles';
 import { GREY, PINK } from '../../../styles/colors';
 import { DataOptionsType } from '../../../store/attendanceSheets/slice';

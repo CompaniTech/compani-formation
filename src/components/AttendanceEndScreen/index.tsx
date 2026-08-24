@@ -1,6 +1,6 @@
 import { View, Text, Image, ScrollView, BackHandler } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { MaterialIcons } from '@expo/vector-icons';
+import MaterialIcons from '@react-native-vector-icons/material-icons';
 import { useFocusEffect } from '@react-navigation/native';
 import { useCallback } from 'react';
 import { IS_WEB, TRAINER } from '../../core/data/constants';

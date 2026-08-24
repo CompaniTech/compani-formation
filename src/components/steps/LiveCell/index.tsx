@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, TouchableOpacity } from 'react-native';
-import { Feather } from '@expo/vector-icons';
+import Feather from '@react-native-vector-icons/feather';
 import get from 'lodash/get';
 import { CourseModeType } from '../../../types/CourseTypes';
 import { LiveStepType } from '../../../types/StepTypes';

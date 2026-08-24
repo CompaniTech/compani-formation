@@ -77,11 +77,6 @@ export default {
       bundleIdentifier: variables.bundleIdentifier,
       requireFullScreen: true,
       icon: './assets/images/ios_icon.png',
-      splash: {
-        image: './assets/images/splash_ios.png',
-        resizeMode: 'cover',
-        backgroundColor: '#FFFFFF',
-      },
       infoPlist: {
         NSCameraUsageDescription: 'Autorisez l\'accès à votre caméra pour pouvoir prendre une photo et la charger comme photo de profil dans Compani.',
         NSPhotoLibraryUsageDescription: 'Autorisez l\'accès à votre librairie pour pouvoir choisir une photo et la charger comme photo de profil dans Compani.',
@@ -110,11 +105,6 @@ export default {
         foregroundImage: './assets/images/android_icon.png',
         backgroundColor: '#005774',
       },
-      splash: {
-        image: './assets/images/splash_android.png',
-        resizeMode: 'cover',
-        backgroundColor: '#FFFFFF',
-      },
       versionCode: VERSION_CODE,
     },
     web: {
@@ -141,6 +131,15 @@ export default {
       ['expo-notifications', { autoRegistration: false }],
       '@sentry/react-native',
       'expo-sharing',
+      [
+        'expo-splash-screen',
+        {
+          backgroundColor: '#FFFFFF',
+          resizeMode: 'cover',
+          image: './assets/images/splash_ios.png',
+          android: { image: './assets/images/splash_android.png' },
+        },
+      ],
     ],
   },
 };
