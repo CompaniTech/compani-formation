@@ -52,6 +52,9 @@ const styles = (inputColor: string) => StyleSheet.create({
     bottom: -6,
     right: -10,
   },
+  datesLengthIcon: {
+    backgroundColor: WHITE,
+  },
   datesLength: {
     ...NUNITO_REGULAR.SM,
     color: inputColor,

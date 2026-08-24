@@ -5,7 +5,7 @@ import CompaniDate from '../../core/helpers/dates/companiDates';
 import { CourseModeType } from '../../types/CourseTypes';
 import { capitalize } from '../../core/helpers/utils';
 import { ICON } from '../../styles/metrics';
-import { PINK, PURPLE, WHITE } from '../../styles/colors';
+import { PINK, PURPLE } from '../../styles/colors';
 import Shadow from '../design/Shadow';
 import ProgressPieChart from '../ProgressPieChart';
 import { TRAINER, DAY_OF_WEEK_SHORT, DAY_OF_MONTH, MONTH_SHORT, DAY } from '../../core/data/constants';
@@ -41,7 +41,7 @@ const CalendarIcon = ({ slots, progress = 0, mode }: CalendarIconProps) => {
       return (
         <View style={style.datesLengthContainer}>
           <Ionicons name='calendar-sharp' size={ICON.SM} color={mode === TRAINER ? PURPLE[800] : PINK[500]}
-            style={{ backgroundColor: WHITE }} />
+            style={style.datesLengthIcon} />
         </View>
       );
     }
