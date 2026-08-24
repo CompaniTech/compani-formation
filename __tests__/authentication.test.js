@@ -1,7 +1,7 @@
 import { Provider as ReduxProvider } from 'react-redux';
 import MockAdapter from 'axios-mock-adapter';
 import sinon from 'sinon';
-import { render, fireEvent, waitFor, act, cleanup } from '@testing-library/react-native';
+import { render, fireEvent, waitFor, cleanup } from '@testing-library/react-native';
 import { Provider as AuthProvider } from '../src/context/AuthContext';
 import Environment from '../environment';
 import store from '../src/store/store';
@@ -70,7 +70,7 @@ describe('Authentication tests', () => {
       .onGet(`${baseURL}/subprograms/draft-e-learning`)
       .reply(200, { data: { subPrograms: [] } });
 
-    const element = render(
+    const element = await render(
       <AuthProvider>
         <ReduxProvider store={store}>
           <AppContainer/>
@@ -88,9 +88,9 @@ describe('Authentication tests', () => {
       sendButton = element.getByTestId('Se connecter');
     });
 
-    await act(async () => fireEvent.changeText(emailInput, 'test@alenvi.io'));
-    await act(async () => fireEvent.changeText(passwordInput, '123456'));
-    await act(async () => fireEvent.press(sendButton));
+    await fireEvent.changeText(emailInput, 'test@alenvi.io');
+    await fireEvent.changeText(passwordInput, '123456');
+    await fireEvent.press(sendButton);
 
     const header = element.getByTestId('header');
     expect(header).toBeTruthy();
