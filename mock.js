@@ -12,3 +12,4 @@ jest.mock('react-native-gesture-handler', () => ({
 jest.mock('expo-audio', () => {});
 jest.mock('expo-video', () => {});
 jest.mock('react-native-reanimated-dnd', () => {});
+jest.mock('react-native-worklets', () => ({ runOnJS: fn => fn, runOnUI: fn => fn }));
