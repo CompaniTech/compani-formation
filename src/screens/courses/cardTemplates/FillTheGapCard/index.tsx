@@ -1,7 +1,8 @@
 import { ReactNode, useEffect, useState } from 'react';
 import { ScrollView, StyleProp, TouchableOpacity, View, ViewStyle } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { GestureDetector } from 'react-native-gesture-handler';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import { runOnJS } from 'react-native-worklets';
 import Animated from 'react-native-reanimated';
 import shuffle from 'lodash/shuffle';
 import { Droppable, DropProvider, useDraggable } from 'react-native-reanimated-dnd';
@@ -45,11 +46,13 @@ interface DraggableAnswerProps {
 
 const DraggableAnswer = ({ id, style, onTap, children }: DraggableAnswerProps) => {
   const { animatedViewProps, gesture, animatedViewRef } = useDraggable<string>({ data: id });
+  const tapGesture = Gesture.Tap().maxDistance(10).onEnd(() => { runOnJS(onTap)(); });
+  const composedGesture = Gesture.Exclusive(tapGesture, gesture);
 
   return (
-    <GestureDetector gesture={gesture}>
+    <GestureDetector gesture={composedGesture}>
       <Animated.View ref={animatedViewRef} {...animatedViewProps} style={[style, animatedViewProps.style]}
-        onTouchEnd={onTap} collapsable={false}>
+        collapsable={false}>
         {children}
       </Animated.View>
     </GestureDetector>
