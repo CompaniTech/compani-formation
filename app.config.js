@@ -137,7 +137,7 @@ export default {
           backgroundColor: '#FFFFFF',
           resizeMode: 'cover',
           image: './assets/images/splash_ios.png',
-          android: { image: './assets/images/splash_android.png' },
+          android: { image: './assets/images/splash_android.png', imageWidth: 200 },
         },
       ],
     ],
