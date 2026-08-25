@@ -1,8 +1,10 @@
-import { useEffect, useState } from 'react';
-import { ScrollView, TouchableOpacity, View } from 'react-native';
+import { ReactNode, useEffect, useState } from 'react';
+import { ScrollView, StyleProp, TouchableOpacity, View, ViewStyle } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { GestureDetector } from 'react-native-gesture-handler';
+import Animated from 'react-native-reanimated';
 import shuffle from 'lodash/shuffle';
-import { DraxDragWithReceiverEventData, DraxProvider, DraxView } from 'react-native-drax';
+import { Droppable, DropProvider, useDraggable } from 'react-native-reanimated-dnd';
 import { useNavigation } from '@react-navigation/native';
 import CardHeader from '../../../../components/cards/CardHeader';
 import QuizCardFooter from '../../../../components/cards/QuizCardFooter';
@@ -33,6 +35,26 @@ export interface FillTheGapAnswers {
   isSelected: boolean,
   _id: string,
 }
+
+interface DraggableAnswerProps {
+  id: string,
+  style: StyleProp<ViewStyle>,
+  onTap: () => void,
+  children: ReactNode,
+}
+
+const DraggableAnswer = ({ id, style, onTap, children }: DraggableAnswerProps) => {
+  const { animatedViewProps, gesture, animatedViewRef } = useDraggable<string>({ data: id });
+
+  return (
+    <GestureDetector gesture={gesture}>
+      <Animated.View ref={animatedViewRef} {...animatedViewProps} style={[style, animatedViewProps.style]}
+        onTouchEnd={onTap} collapsable={false}>
+        {children}
+      </Animated.View>
+    </GestureDetector>
+  );
+};
 
 const FillTheGapCard = ({ isLoading, setIsRightSwipeEnabled }: FillTheGap) => {
   const card: FillTheGapType = useGetCard();
@@ -85,12 +107,9 @@ const FillTheGapCard = ({ isLoading, setIsRightSwipeEnabled }: FillTheGap) => {
 
   const style = styles(footerColors.background);
 
-  const setAnswersAndPropositions = (event: DraxDragWithReceiverEventData, gapIndex?: number) => {
-    const movedProp = event.dragged.payload as string;
+  const setAnswersAndPropositions = (movedProp: string, gapIndex?: number, isActionClick = false) => {
     const newPropositions = [...propositions];
     const selectedPropIdx = newPropositions.map(prop => prop._id).indexOf(movedProp);
-    const isActionClick = !event.dragged.dragOffset || (Math.abs(event.dragged.dragOffset.x) < 0.1 &&
-      Math.abs(event.dragged.dragOffset.y) < 0.1);
     const selectedAnswerIdx = selectedAnswers.indexOf(movedProp);
 
     const updateAnswer = (gapIdx: number, newGapValue: string) => {
@@ -131,18 +150,17 @@ const FillTheGapCard = ({ isLoading, setIsRightSwipeEnabled }: FillTheGap) => {
     const proposition = <FillTheGapProposition item={item} isValidated={isValidated}
       isSelected={selectedAnswers.includes(item._id)} isGoodAnswer={isGoodAnswer(item._id, idx)} />;
 
-    const webAnswer = { dragged: { payload: item._id, dragTranslationRatio: { x: 0, y: 0 } } };
+    const setAnswerOnClick = () => setAnswersAndPropositions(item._id, undefined, true);
 
-    const setAnswerOnClick = () => setAnswersAndPropositions(webAnswer as DraxDragWithReceiverEventData);
+    if (IS_WEB) {
+      return <TouchableOpacity style={style.answerContainer} onPress={setAnswerOnClick}>
+        {proposition}
+      </TouchableOpacity>;
+    }
 
-    return IS_WEB
-      ? <TouchableOpacity style={style.answerContainer} onPress={setAnswerOnClick}>
-        {proposition}
-      </TouchableOpacity>
-      : <DraxView style={style.answerContainer} draggingStyle={{ opacity: 0 }} dragPayload={item._id}
-        longPressDelay={0} onTouchEnd={setAnswerOnClick}>
-        {proposition}
-      </DraxView>;
+    return <DraggableAnswer id={item._id} style={style.answerContainer} onTap={setAnswerOnClick}>
+      {proposition}
+    </DraggableAnswer>;
   };
 
   const renderGap = (idx: number) => {
@@ -151,13 +169,16 @@ const FillTheGapCard = ({ isLoading, setIsRightSwipeEnabled }: FillTheGap) => {
       isSelected: !selectedAnswers[idx],
     };
 
-    return IS_WEB
-      ? <View style={style.gapContainer} key={`gap${idx}`}>
+    if (IS_WEB) {
+      return <View style={style.gapContainer} key={`gap${idx}`}>
         {renderContent(proposition as FillTheGapAnswers, idx)}
-      </View>
-      : <DraxView style={style.gapContainer} key={`gap${idx}`}
-        onReceiveDragDrop={event => setAnswersAndPropositions(event, idx)}
-        renderContent={() => renderContent(proposition as FillTheGapAnswers, idx)} />;
+      </View>;
+    }
+
+    return <Droppable<string> style={style.gapContainer} key={`gap${idx}`}
+      onDrop={movedProp => setAnswersAndPropositions(movedProp, idx)}>
+      {renderContent(proposition as FillTheGapAnswers, idx)}
+    </Droppable>;
   };
 
   const onPressFooterButton = () => {
@@ -192,11 +213,11 @@ const FillTheGapCard = ({ isLoading, setIsRightSwipeEnabled }: FillTheGap) => {
             <FillTheGapPropositionList isValidated={isValidated} propositions={propositions}
               setProposition={setAnswersAndPropositions} renderContent={renderContent} />
           </>
-          : <DraxProvider>
+          : <DropProvider>
             <FillTheGapQuestion text={card.gappedText} isValidated={isValidated} renderGap={renderGap} />
             <FillTheGapPropositionList isValidated={isValidated} propositions={propositions}
               setProposition={setAnswersAndPropositions} renderContent={renderContent} />
-          </DraxProvider>
+          </DropProvider>
         }
         <View style={style.contentContainer}>
           <View style={style.footerContainer}>

@@ -7937,11 +7937,6 @@ react-is@^19.2.3:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-19.2.8.tgz#09826f9fbc187bc668e3e5c62edc001f804d5018"
   integrity sha512-s5un28nYxKJw5gvUHyW5PCC28CvBqLu9r3cWgzHT4Vo/5fqqkFcdRYsGcKf50WMPpjjFZS5d76fn3YCo2njKwQ==
 
-react-native-drax@~1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/react-native-drax/-/react-native-drax-1.1.0.tgz#9970413941c0fe099f530ca233e1847f43e800dc"
-  integrity sha512-MBAmlMZe/sSCwq2EXdxH8Dc2Gy9y+tvRJn/EWPtAsEoRkIVWeCFg8+7q7ABkmIDLwHGobuIRVC5M6OL6+2ldgQ==
-
 react-native-fit-image@^1.5.5:
   version "1.5.5"
   resolved "https://registry.yarnpkg.com/react-native-fit-image/-/react-native-fit-image-1.5.5.tgz#c660d1ad74b9dcaa1cba27a0d9c23837e000226c"
@@ -7978,6 +7973,11 @@ react-native-pager-view@8.0.2:
   version "8.0.2"
   resolved "https://registry.yarnpkg.com/react-native-pager-view/-/react-native-pager-view-8.0.2.tgz#333f05ecf887c7cfa970fdee8128f115478ce5db"
   integrity sha512-Y8All2BbjidI4ZIF9kBOIIoldkqrY/2FXapHZMdjwD+ByXhiOWTFenPs5rq9KRN5uAH/gOXtQCqHLxQDNBQRiQ==
+
+react-native-reanimated-dnd@~2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-reanimated-dnd/-/react-native-reanimated-dnd-2.0.0.tgz#036c1e3d02a37efa36217d392392f37c7aba0dc4"
+  integrity sha512-FXNWZoad5RG4Z6g1xX60/ZEBVkhO9jmmftHAuTML3XrVw15dsU8LwHA5ulVpO9UtX4iBGwAn3CCr3GNRcuH/oQ==
 
 react-native-reanimated@4.5.1:
   version "4.5.1"
