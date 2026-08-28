@@ -39,10 +39,14 @@ const fetchAssets = async () => {
   await Promise.all([...imageAssets]);
 };
 
-export const initializeAssets = async () => {
-  try {
-    await Promise.all([fetchFonts(), fetchAssets()]);
-  } catch (error) {
-    console.error(error);
+let assetsPromise: Promise<void> | null = null;
+
+export const initializeAssets = () => {
+  if (!assetsPromise) {
+    assetsPromise = Promise.all([fetchFonts(), fetchAssets()])
+      .then(() => undefined)
+      .catch((error) => { assetsPromise = null; console.error(error); });
   }
+
+  return assetsPromise;
 };
