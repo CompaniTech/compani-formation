@@ -1,6 +1,6 @@
 import { Text, View, TouchableOpacity } from 'react-native';
 import { useMemo } from 'react';
-import { Feather } from '@expo/vector-icons';
+import Feather from '@react-native-vector-icons/feather';
 import groupBy from 'lodash/groupBy';
 import { useNavigation } from '@react-navigation/native';
 import CompaniDate from '../../../core/helpers/dates/companiDates';

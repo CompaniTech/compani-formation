@@ -1,5 +1,5 @@
 import { View } from 'react-native';
-import { Feather } from '@expo/vector-icons';
+import Feather from '@react-native-vector-icons/feather';
 import ProgressCircle from './ProgressCircle';
 import styles from './styles';
 import { ICON } from '../../styles/metrics';

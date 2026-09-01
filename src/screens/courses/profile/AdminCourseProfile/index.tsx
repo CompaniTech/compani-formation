@@ -9,7 +9,7 @@ import {
   FlatList,
   ActivityIndicator,
 } from 'react-native';
-import { Feather } from '@expo/vector-icons';
+import Feather from '@react-native-vector-icons/feather';
 import pick from 'lodash/pick';
 import uniqBy from 'lodash/uniqBy';
 import groupBy from 'lodash/groupBy';

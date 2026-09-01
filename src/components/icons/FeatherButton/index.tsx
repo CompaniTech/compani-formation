@@ -1,5 +1,5 @@
 import { TouchableOpacity, Insets } from 'react-native';
-import { Feather } from '@expo/vector-icons';
+import Feather from '@react-native-vector-icons/feather';
 import commonStyle from '../../../styles/common';
 import { FeatherType } from '../../../types/FeatherType';
 

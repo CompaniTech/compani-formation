@@ -1,6 +1,6 @@
 import { useState, useReducer, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { AntDesign } from '@expo/vector-icons';
+import AntDesign from '@react-native-vector-icons/ant-design';
 import styles from './styles';
 import NiModal from '../Modal';
 import NiInput from '../form/Input';
