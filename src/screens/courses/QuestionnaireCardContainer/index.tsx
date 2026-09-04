@@ -104,7 +104,7 @@ const QuestionnaireCardContainer = ({ route, navigation }: QuestionnaireCardCont
 
   return isActive
     ? <SafeAreaView style={commonStyles.container} edges={[]}>
-      <Tab.Navigator tabBar={() => <></>} screenOptions={{ swipeEnabled: false }}>
+      <Tab.Navigator tabBar={() => <></>} screenOptions={{ swipeEnabled: false, animationEnabled: false }}>
         <Tab.Screen key={0} name={'startCard'} options={{ title: title || tabsNames.QuestionnaireCardContainer }}>
           {() => <StartCard title={title} goBack={goBack}
             isLoading={!cards.length || !questionnaires.length} />}
