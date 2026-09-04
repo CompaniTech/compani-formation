@@ -9,7 +9,6 @@ interface FillTheGapPropositionListProps {
   isValidated: boolean,
   propositions: FillTheGapAnswers[],
   renderContent: (item: FillTheGapAnswers) => JSX.Element,
-  draggingId?: string | null,
   dropDisabled?: boolean,
   onDrop?: (movedProp: string) => void,
 }
@@ -17,15 +16,13 @@ interface FillTheGapPropositionListProps {
 const FillTheGapPropositionList = ({
   isValidated, propositions,
   renderContent,
-  draggingId,
   dropDisabled,
   onDrop,
 }: FillTheGapPropositionListProps) => {
   const content = (
     <View style={styles.answersContainer} pointerEvents={isValidated ? 'none' : 'auto'}>
       {propositions.map((proposition, idx) => (
-        <View
-          style={[styles.gapContainer, !!draggingId && proposition._id !== draggingId && styles.loweredContainer]}
+        <View style={[styles.gapContainer, !proposition.isSelected && styles.occupiedSlot]}
           key={`proposition${idx}`}>
           {renderContent(proposition)}
         </View>

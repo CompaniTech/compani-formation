@@ -33,19 +33,27 @@ export const formatWordToPlural = (items: object[], text: string): string =>
 
 export const capitalizeFirstLetter = (s: string): string => `${s.charAt(0).toUpperCase()}${s.substr(1)}`;
 
+const AUDIO_LOAD_TIMEOUT = 10000;
+
 const loadPlayAndUnloadAudio = (track: AudioSource) => {
   const player = createAudioPlayer(track);
   let hasStarted = false;
 
+  const cleanup = () => {
+    clearTimeout(loadTimeout);
+    subscription.remove();
+    player.release();
+  };
+
+  const loadTimeout = setTimeout(() => { if (!hasStarted) cleanup(); }, AUDIO_LOAD_TIMEOUT);
+
   const subscription = player.addListener('playbackStatusUpdate', (status) => {
     if (status.isLoaded && !hasStarted) {
       hasStarted = true;
+      clearTimeout(loadTimeout);
       player.play();
     }
-    if (status.didJustFinish) {
-      subscription.remove();
-      player.release();
-    }
+    if (status.didJustFinish) cleanup();
   });
 };
 

@@ -16,8 +16,10 @@ const styles = StyleSheet.create({
     height: INPUT_HEIGHT,
     width: GAP_WIDTH,
   },
-  loweredContainer: {
-    zIndex: -1,
+  // A dragged tile is a child of its own slot, so it only clears the other slots if that slot outranks them.
+  // Occupancy only changes once a drop has completed, so this never moves mid-gesture.
+  occupiedSlot: {
+    zIndex: 1,
   },
 });
 

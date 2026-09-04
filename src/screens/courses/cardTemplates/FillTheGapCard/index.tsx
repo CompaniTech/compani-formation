@@ -12,7 +12,7 @@ import QuizCardFooter from '../../../../components/cards/QuizCardFooter';
 import FillTheGapProposition from '../../../../components/cards/FillTheGapProposition';
 import FillTheGapQuestion from '../../../../components/cards/FillTheGapQuestion';
 import FillTheGapPropositionList from '../../../../components/cards/FillTheGapPropositionList';
-import { IS_WEB } from '../../../../core/data/constants';
+import { IS_IOS, IS_WEB } from '../../../../core/data/constants';
 import { quizJingle } from '../../../../core/helpers/utils';
 import {
   useAddQuizzAnswer,
@@ -57,7 +57,7 @@ const DraggableAnswer = ({ id, style, onTap, onDragStart, onDragEnd, children }:
   const stableOnDragEnd = useStableCallback(onDragEnd);
   const stableOnTap = useStableCallback(onTap);
   const { animatedViewProps, gesture, animatedViewRef } = useDraggable<string>({
-    data: id, onDragStart: stableOnDragStart, onDragEnd: stableOnDragEnd, preDragDelay: 120,
+    data: id, onDragStart: stableOnDragStart, onDragEnd: stableOnDragEnd, preDragDelay: IS_IOS ? 120 : 0,
   });
   const tapGesture = useMemo(
     () => Gesture.Tap().maxDistance(25).onEnd(() => { runOnJS(stableOnTap)(); }),
@@ -127,7 +127,6 @@ const FillTheGapCard = ({ isLoading, setIsRightSwipeEnabled }: FillTheGap) => {
 
   const style = styles(footerColors.background);
   const isDraggingFromGap = draggingId !== null && selectedAnswers.includes(draggingId);
-  const isDraggingFromList = draggingId !== null && !isDraggingFromGap;
 
   const setAnswersAndPropositions = (movedProp: string, gapIndex?: number, isActionClick = false) => {
     const newPropositions = [...propositions];
@@ -180,13 +179,8 @@ const FillTheGapCard = ({ isLoading, setIsRightSwipeEnabled }: FillTheGap) => {
       </TouchableOpacity>;
     }
 
-    const onDragEnd = () => {
-      const draggedId = item._id;
-      setTimeout(() => setDraggingId(current => (current === draggedId ? null : current)), 300);
-    };
-
     return <DraggableAnswer id={item._id} style={style.answerContainer} onTap={setAnswerOnClick}
-      onDragStart={() => setDraggingId(item._id)} onDragEnd={onDragEnd}>
+      onDragStart={() => setDraggingId(item._id)} onDragEnd={() => setDraggingId(null)}>
       {proposition}
     </DraggableAnswer>;
   };
@@ -203,7 +197,8 @@ const FillTheGapCard = ({ isLoading, setIsRightSwipeEnabled }: FillTheGap) => {
       </View>;
     }
 
-    return <Droppable<string> style={style.gapContainer} key={`gap${idx}`} capacity={propositions.length}
+    return <Droppable<string> style={[style.gapContainer, !!selectedAnswers[idx] && style.filledGap]}
+      key={`gap${idx}`} capacity={propositions.length}
       onDrop={movedProp => setAnswersAndPropositions(movedProp, idx)}>
       {renderContent(proposition as FillTheGapAnswers, idx)}
     </Droppable>;
@@ -239,15 +234,15 @@ const FillTheGapCard = ({ isLoading, setIsRightSwipeEnabled }: FillTheGap) => {
           ? <>
             <FillTheGapQuestion text={card.gappedText} isValidated={isValidated} renderGap={renderGap} />
             <FillTheGapPropositionList isValidated={isValidated} propositions={propositions}
-              renderContent={renderContent} draggingId={draggingId} />
+              renderContent={renderContent} />
           </>
           : <DropProvider>
-            <View style={isDraggingFromList && style.loweredContainer}>
+            <View style={style.questionSection}>
               <FillTheGapQuestion text={card.gappedText} isValidated={isValidated} renderGap={renderGap} />
             </View>
-            <View style={isDraggingFromGap && style.loweredContainer}>
+            <View style={[style.answersSection, isDraggingFromGap && style.loweredAnswersSection]}>
               <FillTheGapPropositionList isValidated={isValidated} propositions={propositions}
-                renderContent={renderContent} draggingId={draggingId} dropDisabled={!isDraggingFromGap}
+                renderContent={renderContent} dropDisabled={!isDraggingFromGap}
                 onDrop={setAnswersAndPropositions} />
             </View>
           </DropProvider>
