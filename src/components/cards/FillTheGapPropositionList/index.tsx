@@ -8,22 +8,33 @@ import styles from './styles';
 interface FillTheGapPropositionListProps {
   isValidated: boolean,
   propositions: FillTheGapAnswers[],
-  setProposition: (movedProp: string) => void,
   renderContent: (item: FillTheGapAnswers) => JSX.Element,
+  dropDisabled?: boolean,
+  onDrop?: (movedProp: string) => void,
 }
 
 const FillTheGapPropositionList = ({
   isValidated, propositions,
-  setProposition,
   renderContent,
-}: FillTheGapPropositionListProps) => (
-  <View style={styles.answersContainer} pointerEvents={isValidated ? 'none' : 'auto'}>
-    {propositions.map((proposition, idx) => (IS_WEB
-      ? <View style={styles.gapContainer} key={`proposition${idx}`}>{renderContent(proposition)}</View>
-      : <Droppable<string> style={styles.gapContainer} key={`proposition${idx}`} onDrop={setProposition}>
-        {renderContent(proposition)}
-      </Droppable>))}
-  </View>
-);
+  dropDisabled,
+  onDrop,
+}: FillTheGapPropositionListProps) => {
+  const content = (
+    <View style={styles.answersContainer} pointerEvents={isValidated ? 'none' : 'auto'}>
+      {propositions.map((proposition, idx) => (
+        <View style={[styles.gapContainer, !proposition.isSelected && styles.occupiedSlot]}
+          key={`proposition${idx}`}>
+          {renderContent(proposition)}
+        </View>
+      ))}
+    </View>
+  );
+
+  if (IS_WEB) return content;
+
+  return <Droppable<string> capacity={propositions.length} dropDisabled={dropDisabled} onDrop={onDrop!}>
+    {content}
+  </Droppable>;
+};
 
 export default FillTheGapPropositionList;
