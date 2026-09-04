@@ -36,9 +36,8 @@ export const capitalizeFirstLetter = (s: string): string => `${s.charAt(0).toUpp
 const loadPlayAndUnloadAudio = (track: AudioSource) => {
   const player = createAudioPlayer(track);
 
-  player.play();
-
   player.addListener('playbackStatusUpdate', (status) => {
+    if (status.isLoaded && !status.playing && !status.didJustFinish) player.play();
     if (status.didJustFinish) player.release();
   });
 };

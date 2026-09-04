@@ -70,7 +70,7 @@ const FillTheGapCard = ({ isLoading, setIsRightSwipeEnabled }: FillTheGap) => {
   const [selectedAnswers, setSelectedAnswers] = useState<string[]>([]);
   const [isValidated, setIsValidated] = useState<boolean>(false);
   const [isAnsweredCorrectly, setIsAnsweredCorrectly] = useState<boolean>(false);
-  const areGapsFilled = !selectedAnswers.filter(answer => answer === '').length;
+  const areGapsFilled = !!selectedAnswers.length && !selectedAnswers.filter(answer => answer === '').length;
   const footerColors: footerColorsType = !isValidated
     ? { buttons: PINK[500], text: GREY[100], background: GREY[100] }
     : isAnsweredCorrectly
