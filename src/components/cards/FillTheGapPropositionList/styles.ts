@@ -16,6 +16,9 @@ const styles = StyleSheet.create({
     height: INPUT_HEIGHT,
     width: GAP_WIDTH,
   },
+  loweredContainer: {
+    zIndex: -1,
+  },
 });
 
 export default styles;

@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ScrollView, StyleProp, TouchableOpacity, View, ViewStyle } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
@@ -41,13 +41,29 @@ interface DraggableAnswerProps {
   id: string,
   style: StyleProp<ViewStyle>,
   onTap: () => void,
+  onDragStart?: () => void,
+  onDragEnd?: () => void,
   children: ReactNode,
 }
 
-const DraggableAnswer = ({ id, style, onTap, children }: DraggableAnswerProps) => {
-  const { animatedViewProps, gesture, animatedViewRef } = useDraggable<string>({ data: id });
-  const tapGesture = Gesture.Tap().maxDistance(10).onEnd(() => { runOnJS(onTap)(); });
-  const composedGesture = Gesture.Exclusive(tapGesture, gesture);
+const useStableCallback = (fn?: () => void) => {
+  const ref = useRef(fn);
+  useEffect(() => { ref.current = fn; });
+  return useCallback(() => ref.current?.(), []);
+};
+
+const DraggableAnswer = ({ id, style, onTap, onDragStart, onDragEnd, children }: DraggableAnswerProps) => {
+  const stableOnDragStart = useStableCallback(onDragStart);
+  const stableOnDragEnd = useStableCallback(onDragEnd);
+  const stableOnTap = useStableCallback(onTap);
+  const { animatedViewProps, gesture, animatedViewRef } = useDraggable<string>({
+    data: id, onDragStart: stableOnDragStart, onDragEnd: stableOnDragEnd, preDragDelay: 120,
+  });
+  const tapGesture = useMemo(
+    () => Gesture.Tap().maxDistance(25).onEnd(() => { runOnJS(stableOnTap)(); }),
+    [stableOnTap]
+  );
+  const composedGesture = useMemo(() => Gesture.Exclusive(tapGesture, gesture), [tapGesture, gesture]);
 
   return (
     <GestureDetector gesture={composedGesture}>
@@ -70,6 +86,7 @@ const FillTheGapCard = ({ isLoading, setIsRightSwipeEnabled }: FillTheGap) => {
   const [selectedAnswers, setSelectedAnswers] = useState<string[]>([]);
   const [isValidated, setIsValidated] = useState<boolean>(false);
   const [isAnsweredCorrectly, setIsAnsweredCorrectly] = useState<boolean>(false);
+  const [draggingId, setDraggingId] = useState<string | null>(null);
   const areGapsFilled = !!selectedAnswers.length && !selectedAnswers.filter(answer => answer === '').length;
   const footerColors: footerColorsType = !isValidated
     ? { buttons: PINK[500], text: GREY[100], background: GREY[100] }
@@ -109,6 +126,8 @@ const FillTheGapCard = ({ isLoading, setIsRightSwipeEnabled }: FillTheGap) => {
   if (isLoading) return null;
 
   const style = styles(footerColors.background);
+  const isDraggingFromGap = draggingId !== null && selectedAnswers.includes(draggingId);
+  const isDraggingFromList = draggingId !== null && !isDraggingFromGap;
 
   const setAnswersAndPropositions = (movedProp: string, gapIndex?: number, isActionClick = false) => {
     const newPropositions = [...propositions];
@@ -161,7 +180,13 @@ const FillTheGapCard = ({ isLoading, setIsRightSwipeEnabled }: FillTheGap) => {
       </TouchableOpacity>;
     }
 
-    return <DraggableAnswer id={item._id} style={style.answerContainer} onTap={setAnswerOnClick}>
+    const onDragEnd = () => {
+      const draggedId = item._id;
+      setTimeout(() => setDraggingId(current => (current === draggedId ? null : current)), 300);
+    };
+
+    return <DraggableAnswer id={item._id} style={style.answerContainer} onTap={setAnswerOnClick}
+      onDragStart={() => setDraggingId(item._id)} onDragEnd={onDragEnd}>
       {proposition}
     </DraggableAnswer>;
   };
@@ -178,7 +203,7 @@ const FillTheGapCard = ({ isLoading, setIsRightSwipeEnabled }: FillTheGap) => {
       </View>;
     }
 
-    return <Droppable<string> style={style.gapContainer} key={`gap${idx}`}
+    return <Droppable<string> style={style.gapContainer} key={`gap${idx}`} capacity={propositions.length}
       onDrop={movedProp => setAnswersAndPropositions(movedProp, idx)}>
       {renderContent(proposition as FillTheGapAnswers, idx)}
     </Droppable>;
@@ -214,12 +239,17 @@ const FillTheGapCard = ({ isLoading, setIsRightSwipeEnabled }: FillTheGap) => {
           ? <>
             <FillTheGapQuestion text={card.gappedText} isValidated={isValidated} renderGap={renderGap} />
             <FillTheGapPropositionList isValidated={isValidated} propositions={propositions}
-              setProposition={setAnswersAndPropositions} renderContent={renderContent} />
+              renderContent={renderContent} draggingId={draggingId} />
           </>
           : <DropProvider>
-            <FillTheGapQuestion text={card.gappedText} isValidated={isValidated} renderGap={renderGap} />
-            <FillTheGapPropositionList isValidated={isValidated} propositions={propositions}
-              setProposition={setAnswersAndPropositions} renderContent={renderContent} />
+            <View style={isDraggingFromList && style.loweredContainer}>
+              <FillTheGapQuestion text={card.gappedText} isValidated={isValidated} renderGap={renderGap} />
+            </View>
+            <View style={isDraggingFromGap && style.loweredContainer}>
+              <FillTheGapPropositionList isValidated={isValidated} propositions={propositions}
+                renderContent={renderContent} draggingId={draggingId} dropDisabled={!isDraggingFromGap}
+                onDrop={setAnswersAndPropositions} />
+            </View>
           </DropProvider>
         }
         <View style={style.contentContainer}>

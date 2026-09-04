@@ -22,6 +22,9 @@ const styles = (backgroundColor: string) => StyleSheet.create({
     height: INPUT_HEIGHT,
     width: GAP_WIDTH,
   },
+  loweredContainer: {
+    zIndex: -1,
+  },
   contentContainer: {
     flex: 1,
     justifyContent: 'flex-end',
