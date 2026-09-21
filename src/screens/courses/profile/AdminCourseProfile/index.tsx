@@ -83,12 +83,12 @@ interface imagePreviewProps {
 type QRCodeType = { img: string, courseTimeline: string };
 
 // Helper function to build quick lookup maps for attendance sheets - O(1) lookups instead of O(n)
-const buildAttendanceSheetMaps = (sheets: AttendanceSheetType[], courseType: string) => {
+const buildAttendanceSheetMaps = (sheets: AttendanceSheetType[], courseType: string, loggedUserId: string | null) => {
   const sheetsByTraineeId = new Map<string, InterAttendanceSheetType>();
   const slotsBySheetId = new Map<string, Set<string>>();
 
   sheets.forEach((sheet: any) => {
-    if (courseType === INTER_B2B && sheet.trainee?._id) {
+    if (courseType === INTER_B2B && sheet.trainee?._id && sheet.trainer === loggedUserId) {
       sheetsByTraineeId.set(sheet.trainee._id, sheet);
       if (sheet.slots?.length) slotsBySheetId.set(sheet._id, new Set(sheet.slots.map((s: any) => s._id)));
     }
@@ -134,8 +134,10 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
   const title = useMemo(() => (course ? getTitle(course) : ''), [course]);
 
   // Memoized lookup maps for faster computations - O(1) lookups instead of O(n)
-  const attendanceSheetMaps = useMemo(() => buildAttendanceSheetMaps(savedAttendanceSheets, course?.type || ''),
-    [savedAttendanceSheets, course]);
+  const attendanceSheetMaps = useMemo(
+    () => buildAttendanceSheetMaps(savedAttendanceSheets, course?.type || '', loggedUserId),
+    [savedAttendanceSheets, course, loggedUserId]
+  );
   const missingAttendanceMaps = useMemo(() => buildMissingAttendanceMaps(course?.slots || []), [course]);
 
   const groupedSlotsToBeSigned = useMemo(() => {
@@ -160,8 +162,9 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
             if (sheetSlots?.has(slot._id)) return false;
           }
         } else if (isSingle) {
-          // For SINGLE, if any saved sheet has this slot, skip it
-          const isSlotAlreadySigned = savedAttendanceSheets.some(sheet => sheet.slots?.some(s => s._id === slot._id));
+          // For SINGLE, if any logged trainer's sheet already has this slot, skip it
+          const isSlotAlreadySigned = savedAttendanceSheets
+            .some(sheet => (sheet.trainer as string) === loggedUserId && sheet.slots?.some(s => s._id === slot._id));
           if (isSlotAlreadySigned) return false;
         }
 
@@ -192,7 +195,9 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
     if ([INTRA, INTRA_HOLDING].includes(course.type)) {
       const intraOrIntraHoldingCourseSavedSheets = savedAttendanceSheets as IntraOrIntraHoldingAttendanceSheetType[];
       const savedDatesSet = new Set(
-        intraOrIntraHoldingCourseSavedSheets.map(sheet => CompaniDate(sheet.date).startOf('day').toISO())
+        intraOrIntraHoldingCourseSavedSheets
+          .filter(sheet => (sheet.trainer as string) === loggedUserId)
+          .map(sheet => CompaniDate(sheet.date).startOf('day').toISO())
       );
 
       return uniqBy(
@@ -261,6 +266,7 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
     savedAttendanceSheets,
     flatGroupedSlots,
     TODAY,
+    loggedUserId,
   ]);
 
   const refreshAttendanceSheets = useCallback(async (courseId: string) => {

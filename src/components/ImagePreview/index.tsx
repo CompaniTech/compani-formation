@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { View, Alert, BackHandler, Text, TouchableOpacity } from 'react-native';
+import { File, Paths } from 'expo-file-system';
 import * as Print from 'expo-print';
 import { WebView } from 'react-native-webview';
 import { IMAGE, IS_IOS } from '../../core/data/constants';
@@ -29,6 +30,7 @@ interface ImagePreviewProps {
 const ImagePreview = ({ source, deleteFile, onRequestClose, showButton = true }: ImagePreviewProps) => {
   const [zoomImage, setZoomImage] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isDocumentLoading, setIsDocumentLoading] = useState<boolean>(false);
   const [confirmationModal, setConfirmationModal] = useState<boolean>(false);
   const { link, type, hasSlots, hasTrainee } = source;
   const contentText = 'Voulez-vous également supprimer les émargements associés à la feuille d\'émargement'
@@ -49,6 +51,20 @@ const ImagePreview = ({ source, deleteFile, onRequestClose, showButton = true }:
 
     return () => { subscription.remove(); };
   }, [hardwareBackPress]);
+
+  const onPressViewDocument = async () => {
+    if (isDocumentLoading) return;
+
+    try {
+      setIsDocumentLoading(true);
+      const { uri } = await File.downloadFileAsync(link, Paths.cache, { idempotent: true });
+      await Print.printAsync({ uri });
+    } catch (_) {
+      Alert.alert('Erreur', 'Impossible d\'afficher le document, veuillez réessayer');
+    } finally {
+      setIsDocumentLoading(false);
+    }
+  };
 
   const onDeleteFile = async (shouldDeleteAttendances: boolean) => {
     try {
@@ -81,7 +97,8 @@ const ImagePreview = ({ source, deleteFile, onRequestClose, showButton = true }:
               ? <View style={styles.pdfContainer}>
                 <WebView source={{ uri: link }} style={styles.pdfContent} startInLoadingState />
               </View>
-              : <TouchableOpacity onPress={() => Print.printAsync({ uri: link })} style={styles.linkContainer}>
+              : <TouchableOpacity onPress={onPressViewDocument} style={styles.linkContainer}
+                disabled={isDocumentLoading}>
                 <Text style={styles.linkContent}>
                   Pour visualiser le document veuillez cliquer <Text style={styles.link}>ici</Text>
                 </Text>
