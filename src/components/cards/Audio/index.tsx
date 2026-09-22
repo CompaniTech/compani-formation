@@ -31,8 +31,12 @@ const NiAudio = ({ mediaSource }: NiAudioProps) => {
   }, [player, status.didJustFinish]);
 
   const playOrPauseAudio = () => {
-    if (status.playing) player.pause();
-    else player.play();
+    try {
+      if (status.playing) player.pause();
+      else player.play();
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const renderPlayer = (iconSize: number) => (
