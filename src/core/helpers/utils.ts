@@ -40,9 +40,13 @@ const loadPlayAndUnloadAudio = (track: AudioSource) => {
   let hasStarted = false;
 
   const cleanup = () => {
-    clearTimeout(loadTimeout);
-    subscription.remove();
-    player.release();
+    try {
+      clearTimeout(loadTimeout);
+      subscription.remove();
+      player.release();
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const loadTimeout = setTimeout(() => { if (!hasStarted) cleanup(); }, AUDIO_LOAD_TIMEOUT);
@@ -51,7 +55,11 @@ const loadPlayAndUnloadAudio = (track: AudioSource) => {
     if (status.isLoaded && !hasStarted) {
       hasStarted = true;
       clearTimeout(loadTimeout);
-      player.play();
+      try {
+        player.play();
+      } catch (e) {
+        console.error(e);
+      }
     }
     if (status.didJustFinish) cleanup();
   });
