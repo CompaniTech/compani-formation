@@ -12,6 +12,7 @@ import {
   SLOTS_SELECTION,
   ATTENDANCE_SIGNATURE,
   TRAINEES_ATTENDANCES,
+  IS_WEB,
 } from '../../core/data/constants';
 import AttendanceSheets from '../../api/attendanceSheets';
 import styles from './styles';
@@ -130,12 +131,12 @@ const UploadMethods = ({
         <FeatherButton name='arrow-left' onPress={navigation.goBack} size={ICON.MD} color={GREY[600]} />
       </View>
       <View style={styles.container}>
-        <NiPrimaryButton caption='Prendre une photo' customStyle={styles.button} onPress={requestPermissionsForCamera}
-          disabled={isLoading || severalAttendanceSheetsToAdd} bgColor={GREY[100]}
-          color={severalAttendanceSheetsToAdd ? GREY[300] : PINK[500]} />
+        <NiPrimaryButton caption='Prendre une photo' customStyle={styles.button} onPress={requestPermissionsForCamera} 
+          disabled={isLoading || severalAttendanceSheetsToAdd || IS_WEB} bgColor={GREY[100]}
+          color={severalAttendanceSheetsToAdd || IS_WEB ? GREY[300] : PINK[500]} />
         <NiPrimaryButton caption='Ajouter une photo' customStyle={styles.button} bgColor={GREY[100]}
-          disabled={isLoading || severalAttendanceSheetsToAdd} onPress={requestPermissionsForImagePicker}
-          color={severalAttendanceSheetsToAdd ? GREY[300] : PINK[500]} />
+          disabled={isLoading || severalAttendanceSheetsToAdd || IS_WEB} onPress={requestPermissionsForImagePicker}
+          color={severalAttendanceSheetsToAdd || IS_WEB ? GREY[300] : PINK[500]} />
         {<NiPrimaryButton caption='Ajouter une signature' customStyle={styles.button} disabled={isLoading}
           color={PINK[500]} onPress={() => navigation.navigate(getSlotSelectionNextScreen())}
           bgColor={GREY[100]} />}
