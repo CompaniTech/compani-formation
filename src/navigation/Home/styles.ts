@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { PINK, WHITE } from '../../styles/colors';
+import { COPPER, WHITE } from '../../styles/colors';
 import { FIRA_SANS_BOLD } from '../../styles/fonts';
 import { MARGIN, TAB_BAR_HEIGHT, TAB_BAR_LABEL_WIDTH } from '../../styles/metrics';
 
@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
   },
   iconText: {
     ...FIRA_SANS_BOLD.SM,
-    color: PINK[500],
+    color: COPPER[500],
     textAlign: 'center',
   },
 });

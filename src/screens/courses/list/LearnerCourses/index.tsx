@@ -153,7 +153,7 @@ const LearnerCourses = ({ navigation }: LearnerCoursesProps) => {
         }
         {!!courses.tutor.length &&
           <ImageBackground imageStyle={styles.leftBackground} style={styles.sectionContainer}
-            source={require('../../../../../assets/images/pink_section_background.webp')}>
+            source={require('../../../../../assets/images/copper_section_background.webp')}>
             <CoursesSection items={courses.tutor} title='Tutorat' renderItem={renderTutorCourseItem}
               countStyle={styles.pinkCount} />
           </ImageBackground>

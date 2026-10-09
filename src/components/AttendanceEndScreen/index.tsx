@@ -5,7 +5,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { useCallback } from 'react';
 import { IS_WEB, TRAINER } from '../../core/data/constants';
 import NiPrimaryButton from '../form/PrimaryButton';
-import { PINK } from '../../styles/colors';
+import { COPPER } from '../../styles/colors';
 import { EDGES } from '../../styles/metrics';
 import styles from './styles';
 
@@ -19,7 +19,7 @@ interface AttendanceEndScreenProps {
 const renderFailMessage = (text: string) =>
   <ScrollView contentContainerStyle={styles.errorContainer} showsVerticalScrollIndicator={IS_WEB}>
     <Text style={styles.title}>{text}</Text>
-    <MaterialIcons style={styles.icon} size={200} name={'warning'} color={PINK[500]} />
+    <MaterialIcons style={styles.icon} size={200} name={'warning'} color={COPPER[500]} />
     <Text style={styles.text}>Veuillez réitérer votre demande</Text>
   </ScrollView>;
 

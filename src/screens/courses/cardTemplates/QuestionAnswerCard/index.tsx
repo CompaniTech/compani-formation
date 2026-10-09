@@ -18,7 +18,7 @@ import {
 import cardsStyle from '../../../../styles/cards';
 import { EDGES, IS_LARGE_SCREEN, MARGIN } from '../../../../styles/metrics';
 import { IS_IOS } from '../../../../core/data/constants';
-import { GREY, PINK } from '../../../../styles/colors';
+import { GREY, COPPER } from '../../../../styles/colors';
 import styles from './styles';
 
 interface QuestionAnswerCardProps {
@@ -117,8 +117,8 @@ const QuestionAnswerCard = ({ isLoading, setIsRightSwipeEnabled }: QuestionAnswe
       </KeyboardAvoidingView>
       <View style={style.footerContainer}>
         <FooterGradient />
-        <QuestionCardFooter buttonCaption={'Valider'} arrowColor={PINK[500]} index={cardIndex}
-          buttonDisabled={isValidationDisabled} buttonColor={isValidationDisabled ? GREY[300] : PINK[500]}
+        <QuestionCardFooter buttonCaption={'Valider'} arrowColor={COPPER[500]} index={cardIndex}
+          buttonDisabled={isValidationDisabled} buttonColor={isValidationDisabled ? GREY[300] : COPPER[500]}
           validateCard={validateQuestionnaireAnswer} />
       </View>
     </SafeAreaView>

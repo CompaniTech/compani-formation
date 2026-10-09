@@ -5,7 +5,7 @@ import NiModal from '../Modal';
 import NiPrimaryButton from '../form/PrimaryButton';
 import FeatherButton from '../icons/FeatherButton';
 import { ICON } from '../../styles/metrics';
-import { PINK, WHITE } from '../../styles/colors';
+import { COPPER, WHITE } from '../../styles/colors';
 import styles from './styles';
 
 interface PictureModalProps {
@@ -78,15 +78,15 @@ const PictureModal = ({
 
   return (
     <NiModal visible={visible} onRequestClose={closePictureModal}>
-      <FeatherButton name={'x-circle'} onPress={closePictureModal} size={ICON.LG} color={PINK[500]}
+      <FeatherButton name={'x-circle'} onPress={closePictureModal} size={ICON.LG} color={COPPER[500]}
         style={styles.goBack} />
       <NiPrimaryButton caption='Prendre une photo' customStyle={styles.button} onPress={takePicture}
-        disabled={isLoading} bgColor={WHITE} color={PINK[500]} />
+        disabled={isLoading} bgColor={WHITE} color={COPPER[500]} />
       <NiPrimaryButton caption='Ajouter une photo' customStyle={styles.button} onPress={addPictureFromGallery}
-        disabled={isLoading} bgColor={WHITE} color={PINK[500]} />
+        disabled={isLoading} bgColor={WHITE} color={COPPER[500]} />
       {canDelete &&
         <NiPrimaryButton caption='Supprimer la photo' customStyle={styles.button} onPress={onDeletePicture}
-          disabled={isLoading} bgColor={WHITE} color={PINK[500]} loading={isLoading} />}
+          disabled={isLoading} bgColor={WHITE} color={COPPER[500]} loading={isLoading} />}
     </NiModal>);
 };
 

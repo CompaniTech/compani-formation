@@ -16,7 +16,7 @@ import {
   useIncGoodAnswersCount,
 } from '../../../../store/cards/hooks';
 import cardsStyle from '../../../../styles/cards';
-import { GREEN, GREY, ORANGE, PINK } from '../../../../styles/colors';
+import { GREEN, GREY, ORANGE, COPPER } from '../../../../styles/colors';
 import { EDGES } from '../../../../styles/metrics';
 import { footerColorsType, OrderTheSequenceType, AnswerPositionType } from '../../../../types/CardType';
 import styles from './styles';
@@ -47,7 +47,7 @@ const OrderTheSequenceCard = ({ isLoading, setIsRightSwipeEnabled }: OrderTheSeq
     [[-sumOtherHeightsList[2]], [-propsHeight[1], -propsHeight[0]], [0]],
   ];
   const footerColors: footerColorsType = !isValidated
-    ? { buttons: PINK[500], text: GREY[100], background: GREY[100] }
+    ? { buttons: COPPER[500], text: GREY[100], background: GREY[100] }
     : isOrderedCorrectly
       ? { buttons: GREEN[600], text: GREEN[600], background: GREEN[100] }
       : { buttons: ORANGE[600], text: ORANGE[600], background: ORANGE[100] };

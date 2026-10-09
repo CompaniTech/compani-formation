@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { GREY, PINK, BLACK } from '../../../styles/colors';
+import { GREY, COPPER, BLACK } from '../../../styles/colors';
 import { FIRA_SANS_REGULAR } from '../../../styles/fonts';
 import { BORDER_WIDTH, ICON, PADDING } from '../../../styles/metrics';
 
@@ -36,9 +36,9 @@ const styles = StyleSheet.create({
     height: ICON.XL,
     width: ICON.XL,
     borderRadius: ICON.XL / 2,
-    backgroundColor: PINK[300],
+    backgroundColor: COPPER[300],
     borderWidth: 2,
-    borderColor: PINK[500],
+    borderColor: COPPER[500],
   },
   text: {
     ...FIRA_SANS_REGULAR.MD,
@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
   selectedText: {
     ...FIRA_SANS_REGULAR.XL,
     textAlign: 'center',
-    color: PINK[600],
+    color: COPPER[600],
   },
 });
 

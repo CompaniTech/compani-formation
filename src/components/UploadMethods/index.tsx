@@ -3,7 +3,7 @@ import { Alert, BackHandler, View } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import { GREY, PINK } from '../../styles/colors';
+import { GREY, COPPER } from '../../styles/colors';
 import {
   INTER_B2B,
   SINGLE,
@@ -133,12 +133,12 @@ const UploadMethods = ({
       <View style={styles.container}>
         <NiPrimaryButton caption='Prendre une photo' customStyle={styles.button} onPress={requestPermissionsForCamera} 
           disabled={isLoading || severalAttendanceSheetsToAdd || IS_WEB} bgColor={GREY[100]}
-          color={severalAttendanceSheetsToAdd || IS_WEB ? GREY[300] : PINK[500]} />
+          color={severalAttendanceSheetsToAdd || IS_WEB ? GREY[300] : COPPER[500]} />
         <NiPrimaryButton caption='Ajouter une photo' customStyle={styles.button} bgColor={GREY[100]}
           disabled={isLoading || severalAttendanceSheetsToAdd || IS_WEB} onPress={requestPermissionsForImagePicker}
-          color={severalAttendanceSheetsToAdd || IS_WEB ? GREY[300] : PINK[500]} />
+          color={severalAttendanceSheetsToAdd || IS_WEB ? GREY[300] : COPPER[500]} />
         {<NiPrimaryButton caption='Ajouter une signature' customStyle={styles.button} disabled={isLoading}
-          color={PINK[500]} onPress={() => navigation.navigate(getSlotSelectionNextScreen())}
+          color={COPPER[500]} onPress={() => navigation.navigate(getSlotSelectionNextScreen())}
           bgColor={GREY[100]} />}
       </View>
       {imagePickerManager && <ImagePickerManager type={type} onRequestClose={() => setImagePickerManager(false)}

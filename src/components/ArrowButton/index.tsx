@@ -1,7 +1,7 @@
 import { ICON } from '../../styles/metrics';
 import commonStyle from '../../styles/common';
 import FeatherButton from '../icons/FeatherButton';
-import { PINK } from '../../styles/colors';
+import { COPPER } from '../../styles/colors';
 import { LEFT, RIGHT } from '../../core/data/constants';
 import styles from './styles';
 
@@ -12,7 +12,7 @@ interface ArrowButtonProps {
   color?: string,
 }
 
-const ArrowButton = ({ direction, onPress, disabled = false, color = PINK[500] }: ArrowButtonProps) => {
+const ArrowButton = ({ direction, onPress, disabled = false, color = COPPER[500] }: ArrowButtonProps) => {
   const coloredStyle = styles({ borderColor: color });
 
   return (

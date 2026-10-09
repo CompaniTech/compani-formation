@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { GREY, PINK, WHITE } from '../../../../styles/colors';
+import { GREY, COPPER, WHITE } from '../../../../styles/colors';
 import { BORDER_RADIUS, BORDER_WIDTH, BUTTON_HEIGHT, MARGIN, PADDING } from '../../../../styles/metrics';
 import { FIRA_SANS_MEDIUM } from '../../../../styles/fonts';
 
@@ -31,14 +31,14 @@ const styles = (isSelected: boolean) => StyleSheet.create({
     minHeight: BUTTON_HEIGHT,
     borderWidth: BORDER_WIDTH,
     backgroundColor: WHITE,
-    borderColor: isSelected ? PINK[500] : GREY[200],
+    borderColor: isSelected ? COPPER[500] : GREY[200],
     borderRadius: BORDER_RADIUS.MD,
     paddingHorizontal: PADDING.LG,
     color: GREY[900],
     width: '100%',
   },
   shadow: {
-    backgroundColor: isSelected ? PINK[500] : GREY[200],
+    backgroundColor: isSelected ? COPPER[500] : GREY[200],
     borderRadius: BORDER_RADIUS.LG,
   },
 });

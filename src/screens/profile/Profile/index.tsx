@@ -17,7 +17,7 @@ import Courses from '../../../api/courses';
 import CompanyLinkRequests from '../../../api/companyLinkRequests';
 import Users from '../../../api/users';
 import Companies from '../../../api/companies';
-import { PINK } from '../../../styles/colors';
+import { COPPER } from '../../../styles/colors';
 import { HIT_SLOP, ICON } from '../../../styles/metrics';
 import FeatherButton from '../../../components/icons/FeatherButton';
 import PictureModal from '../../../components/PictureModal';
@@ -198,7 +198,7 @@ const Profile = ({ navigation }: ProfileProps) => {
                   : <TouchableOpacity onPress={() => setPictureModal(true)}>
                     <Image style={styles.profileImage} source={source} />
                     <FeatherButton name={hasPhoto ? 'edit-2' : 'plus'} onPress={() => setPictureModal(true)}
-                      size={ICON.SM} color={PINK[500]} style={styles.profileImageEdit} />
+                      size={ICON.SM} color={COPPER[500]} style={styles.profileImageEdit} />
                   </TouchableOpacity>}
                 <Text style={styles.name}>{loggedUser.identity.firstname || ''} {loggedUser.identity.lastname}</Text>
                 {loggedUser.company?.name

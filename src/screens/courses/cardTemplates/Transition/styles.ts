@@ -1,12 +1,12 @@
 import { StyleSheet } from 'react-native';
-import { PINK, WHITE } from '../../../../styles/colors';
+import { COPPER, WHITE } from '../../../../styles/colors';
 import { MARGIN } from '../../../../styles/metrics';
 import { NUNITO_REGULAR_BOLD_ITALIC } from '../../../../styles/fonts';
 
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: PINK[500],
+    backgroundColor: COPPER[500],
   },
   closeButton: {
     margin: MARGIN.MD,

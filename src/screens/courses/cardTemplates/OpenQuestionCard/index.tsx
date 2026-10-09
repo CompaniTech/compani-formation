@@ -12,7 +12,7 @@ import {
   useGetCardIndex,
   useGetQuestionnaireAnswer,
 } from '../../../../store/cards/hooks';
-import { GREY, PINK } from '../../../../styles/colors';
+import { GREY, COPPER } from '../../../../styles/colors';
 import { EDGES, IS_LARGE_SCREEN, MARGIN } from '../../../../styles/metrics';
 import { OpenQuestionType } from '../../../../types/CardType';
 import styles from './styles';
@@ -66,8 +66,8 @@ const OpenQuestionCard = ({ isLoading, setIsRightSwipeEnabled }: OpenQuestionCar
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
-      <QuestionCardFooter index={index} buttonColor={isValidationDisabled ? GREY[300] : PINK[500]}
-        arrowColor={PINK[500]} buttonCaption='Valider' buttonDisabled={isValidationDisabled}
+      <QuestionCardFooter index={index} buttonColor={isValidationDisabled ? GREY[300] : COPPER[500]}
+        arrowColor={COPPER[500]} buttonCaption='Valider' buttonDisabled={isValidationDisabled}
         onPressArrow={() => setIsSelected(false)} validateCard={validateQuestionnaireAnswer} />
     </SafeAreaView>
   );

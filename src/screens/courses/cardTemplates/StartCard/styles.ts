@@ -1,12 +1,12 @@
 import { StyleSheet } from 'react-native';
 import { MARGIN } from '../../../../styles/metrics';
 import { FIRA_SANS_BLACK } from '../../../../styles/fonts';
-import { PINK, WHITE } from '../../../../styles/colors';
+import { COPPER, WHITE } from '../../../../styles/colors';
 
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: PINK[500],
+    backgroundColor: COPPER[500],
   },
   contentContainer: {
     flexGrow: 1,

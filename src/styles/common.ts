@@ -10,7 +10,7 @@ import {
   BORDER_RADIUS,
   PADDING,
 } from './metrics';
-import { WHITE, PINK, GREY } from './colors';
+import { WHITE, COPPER, GREY } from './colors';
 import { FIRA_SANS_BLACK, FIRA_SANS_BOLD, FIRA_SANS_ITALIC, FIRA_SANS_MEDIUM, FIRA_SANS_REGULAR } from './fonts';
 
 export default StyleSheet.create({
@@ -75,5 +75,5 @@ export const markdownStyle = bodyStyle => ({
   strong: { ...FIRA_SANS_BOLD.MD },
   em: { ...FIRA_SANS_ITALIC.MD },
   list_item: { margin: MARGIN.XS },
-  link: { color: PINK[500] },
+  link: { color: COPPER[500] },
 });
