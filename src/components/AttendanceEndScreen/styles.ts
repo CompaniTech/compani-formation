@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
 import { MARGIN } from '../../styles/metrics';
 import { FIRA_SANS_BLACK, FIRA_SANS_BOLD } from '../../styles/fonts';
-import { GREY, PINK } from '../../styles/colors';
+import { GREY, COPPER } from '../../styles/colors';
 
 const styles = StyleSheet.create({
   safeArea: {
@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
   },
   text: {
     ...FIRA_SANS_BLACK.MD,
-    color: PINK[600],
+    color: COPPER[600],
     marginVertical: MARGIN.LG,
     textAlign: 'center',
   },

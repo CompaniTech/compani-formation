@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { WHITE, TRANSPARENT_GREY, GREY, GREEN, PINK } from '../../styles/colors';
+import { WHITE, TRANSPARENT_GREY, GREY, GREEN, COPPER } from '../../styles/colors';
 import { BORDER_RADIUS, PADDING, PROGRAM_CELL_WIDTH, BORDER_WIDTH, ICON, MARGIN } from '../../styles/metrics';
 import { FIRA_SANS_REGULAR, FIRA_SANS_BOLD } from '../../styles/fonts';
 
@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
   theoreticalDuration: {
     paddingLeft: PADDING.MD,
     paddingBottom: PADDING.MD,
-    color: PINK[500],
+    color: COPPER[500],
   },
   progressContainer: {
     margin: MARGIN.SM,

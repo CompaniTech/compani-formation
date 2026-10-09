@@ -1,9 +1,9 @@
 // Yellow
 export const YELLOW = {
-  '100': '#FFFBE5',
-  '200': '#FDF2BE',
-  '300': '#FCE68D',
-  '400': '#F8D95D',
+  '100': '#FCF8EC',
+  '200': '#F7EBC8',
+  '300': '#F4DD97',
+  '400': '#F2D264',
   '500': '#F4CA25',
   '600': '#DBA00A',
   '700': '#AB6F07',
@@ -13,15 +13,15 @@ export const YELLOW = {
 
 // Orange
 export const ORANGE = {
-  '100': '#FFF7EB',
-  '200': '#FEE7C8',
-  '300': '#FBC88D',
-  '400': '#F6A555',
-  '500': '#ED8936',
-  '600': '#DD6B20',
-  '700': '#C05621',
-  '800': '#9C4221',
-  '900': '#7B341E',
+  '100': '#FFF5E8',
+  '200': '#FFE1BE',
+  '300': '#FFBA76',
+  '400': '#FF8E2F',
+  '500': '#FF6A00',
+  '600': '#D2530C',
+  '700': '#B6400F',
+  '800': '#933012',
+  '900': '#742612',
 };
 
 // Green
@@ -48,14 +48,14 @@ export const PURPLE = {
   '800': '#2E2673',
 };
 
-// AltPink
-export const PINK = {
-  '100': '#FFEBF1',
-  '200': '#FBB8D2',
-  '300': '#F18FB5',
-  '400': '#E74B87',
-  '500': '#C12862',
-  '600': '#98204D',
+// Copper
+export const COPPER = {
+  '100': '#D3F1F5',
+  '200': '#A1DFE9',
+  '300': '#70C1CF',
+  '400': '#419FB0',
+  '500': '#1D7C8F',
+  '600': '#005774',
 };
 
 // Grey
@@ -78,7 +78,7 @@ export const TRANSPARENT_GREY = 'rgba(31, 20, 27, 0.2)';
 export const TRANSPARENT_LIGHT_GREY = 'rgba(226, 218, 223, 0.3)';
 export const TRANSPARENT_DARK_GREY = '#00000066';
 export const MEDIA_BACKGROUND_PLAY = '#00000020';
-export const TRANSPARENT_PINK = 'rgba(193, 40, 98, 0.2)';
+export const TRANSPARENT_COPPER = 'rgba(29, 124, 143, 0.2)';
 export const TRANSPARENT_GRADIENT = '#FFFFFF00';
 export const MODAL_BACKDROP_GREY = '#00000099';
 export const RED = '#FF0000';

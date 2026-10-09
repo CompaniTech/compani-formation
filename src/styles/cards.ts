@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { GREY, PINK } from './colors';
+import { GREY, COPPER } from './colors';
 import { FIRA_SANS_REGULAR, FIRA_SANS_BLACK, FIRA_SANS_MEDIUM } from './fonts';
 import { INPUT_HEIGHT, MARGIN, PADDING, TEXT_LINE_HEIGHT } from './metrics';
 
@@ -31,7 +31,7 @@ export default StyleSheet.create({
   },
   informativeText: {
     ...FIRA_SANS_REGULAR.SM,
-    color: PINK[500],
+    color: COPPER[500],
     marginBottom: MARGIN.SM,
   },
 });

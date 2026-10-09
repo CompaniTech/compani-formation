@@ -1,6 +1,6 @@
 import { Text, TouchableOpacity } from 'react-native';
 import MaterialIcons from '@react-native-vector-icons/material-icons';
-import { GREY, PINK } from '../../../styles/colors';
+import { GREY, COPPER } from '../../../styles/colors';
 import styles from './styles';
 
 interface RenderItemProps {
@@ -11,7 +11,7 @@ interface RenderItemProps {
 }
 
 const getColors = (isChecked: boolean, disabled: boolean) => {
-  if (isChecked) return { icon: disabled ? PINK[300] : PINK[500], text: disabled ? GREY[300] : GREY[600] };
+  if (isChecked) return { icon: disabled ? COPPER[300] : COPPER[500], text: disabled ? GREY[300] : GREY[600] };
   return { icon: disabled ? GREY[300] : GREY[600], text: disabled ? GREY[300] : GREY[600] };
 };
 

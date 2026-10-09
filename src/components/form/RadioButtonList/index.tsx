@@ -1,7 +1,7 @@
 import { TouchableOpacity, Text } from 'react-native';
 import MaterialIcons from '@react-native-vector-icons/material-icons';
 import styles from './styles';
-import { GREY, PINK } from '../../../styles/colors';
+import { GREY, COPPER } from '../../../styles/colors';
 import { DataOptionsType } from '../../../store/attendanceSheets/slice';
 
 interface RadioButtonProps {
@@ -18,7 +18,7 @@ interface RenderItemProps {
 
 const renderItem = ({ item, checkedRadioButton, onPressCheckbox }: RenderItemProps) => {
   const iconName = checkedRadioButton === item.value ? 'radio-button-checked' : 'radio-button-unchecked';
-  const iconColor = checkedRadioButton === item.value ? PINK[500] : GREY[600];
+  const iconColor = checkedRadioButton === item.value ? COPPER[500] : GREY[600];
   const textStyle = checkedRadioButton === item.value ? styles.text : { ...styles.text, color: GREY[600] };
 
   return (

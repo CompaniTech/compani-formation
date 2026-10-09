@@ -5,7 +5,7 @@ import CompaniDate from '../../core/helpers/dates/companiDates';
 import { CourseModeType } from '../../types/CourseTypes';
 import { capitalize } from '../../core/helpers/utils';
 import { ICON } from '../../styles/metrics';
-import { PINK, PURPLE } from '../../styles/colors';
+import { COPPER, PURPLE } from '../../styles/colors';
 import Shadow from '../design/Shadow';
 import ProgressPieChart from '../ProgressPieChart';
 import { TRAINER, DAY_OF_WEEK_SHORT, DAY_OF_MONTH, MONTH_SHORT, DAY } from '../../core/data/constants';
@@ -19,7 +19,7 @@ interface CalendarIconProps {
 
 const CalendarIcon = ({ slots, progress = 0, mode }: CalendarIconProps) => {
   const TODAY = CompaniDate();
-  const style = styles(mode === TRAINER ? PURPLE[800] : PINK[500]);
+  const style = styles(mode === TRAINER ? PURPLE[800] : COPPER[500]);
 
   const getNextSlot = useCallback(() => {
     if (TODAY.isBefore(slots[0])) return slots[0];
@@ -40,7 +40,7 @@ const CalendarIcon = ({ slots, progress = 0, mode }: CalendarIconProps) => {
     if (!progress) {
       return (
         <View style={style.datesLengthContainer}>
-          <Ionicons name='calendar-sharp' size={ICON.SM} color={mode === TRAINER ? PURPLE[800] : PINK[500]}
+          <Ionicons name='calendar-sharp' size={ICON.SM} color={mode === TRAINER ? PURPLE[800] : COPPER[500]}
             style={style.datesLengthIcon} />
         </View>
       );

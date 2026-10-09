@@ -11,7 +11,7 @@ import {
   useGetQuestionnaireAnswer,
   useRemoveQuestionnaireAnswer,
 } from '../../../../store/cards/hooks';
-import { GREY, PINK } from '../../../../styles/colors';
+import { GREY, COPPER } from '../../../../styles/colors';
 import { EDGES } from '../../../../styles/metrics';
 import { SurveyType } from '../../../../types/CardType';
 import styles from './styles';
@@ -65,8 +65,8 @@ const SurveyCard = ({ isLoading, setIsRightSwipeEnabled }: SurveyCardProps) => {
           </View>
         </View>
       </ScrollView>
-      <QuestionCardFooter index={index} buttonColor={isValidationDisabled ? GREY[300] : PINK[500]}
-        arrowColor={PINK[500]} buttonCaption='Valider' buttonDisabled={isValidationDisabled}
+      <QuestionCardFooter index={index} buttonColor={isValidationDisabled ? GREY[300] : COPPER[500]}
+        arrowColor={COPPER[500]} buttonCaption='Valider' buttonDisabled={isValidationDisabled}
         validateCard={validateSurvey} />
     </SafeAreaView>
   );
