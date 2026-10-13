@@ -16,7 +16,7 @@ import Catalog from '../../screens/explore/Catalog';
 import ProfileDetails from '../../screens/profile/Profile';
 import styles from './styles';
 import { RootBottomTabParamList } from '../../types/NavigationType';
-import { VENDOR_ADMIN, TRAINING_ORGANISATION_MANAGER, TRAINER, IS_WEB } from '../../core/data/constants';
+import { VENDOR_ADMIN, TRAINING_ORGANISATION_MANAGER, TRAINER } from '../../core/data/constants';
 import { EDGES } from '../../styles/metrics';
 import { tabsNames } from '../../core/data/tabs';
 
@@ -56,7 +56,7 @@ const profileIcon = ({ focused }: tabBarProps) => (focused
 
 const Home = () => {
   const userVendorRole = useGetUserVendorRole();
-  const showTrainerTab = !!userVendorRole && !IS_WEB &&
+  const showTrainerTab = !!userVendorRole &&
     [VENDOR_ADMIN, TRAINING_ORGANISATION_MANAGER, TRAINER].includes(userVendorRole);
 
   return (

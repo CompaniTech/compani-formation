@@ -191,13 +191,11 @@ const TrainerCourses = ({ navigation }: TrainerCoursesProps) => {
 
   return (
     <SafeAreaView style={commonStyles.container} edges={[]}>
-      <View style={styles.container}>
-        <FlatList data={filteredCoursesDisplays} keyExtractor={item => item.title}
-          ListHeaderComponent={<TrainerCoursesHeader answer={answer} setAnswer={setAnswer} nextSteps={nextSteps} />}
-          renderItem={({ item }) => renderCourseDisplay(item)} showsVerticalScrollIndicator={false}
-          ListEmptyComponent={<TrainerEmptyState />} ListFooterComponent={renderFooter}
-          refreshControl={renderRefreshControl} />
-      </View>
+      <FlatList data={filteredCoursesDisplays} keyExtractor={item => item.title}
+        ListHeaderComponent={<TrainerCoursesHeader answer={answer} setAnswer={setAnswer} nextSteps={nextSteps} />}
+        renderItem={({ item }) => renderCourseDisplay(item)} showsVerticalScrollIndicator={false}
+        ListEmptyComponent={<TrainerEmptyState />} ListFooterComponent={renderFooter}
+        refreshControl={renderRefreshControl} />
     </SafeAreaView>
   );
 };

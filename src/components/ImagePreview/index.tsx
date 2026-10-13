@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
-import { View, Alert, BackHandler, Text, TouchableOpacity } from 'react-native';
+import { View, Alert, BackHandler, Text, TouchableOpacity, Linking } from 'react-native';
 import { File, Paths } from 'expo-file-system';
 import * as Print from 'expo-print';
 import { WebView } from 'react-native-webview';
-import { IMAGE, IS_IOS } from '../../core/data/constants';
+import { IMAGE, IS_IOS, IS_WEB } from '../../core/data/constants';
 import { WHITE } from '../../styles/colors';
 import { ICON, SCREEN_HEIGHT } from '../../styles/metrics';
 import NiImage from '../Image';
@@ -83,7 +83,7 @@ const ImagePreview = ({ source, deleteFile, onRequestClose, showButton = true }:
   };
 
   return (
-    <View>
+    <View style={IS_WEB && styles.overlay}>
       <View style={styles.container}>
         <ConfirmationModal onPressConfirmButton={() => onDeleteFile(true)} visible={confirmationModal}
           title={'Supprimer les émargements'} onPressCancelButton={() => onDeleteFile(false)}
@@ -97,8 +97,8 @@ const ImagePreview = ({ source, deleteFile, onRequestClose, showButton = true }:
               ? <View style={styles.pdfContainer}>
                 <WebView source={{ uri: link }} style={styles.pdfContent} startInLoadingState />
               </View>
-              : <TouchableOpacity onPress={onPressViewDocument} style={styles.linkContainer}
-                disabled={isDocumentLoading}>
+              : <TouchableOpacity onPress={() => (IS_WEB ? Linking.openURL(link) : onPressViewDocument())}
+                style={styles.linkContainer} disabled={isDocumentLoading}>
                 <Text style={styles.linkContent}>
                   Pour visualiser le document veuillez cliquer <Text style={styles.link}>ici</Text>
                 </Text>
