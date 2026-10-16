@@ -26,15 +26,15 @@ type ExpoTokenAndStatusType = {
 export const registerForPushNotificationsAsync = async (): Promise<ExpoTokenAndStatusType> => {
   if (!Device.isDevice) return { token: null, status: DENIED };
 
-  const { status: existingStatus } = await Notifications.getPermissionsAsync();
-  let finalStatus = existingStatus;
-
-  if (existingStatus !== GRANTED) {
-    const { status } = await Notifications.requestPermissionsAsync();
-    finalStatus = status;
-  }
-
   try {
+    const { status: existingStatus } = await Notifications.getPermissionsAsync();
+    let finalStatus = existingStatus;
+
+    if (existingStatus !== GRANTED) {
+      const { status } = await Notifications.requestPermissionsAsync();
+      finalStatus = status;
+    }
+
     const { data: token } = await Notifications
       .getExpoPushTokenAsync({ projectId: Constants.expoConfig?.extra?.eas.projectId });
     await asyncStorage.setExpoToken(token);
