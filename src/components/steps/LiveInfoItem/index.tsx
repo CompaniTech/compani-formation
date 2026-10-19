@@ -1,4 +1,4 @@
-import { View, Text, FlatList, Linking, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, Linking, TouchableOpacity, Alert } from 'react-native';
 import get from 'lodash/get';
 import { SlotType } from '../../../types/CourseTypes';
 import CompaniDate from '../../../core/helpers/dates/companiDates';
@@ -17,10 +17,15 @@ const LiveInfoItem = ({ slots }: LiveInfoItemProps) => {
     ? (get(slots[0], 'address.fullAddress') || '')
     : (get(slots[0], 'meetingLink') || '');
 
-  const openUrl = async (add: string) => (slots[0].step.type === ON_SITE
-    ? Linking.openURL(`https://www.google.com/maps/search/?api=1&query=${add}`)
-    : Linking.openURL(add)
-  );
+  const openUrl = async (add: string) => {
+    try {
+      await (slots[0].step.type === ON_SITE
+        ? Linking.openURL(`https://www.google.com/maps/search/?api=1&query=${add}`)
+        : Linking.openURL(add));
+    } catch (_) {
+      Alert.alert('Erreur', 'Impossible d\'ouvrir ce lien, veuillez contacter votre formateur');
+    }
+  };
 
   return (
     <>
