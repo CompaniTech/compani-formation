@@ -8,7 +8,7 @@ import {
   SCREEN_WIDTH,
   BACKGROUND_SPOT_WIDTH,
 } from '../../../styles/metrics';
-import { GREEN, GREY, PINK, PURPLE, YELLOW, TRANSPARENT_GREY, WHITE } from '../../../styles/colors';
+import { GREEN, GREY, COPPER, PURPLE, YELLOW, TRANSPARENT_GREY, WHITE } from '../../../styles/colors';
 import { FIRA_SANS_REGULAR, FIRA_SANS_BOLD } from '../../../styles/fonts';
 
 const styles = StyleSheet.create({
@@ -40,8 +40,8 @@ const styles = StyleSheet.create({
   },
   pinkCount: {
     ...FIRA_SANS_REGULAR.SM,
-    color: PINK[600],
-    backgroundColor: PINK[200],
+    color: COPPER[600],
+    backgroundColor: COPPER[200],
   },
   rightBackground: {
     resizeMode: 'contain',

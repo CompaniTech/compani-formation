@@ -28,7 +28,7 @@ const fetchAssets = async () => {
     require('../../../assets/images/home_footer_ellipse.webp'),
     require('../../../assets/images/pa_aidant_balade_bleu.webp'),
     require('../../../assets/images/pa_aidant_balade_rose.webp'),
-    require('../../../assets/images/pink_section_background.webp'),
+    require('../../../assets/images/copper_section_background.webp'),
     require('../../../assets/images/profile_background.webp'),
     require('../../../assets/images/purple_section_background.webp'),
     require('../../../assets/images/start_card_background.webp'),

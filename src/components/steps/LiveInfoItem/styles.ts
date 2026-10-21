@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { BORDER_WIDTH, MARGIN } from '../../../styles/metrics';
-import { GREY, PINK } from '../../../styles/colors';
+import { GREY, COPPER } from '../../../styles/colors';
 import { NUNITO_SEMI, FIRA_SANS_REGULAR } from '../../../styles/fonts';
 
 export default StyleSheet.create({
@@ -18,7 +18,7 @@ export default StyleSheet.create({
   },
   location: {
     ...FIRA_SANS_REGULAR.MD,
-    color: PINK[600],
+    color: COPPER[600],
     textDecorationLine: 'underline',
   },
 });

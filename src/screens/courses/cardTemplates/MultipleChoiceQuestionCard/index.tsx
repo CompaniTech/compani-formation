@@ -15,7 +15,7 @@ import {
   useGetQuizzAnswer,
   useIncGoodAnswersCount,
 } from '../../../../store/cards/hooks';
-import { GREEN, GREY, ORANGE, PINK } from '../../../../styles/colors';
+import { GREEN, GREY, ORANGE, COPPER } from '../../../../styles/colors';
 import { EDGES } from '../../../../styles/metrics';
 import cardsStyle from '../../../../styles/cards';
 import { footerColorsType, MultipleChoiceQuestionType, StoreAnswerType } from '../../../../types/CardType';
@@ -36,7 +36,7 @@ const MultipleChoiceQuestionCard = ({ isLoading, setIsRightSwipeEnabled }: Multi
   const [isValidated, setIsValidated] = useState<boolean>(false);
   const [isAnsweredCorrectly, setIsAnsweredCorrectly] = useState<boolean>(false);
   const footerColors: footerColorsType = !isValidated
-    ? { buttons: PINK[500], text: GREY[100], background: GREY[100] }
+    ? { buttons: COPPER[500], text: GREY[100], background: GREY[100] }
     : isAnsweredCorrectly
       ? { buttons: GREEN[600], text: GREEN[600], background: GREEN[100] }
       : { buttons: ORANGE[600], text: ORANGE[600], background: ORANGE[100] };

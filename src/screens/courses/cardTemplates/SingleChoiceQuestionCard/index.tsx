@@ -15,7 +15,7 @@ import {
   useIncGoodAnswersCount,
 } from '../../../../store/cards/hooks';
 import cardsStyle from '../../../../styles/cards';
-import { GREY, GREEN, ORANGE, PINK } from '../../../../styles/colors';
+import { GREY, GREEN, ORANGE, COPPER } from '../../../../styles/colors';
 import { EDGES } from '../../../../styles/metrics';
 import { footerColorsType, StoreAnswerType, SingleChoiceQuestionType } from '../../../../types/CardType';
 import styles from './styles';
@@ -36,7 +36,7 @@ const SingleChoiceQuestionCard = ({ isLoading, setIsRightSwipeEnabled }: SingleC
   const [answers, setAnswers] = useState<StoreAnswerType[]>([]);
 
   const footerColors: footerColorsType = !isPressed
-    ? { buttons: PINK[500], text: GREY[100], background: GREY[100] }
+    ? { buttons: COPPER[500], text: GREY[100], background: GREY[100] }
     : isAnsweredCorrectly
       ? { buttons: GREEN[600], text: GREEN[600], background: GREEN[100] }
       : { buttons: ORANGE[600], text: ORANGE[600], background: ORANGE[100] };

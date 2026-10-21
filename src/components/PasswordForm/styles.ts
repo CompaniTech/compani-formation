@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
 import { BORDER_RADIUS, MARGIN, PADDING } from '../../styles/metrics';
 import { FIRA_SANS_BOLD, FIRA_SANS_REGULAR } from '../../styles/fonts';
-import { GREY, PINK } from '../../styles/colors';
+import { GREY, COPPER } from '../../styles/colors';
 
 const styles = StyleSheet.create({
   title: {
@@ -11,16 +11,16 @@ const styles = StyleSheet.create({
   },
   email: {
     ...FIRA_SANS_REGULAR.MD,
-    color: PINK[600],
+    color: COPPER[600],
     marginVertical: MARGIN.MD,
     padding: PADDING.MD,
     textAlign: 'center',
-    backgroundColor: PINK[100],
+    backgroundColor: COPPER[100],
     borderRadius: BORDER_RADIUS.LG,
   },
   bold: {
     ...FIRA_SANS_BOLD.MD,
-    color: PINK[600],
+    color: COPPER[600],
   },
   keyboardAvoidingView: {
     flex: 1,

@@ -2,7 +2,7 @@ import { View, Text, Image, ImageBackground, ScrollView, ActivityIndicator } fro
 import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import NiPrimaryButton from '../../../../components/form/PrimaryButton';
-import { PINK, WHITE } from '../../../../styles/colors';
+import { COPPER, WHITE } from '../../../../styles/colors';
 import { EDGES } from '../../../../styles/metrics';
 import CardHeader from '../../../../components/cards/CardHeader';
 import styles from './styles';
@@ -36,7 +36,7 @@ const StartCard = ({ title, isLoading, goBack, startTimer }: StartCardProps) => 
               ? <ActivityIndicator style={styles.loader} color={WHITE} size="large" />
               : <Text style={styles.text}>{title}</Text>}
           </View>
-          {!isLoading && <NiPrimaryButton customStyle={styles.button} bgColor={WHITE} color={PINK[500]}
+          {!isLoading && <NiPrimaryButton customStyle={styles.button} bgColor={WHITE} color={COPPER[500]}
             caption="Démarrer" onPress={onPress} />}
         </View>
       </ScrollView>

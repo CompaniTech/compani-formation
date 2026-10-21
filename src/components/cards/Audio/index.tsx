@@ -5,7 +5,7 @@ import Ionicons from '@react-native-vector-icons/ionicons';
 import { useAudioPlayer, useAudioPlayerStatus } from 'expo-audio';
 import { ICON, WEB_AUDIO_ICON_SIZE } from '../../../styles/metrics';
 import IoniconsButton from '../../icons/IoniconsButton';
-import { GREY, PINK } from '../../../styles/colors';
+import { GREY, COPPER } from '../../../styles/colors';
 import styles from './styles';
 import { IS_WEB } from '../../../core/data/constants';
 
@@ -56,8 +56,8 @@ const NiAudio = ({ mediaSource }: NiAudioProps) => {
       : <View style={styles.container}>
         {renderPlayer(ICON.MD)}
         <Text style={styles.timer}>{convertSeconds(Math.floor(status.currentTime))}</Text>
-        <Slider minimumValue={0} maximumValue={status.duration} minimumTrackTintColor={PINK[500]}
-          thumbTintColor={PINK[500]} style={styles.track}
+        <Slider minimumValue={0} maximumValue={status.duration} minimumTrackTintColor={COPPER[500]}
+          thumbTintColor={COPPER[500]} style={styles.track}
           value={status.currentTime} onValueChange={event => player.seekTo(event)} />
         <Text style={styles.timer}>
           {convertSeconds(Math.floor(status.duration) - Math.floor(status.currentTime))}

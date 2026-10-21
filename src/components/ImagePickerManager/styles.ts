@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { PINK } from '../../styles/colors';
+import { COPPER } from '../../styles/colors';
 import { FIRA_SANS_MEDIUM } from '../../styles/fonts';
 import { MARGIN } from '../../styles/metrics';
 
@@ -10,7 +10,7 @@ const styles = StyleSheet.create({
   },
   text: {
     ...FIRA_SANS_MEDIUM.MD,
-    color: PINK[500],
+    color: COPPER[500],
     marginBottom: MARGIN.SM,
   },
 });

@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { GREY, PINK } from '../../../styles/colors';
+import { GREY, COPPER } from '../../../styles/colors';
 import { PADDING, MARGIN, SCREEN_HEIGHT, WEB_AUDIO_ICON_SIZE } from '../../../styles/metrics';
 import { FIRA_SANS_REGULAR } from '../../../styles/fonts';
 
@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
   webContainer: {
     width: 'auto',
     height: SCREEN_HEIGHT > 3 * WEB_AUDIO_ICON_SIZE ? SCREEN_HEIGHT / 3 : WEB_AUDIO_ICON_SIZE + (2 * PADDING.MD),
-    backgroundColor: PINK[100],
+    backgroundColor: COPPER[100],
     borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',

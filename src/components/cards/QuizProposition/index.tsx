@@ -1,6 +1,6 @@
 import { View, TouchableOpacity, Text } from 'react-native';
 import Feather from '@react-native-vector-icons/feather';
-import { GREY, GREEN, ORANGE, PINK } from '../../../styles/colors';
+import { GREY, GREEN, ORANGE, COPPER } from '../../../styles/colors';
 import Shadow from '../../design/Shadow';
 import styles from './styles';
 
@@ -24,7 +24,7 @@ const QuizProposition = ({
   const color = (() => {
     if (isSelected && isGoodAnswer && isValidated) return GREEN[600];
     if (isSelected && isValidated) return ORANGE[600];
-    if (isSelected) return PINK[500];
+    if (isSelected) return COPPER[500];
     return GREY[500];
   })();
 

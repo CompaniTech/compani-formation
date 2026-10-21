@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { FIRA_SANS_BOLD, NUNITO_LIGHT } from '../../../../styles/fonts';
-import { GREY, PINK, WHITE } from '../../../../styles/colors';
+import { GREY, COPPER, WHITE } from '../../../../styles/colors';
 import {
   BORDER_RADIUS,
   BORDER_WIDTH,
@@ -53,11 +53,11 @@ const styles = (card: FlashCardType) => StyleSheet.create({
     ...IS_LARGE_SCREEN ? NUNITO_LIGHT.XXXL : NUNITO_LIGHT.XXL,
     alignSelf: 'center',
     position: 'absolute',
-    color: PINK[100],
+    color: COPPER[100],
   },
   flipCardBack: {
-    backgroundColor: PINK[400],
-    borderColor: PINK[500],
+    backgroundColor: COPPER[400],
+    borderColor: COPPER[500],
     position: 'absolute',
     top: 0,
     height: '100%',
@@ -72,7 +72,7 @@ const styles = (card: FlashCardType) => StyleSheet.create({
     ...IS_LARGE_SCREEN ? NUNITO_LIGHT.XXXL : NUNITO_LIGHT.XXL,
     alignSelf: 'center',
     position: 'absolute',
-    color: PINK[500],
+    color: COPPER[500],
   },
   shadow: {
     backgroundColor: GREY[200],

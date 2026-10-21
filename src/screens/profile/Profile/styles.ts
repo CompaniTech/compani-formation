@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { GREY, PINK, TRANSPARENT_GREY, WHITE } from '../../../styles/colors';
+import { GREY, COPPER, TRANSPARENT_GREY, WHITE } from '../../../styles/colors';
 import { BORDER_RADIUS, BORDER_WIDTH, MARGIN, PADDING } from '../../../styles/metrics';
 import {
   FIRA_SANS_BOLD,
@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
   },
   numberOfCourses: {
     ...NUNITO_LIGHT.XL,
-    color: PINK[500],
+    color: COPPER[500],
   },
   contact: {
     ...FIRA_SANS_BOLD.LG,
@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
   },
   legalNotice: {
     ...FIRA_SANS_REGULAR.MD,
-    color: PINK[500],
+    color: COPPER[500],
   },
 });
 

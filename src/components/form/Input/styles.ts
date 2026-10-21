@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { BORDER_RADIUS, MARGIN, PADDING, INPUT_HEIGHT, BORDER_WIDTH } from '../../../styles/metrics';
-import { GREY, ORANGE, PINK, TRANSPARENT_PINK, WHITE } from '../../../styles/colors';
+import { GREY, ORANGE, COPPER, TRANSPARENT_COPPER, WHITE } from '../../../styles/colors';
 import { FIRA_SANS_REGULAR, FIRA_SANS_MEDIUM, FIRA_SANS_ITALIC } from '../../../styles/fonts';
 
 const styles = (isSelected: boolean, borderColor: string) => StyleSheet.create({
@@ -10,7 +10,7 @@ const styles = (isSelected: boolean, borderColor: string) => StyleSheet.create({
   },
   input: {
     borderWidth: BORDER_WIDTH,
-    borderColor: isSelected ? PINK[500] : borderColor,
+    borderColor: isSelected ? COPPER[500] : borderColor,
     height: INPUT_HEIGHT,
     alignItems: 'center',
     borderRadius: BORDER_RADIUS.MD,
@@ -29,7 +29,7 @@ const styles = (isSelected: boolean, borderColor: string) => StyleSheet.create({
   },
   required: {
     ...FIRA_SANS_REGULAR.SM,
-    color: PINK[500],
+    color: COPPER[500],
     paddingHorizontal: PADDING.SM,
   },
   inputIcon: {
@@ -43,7 +43,7 @@ const styles = (isSelected: boolean, borderColor: string) => StyleSheet.create({
     height: INPUT_HEIGHT,
   },
   shadow: {
-    backgroundColor: TRANSPARENT_PINK,
+    backgroundColor: TRANSPARENT_COPPER,
     top: -3,
     bottom: -3,
     right: -3,

@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { GREY, PINK } from '../../styles/colors';
+import { GREY, COPPER } from '../../styles/colors';
 import { MARGIN, PADDING } from '../../styles/metrics';
 import { FIRA_SANS_BOLD, FIRA_SANS_REGULAR } from '../../styles/fonts';
 
@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
   },
   button: {
     ...FIRA_SANS_REGULAR.MD,
-    color: PINK[500],
+    color: COPPER[500],
   },
 });
 

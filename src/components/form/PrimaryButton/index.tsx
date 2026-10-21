@@ -1,5 +1,5 @@
 import NiButton from '../Button';
-import { PINK, WHITE } from '../../../styles/colors';
+import { COPPER, WHITE } from '../../../styles/colors';
 import { FontType } from '../../../types/FontType';
 import { FIRA_SANS_BLACK } from '../../../styles/fonts';
 import { FeatherType } from '../../../types/FeatherType';
@@ -21,7 +21,7 @@ const PrimaryButton = ({
   caption,
   onPress,
   loading = false,
-  bgColor = PINK[500],
+  bgColor = COPPER[500],
   color = WHITE,
   font = FIRA_SANS_BLACK.MD,
   icon,

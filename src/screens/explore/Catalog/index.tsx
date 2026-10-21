@@ -16,7 +16,7 @@ import ProgramCell from '../../../components/ProgramCell';
 import styles from './styles';
 import CoursesSection from '../../../components/CoursesSection';
 import HomeScreenFooter from '../../../components/HomeScreenFooter';
-import { GREEN, PINK, YELLOW, PURPLE, GREY } from '../../../styles/colors';
+import { GREEN, COPPER, YELLOW, PURPLE, GREY } from '../../../styles/colors';
 import { capitalizeFirstLetter, getTheoreticalDuration, removeDiacritics } from '../../../core/helpers/utils';
 import { IS_WEB } from '../../../core/data/constants';
 
@@ -42,9 +42,9 @@ const CategoriesStyleList = [
     countStyle: { background: PURPLE[200], color: PURPLE[800] },
   },
   {
-    imageBackground: require('../../../../assets/images/pink_section_background.webp'),
+    imageBackground: require('../../../../assets/images/copper_section_background.webp'),
     backgroundStyle: styles().rightBackground,
-    countStyle: { background: PINK[200], color: PINK[600] },
+    countStyle: { background: COPPER[200], color: COPPER[600] },
   },
 ];
 

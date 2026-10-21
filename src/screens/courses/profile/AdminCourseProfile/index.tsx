@@ -23,7 +23,7 @@ import AttendanceSheets from '../../../../api/attendanceSheets';
 import Questionnaires from '../../../../api/questionnaires';
 import commonStyles from '../../../../styles/common';
 import { EDGES, ICON } from '../../../../styles/metrics';
-import { BLACK, GREY, PINK, YELLOW } from '../../../../styles/colors';
+import { BLACK, GREY, COPPER, YELLOW } from '../../../../styles/colors';
 import { BlendedCourseType, SlotType, TraineeType } from '../../../../types/CourseTypes';
 import styles from './styles';
 import { getTitle } from '../helper';
@@ -413,7 +413,7 @@ const AdminCourseProfile = ({ route, navigation }: AdminCourseProfileProps) => {
       <View key={sheet._id} style={styles.savedSheetContent}>
         <TouchableOpacity onPress={() => openImagePreview(sheet)}>
           <Feather name='file-text' size={ICON.XXL} color={GREY[900]} />
-          <View style={styles.editButton}><Feather name='edit-2' size={ICON.SM} color={PINK[500]} /></View>
+          <View style={styles.editButton}><Feather name='edit-2' size={ICON.SM} color={COPPER[500]} /></View>
         </TouchableOpacity>
         <Text style={styles.savedSheetText} numberOfLines={2}>{label}</Text>
       </View>

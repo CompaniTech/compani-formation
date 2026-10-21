@@ -3,7 +3,7 @@ import Feather from '@react-native-vector-icons/feather';
 import ProgressCircle from './ProgressCircle';
 import styles from './styles';
 import { ICON } from '../../styles/metrics';
-import { PINK, WHITE } from '../../styles/colors';
+import { COPPER, WHITE } from '../../styles/colors';
 
 interface ProgressPieChartProps {
   progress: number | null,
@@ -13,7 +13,7 @@ const ProgressPieChart = ({ progress }: ProgressPieChartProps) => (
   <View style={styles.container}>
     {!progress &&
         <View style={styles.unstartedContainer}>
-          <Feather name='play-circle' size={ICON.MD} color={PINK[500]} />
+          <Feather name='play-circle' size={ICON.MD} color={COPPER[500]} />
         </View>}
     {!!progress && progress < 1 &&
         <View style={styles.progressContainer}>

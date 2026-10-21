@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { FIRA_SANS_REGULAR } from '../../../../styles/fonts';
-import { GREY, PINK } from '../../../../styles/colors';
+import { GREY, COPPER } from '../../../../styles/colors';
 import { MARGIN, PADDING } from '../../../../styles/metrics';
 
 const styles = StyleSheet.create({
@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: PADDING.LG,
   },
   text: {
-    color: PINK[500],
+    color: COPPER[500],
     margin: MARGIN.XS,
   },
 });
