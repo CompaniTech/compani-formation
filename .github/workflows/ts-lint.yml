@@ -10,12 +10,12 @@ jobs:
     steps:
 
       # Check out the repository
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v7
 
       # Install Node.js
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v7
         with:
-          node-version: 22.20.0
+          node-version: 24.21.0
 
       # Install your dependencies
       - run: yarn install --frozen-lockfile --ignore-scripts
