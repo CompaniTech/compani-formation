@@ -6,7 +6,7 @@
   },
   "build": {
     "local": {
-      "node": "24.21.0",
+      "node": "24.22.1",
       "developmentClient": true,
       "distribution": "internal",
       "env": {
@@ -22,7 +22,7 @@
       }
     },
     "development": {
-      "node": "24.21.0",
+      "node": "24.22.1",
       "channel": "dev",
       "distribution": "internal",
       "env": {
@@ -41,8 +41,8 @@
       }
     },
     "prod": {
-      "node": "24.21.0",
-      "channel": "prod-2.46.0",
+      "node": "24.22.1",
+      "channel": "prod-2.47.0",
       "env": {
         "EXPO_USE_SOURCE": "1",
         "APP_ENV": "production",
