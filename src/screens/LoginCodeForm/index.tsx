@@ -116,7 +116,9 @@ const LoginCodeForm = ({ navigation }: LoginCodeFormProps) => {
       );
       return null;
     } catch (e: any) {
-      if (e.response.status === 404) return dispatchError({ type: SET_ERROR, payload: e.response.data.message });
+      if ([404, 429].includes(e.response.status)) {
+        return dispatchError({ type: SET_ERROR, payload: e.response.data.message });
+      }
       return dispatchError({ type: SET_ERROR, payload: 'Oops, une erreur est survenue' });
     } finally {
       setIsLoading(false);
