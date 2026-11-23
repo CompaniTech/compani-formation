@@ -24,7 +24,7 @@ const PersonCell = ({ person }: PersonCellProps) => {
         <Text style={styles.email}>{email}</Text>
         {contact && <Text style={styles.phone}>{formatPhone(contact)}</Text>}
         {isConnected && <Text style={styles.connected}>{isConnected}</Text>}
-        {!isConnected && <Text style={styles.code}>Code de connexion: {person?.loginCode}</Text>}
+        {!isConnected && !!person?.loginCode && <Text style={styles.code}>Code de connexion: {person.loginCode}</Text>}
       </View>
     </View>
   );

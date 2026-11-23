@@ -105,8 +105,9 @@ const ForgotPasswordModal = ({ visible, email, setForgotPasswordModal }: ForgotP
         { userId: checkToken.user._id, email, token: checkToken.token, mobileConnectionMode: IDENTITY_VERIFICATION }
       );
       onRequestClose();
-    } catch (_) {
-      dispatchError({ type: SET_ERROR, payload: 'Oops, le code n\'est pas valide' });
+    } catch (e: any) {
+      const payload = e.response?.status === 429 ? e.response.data.message : 'Oops, le code n\'est pas valide';
+      dispatchError({ type: SET_ERROR, payload });
     } finally {
       setIsLoading(false);
     }
@@ -120,9 +121,9 @@ const ForgotPasswordModal = ({ visible, email, setForgotPasswordModal }: ForgotP
       setCodeRecipient(email);
       dispatchError({ type: RESET_ERROR });
     } catch (e: any) {
-      const payload = e.response?.status === 404
-        ? 'Oops, on ne reconnaît pas cet e-mail'
-        : 'Oops, erreur lors de la transmission de l\'e-mail';
+      let payload = 'Oops, erreur lors de la transmission de l\'e-mail';
+      if (e.response?.status === 404) payload = 'Oops, on ne reconnaît pas cet e-mail';
+      if (e.response?.status === 429) payload = e.response.data.message;
       dispatchError({ type: SET_ERROR, payload });
     } finally {
       setIsLoading(false);
@@ -137,9 +138,12 @@ const ForgotPasswordModal = ({ visible, email, setForgotPasswordModal }: ForgotP
       setCodeRecipient(get(sms, 'phone') ? `${formatPhone(sms!)}` : '');
       dispatchError({ type: RESET_ERROR });
     } catch (e: any) {
-      const payload = e.response?.status === 409
-        ? 'Oops, nous n\'avons pas trouvé de numéro de téléphone associé à votre compte'
-        : 'Oops, erreur lors de la transmission du numéro de téléphone';
+      let payload = 'Oops, erreur lors de la transmission du numéro de téléphone';
+      if (e.response?.status === 404) payload = 'Oops, on ne reconnaît pas cet e-mail';
+      if (e.response?.status === 409) {
+        payload = 'Oops, nous n\'avons pas trouvé de numéro de téléphone associé à votre compte';
+      }
+      if (e.response?.status === 429) payload = e.response.data.message;
       dispatchError({ type: SET_ERROR, payload });
     } finally {
       setIsLoading(false);
