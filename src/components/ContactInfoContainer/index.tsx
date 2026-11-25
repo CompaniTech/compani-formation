@@ -25,13 +25,15 @@ const ContactInfoContainer = ({ title, contact }: ContactInfoContainerProps) => 
             <TouchableOpacity style={styles.contact} onPress={() => Linking.openURL(`tel:${phone}`)}>
               <Feather name='phone' size={ICON.MD} color={GREY[600]} />
               <Text style={styles.contactContent}>{phone}</Text>
-            </TouchableOpacity>}
+            </TouchableOpacity>
+          }
           <TouchableOpacity onPress={() => Linking.openURL(`mailto:${contact.local.email}`)} style={styles.contact}>
             <Feather name='mail' size={ICON.MD} color={GREY[600]}/>
             <Text style={styles.contactContent}>{contact.local.email}</Text>
           </TouchableOpacity>
         </>
-        : <Text style={styles.italicText}>Il n&apos;y a aucun interlocuteur pour cette formation.</Text>}
+        : <Text style={styles.italicText}>Il n&apos;y a aucun interlocuteur pour cette formation.</Text>
+      }
     </View>
   );
 };
